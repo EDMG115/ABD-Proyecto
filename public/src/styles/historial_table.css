@@ -1,0 +1,396 @@
+/* Accesibilidad */
+.visually-hidden {
+  position: absolute !important;
+  height: 1px;
+  width: 1px;
+  overflow: hidden;
+  clip: rect(1px, 1px, 1px, 1px);
+  white-space: nowrap;
+}
+
+/* Estilos de diálogos personalizados (iguales a los de administradores) */
+.dialog_select {
+    background-color: rgba(255, 255, 255, 0.95);
+    border: 0px solid rgba(255, 255, 255, 0.4);
+    transform: translate(-50%, -50%);
+    backdrop-filter: blur(4px);
+    border-radius: 10px;
+    position: fixed;
+    padding: 20px;
+    margin: 0;
+    left: 50%;
+    top: 50%;
+    text-align: center;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.dialog_h3 {
+    font-size: 1.5rem;
+}
+
+.button_ls_close {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    margin: 0 auto;
+    width: 80%;
+    gap: 10px;
+}
+
+.dialog_text_btn_close {
+    display: inline-block;
+    margin: 0;
+    line-height: 1;
+}
+
+/* Contenedor general */
+#hist-table-sample,
+#reservaciones-table-sample {
+  padding: 18px;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(2, 62, 138, 0.08);
+  overflow-x: auto;
+}
+
+/* TABLA BASE */
+#hist-table-sample .hist-table,
+#reservaciones-table-sample .hist-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  min-width: 640px;
+  font-size: 0.95rem;
+  color: #222;
+}
+
+/* Header */
+#hist-table-sample .hist-table thead th,
+#reservaciones-table-sample .hist-table thead th {
+  text-align: left;
+  padding: 12px 14px;
+  background: #023E8A;
+  color: #fff;
+  font-weight: 700;
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  border-bottom: 2px solid rgba(0, 0, 0, 0.06);
+}
+
+/* Celdas */
+#hist-table-sample .hist-table td,
+#reservaciones-table-sample .hist-table td {
+  padding: 12px 14px;
+  vertical-align: middle;
+  border-bottom: 1px solid rgba(2, 62, 138, 0.08);
+  background: transparent;
+}
+
+/* Filas */
+#hist-table-sample .hist-table tbody tr:nth-child(odd) td,
+#reservaciones-table-sample .hist-table tbody tr:nth-child(odd) td {
+  background: rgba(2, 62, 138, 0.02);
+}
+#hist-table-sample .hist-table tbody tr:hover td,
+#reservaciones-table-sample .hist-table tbody tr:hover td {
+  background: rgba(2, 62, 138, 0.05);
+  transition: background 0.2s ease;
+}
+
+/* Estados */
+.badge {
+  display: inline-block;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: #fff;
+  text-align: center;
+}
+
+.status-en-espera {
+  background: #ff8c00;
+  color: #2b1a00;
+}
+
+.status-cancelado {
+  background: #d00000;
+}
+
+.status-realizado {
+  background: #00a86b;
+}
+
+/* Botones */
+.hist-btn {
+  padding: 7px 12px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  color: #fff;
+  font-weight: 700;
+  margin-right: 6px;
+  box-shadow: 0 4px 10px rgba(2, 62, 138, 0.08);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  min-width: 110px;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.hist-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(2, 62, 138, 0.16);
+}
+
+.hist-btn:disabled {
+  opacity: 0.6;
+  cursor: default;
+  box-shadow: none;
+  transform: none;
+}
+
+.hist-btn-cancel {
+  background: #d00000;
+}
+
+.hist-btn-desc {
+  background: #023E8A;
+}
+
+/* ambos botones en la celda Acciones */
+#hist-table-sample .hist-table td:last-child,
+#reservaciones-table-sample .hist-table td:last-child {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+}
+
+@media (max-width: 900px) {
+  #hist-table-sample,
+  #reservaciones-table-sample {
+    padding: 14px;
+  }
+
+  #hist-table-sample .hist-table,
+  #reservaciones-table-sample .hist-table {
+    min-width: 560px;
+    font-size: 0.9rem;
+  }
+
+  #hist-table-sample .hist-table thead th,
+  #hist-table-sample .hist-table td,
+  #reservaciones-table-sample .hist-table thead th,
+  #reservaciones-table-sample .hist-table td {
+    padding: 10px 12px;
+  }
+
+  .hist-btn {
+    padding: 6px 10px;
+    font-size: 0.85rem;
+    min-width: 100px;
+  }
+
+  /* Botones deshabilitados (gris) */
+  .disabled-btn {
+    background: #b0b0b0 !important;
+    color: #fff !important;
+    cursor: not-allowed !important;
+    box-shadow: none !important;
+    transform: none !important;
+  }
+
+
+
+
+}
+
+/* Estado: En curso */
+.status-en-curso {
+  background: #0077b6;
+
+}
+
+.cambio_h3{
+  font-size: 5rem;
+  text-align: center;
+  color: #b51919;
+}
+
+/* Títulos de sección */
+.cambio_h3.historial-title {
+  font-size: 1.5rem;
+  text-align: center;
+}
+
+/* Secciones con espaciado */
+.historial-section {
+  margin-top: 40px;
+}
+
+/* Contenedor de filtros */
+.filtros-container {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+  align-items: center;
+  margin: 20px 0;
+  flex-wrap: wrap;
+}
+
+.filtros-container .filtro-label {
+  font-weight: 600;
+  color: #023E8A;
+  font-size: 0.95rem;
+}
+
+/* Contenedor individual de cada filtro */
+.filtro-item {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.filtro-item label {
+  font-size: 0.85rem;
+  color: #666;
+  font-weight: 500;
+}
+
+/* Estilos para los combobox */
+.filtro-item select,
+#cbNombre,
+#cbCiudad,
+#cbZona {
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid #023E8A;
+  font-size: 0.95rem;
+  min-width: 200px;
+  background-color: #fff;
+  color: #222;
+  cursor: pointer;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.filtro-item select:hover,
+#cbNombre:hover,
+#cbCiudad:hover,
+#cbZona:hover {
+  border-color: #0077b6;
+  box-shadow: 0 2px 8px rgba(2, 62, 138, 0.1);
+}
+
+.filtro-item select:focus,
+#cbNombre:focus,
+#cbCiudad:focus,
+#cbZona:focus {
+  outline: none;
+  border-color: #023E8A;
+  box-shadow: 0 0 0 3px rgba(2, 62, 138, 0.1);
+}
+
+/* Ocultar columna de ID */
+#hist-table-sample .hist-table thead th:first-child,
+#hist-table-sample .hist-table tbody td:first-child,
+#reservaciones-table-sample .hist-table thead th:first-child,
+#reservaciones-table-sample .hist-table tbody td:first-child {
+  display: none;
+}
+
+/* Ancho específico para la columna de Fecha (4ta columna después de ID oculto) */
+#hist-table-sample .hist-table thead th:nth-child(4),
+#hist-table-sample .hist-table tbody td:nth-child(4),
+#reservaciones-table-sample .hist-table thead th:nth-child(4),
+#reservaciones-table-sample .hist-table tbody td:nth-child(4) {
+  min-width: 140px;
+  width: 140px;
+  white-space: nowrap;
+}
+
+/* Estilos para el combo box de lugares */
+#combo-lugares-container {
+  margin: 20px auto;
+  text-align: center;
+  padding: 15px;
+  background: rgba(2, 62, 138, 0.02);
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  max-width: 500px;
+}
+
+#combo-lugares-container label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #023E8A;
+  font-size: 0.95rem;
+}
+
+#cbLugares {
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid #023E8A;
+  font-size: 0.95rem;
+  min-width: 250px;
+  max-width: 100%;
+  background-color: #fff;
+  color: #222;
+  cursor: pointer;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  margin: 0 auto;
+  display: block;
+}
+
+#cbLugares:hover {
+  border-color: #0077b6;
+  box-shadow: 0 2px 8px rgba(2, 62, 138, 0.1);
+}
+
+#cbLugares:focus {
+  outline: none;
+  border-color: #023E8A;
+  box-shadow: 0 0 0 3px rgba(2, 62, 138, 0.1);
+}
+
+@media (max-width: 900px) {
+  #cbLugares {
+    min-width: 200px;
+    font-size: 0.9rem;
+    padding: 6px 10px;
+  }
+  
+  #combo-lugares-container label {
+    font-size: 0.9rem;
+  }
+}
+
+/* Responsive para filtros */
+@media (max-width: 900px) {
+  .filtros-container {
+    gap: 10px;
+    margin: 15px 0;
+  }
+
+  .filtro-item select,
+  #cbNombre,
+  #cbCiudad,
+  #cbZona {
+    min-width: 150px;
+    font-size: 0.9rem;
+    padding: 6px 10px;
+  }
+
+  .filtros-container .filtro-label {
+    font-size: 0.9rem;
+  }
+
+  .filtro-item label {
+    font-size: 0.8rem;
+  }
+}

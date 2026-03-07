@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ARC - Ingreso</title>
+    <link rel="stylesheet" href="./../styles/style_generico.css">
+    <link rel="stylesheet" href="./../styles/ingreso_style.css">
+    <script src="./../scripts/ingreso_script.js" type="module"></script>
+</head>
+
+<body>
+    <div class="contenedor" id="contenedor">
+        <div class="contenedor_formulario contenedor_registro">
+            <form id="form_registro">
+                <h1>Registrate</h1>
+
+                <!-- Nombre 20 caracteres -->
+                <input type="text" placeholder="Nombre / Nombre de la empresa" id="r_nombre" name="nombre"
+                    maxlength="20" pattern="[A-Za-zÁÉÍÓÚáéíóúÑñ ]{1,20}" required>
+
+                <!-- Apellido 20 caracteres -->
+                <input type="text" placeholder="Apellido / Descripcion de la empresa" id="r_apellido" name="apellido"
+                    maxlength="20" pattern="[A-Za-zÁÉÍÓÚáéíóúÑñ ]{1,20}" required>
+
+                <!-- Correo solo hotmail y gmail -->
+                <input type="email" placeholder="Correo" id="r_correo" name="correo"
+                    pattern="[a-zA-Z0-9._%+-]+@(hotmail|gmail)\.com" required>
+
+                <!-- Telefono 10 dígitos -->
+                <input type="tel" placeholder="Telefono" id="r_telefono" name="telefono" pattern="[0-9]{10}"
+                    maxlength="10" required>
+
+                <!-- Usuario max 30 caracteres -->
+                <input type="text" placeholder="Usuario" id="r_usuario" name="usuario" maxlength="30" pattern=".{1,30}"
+                    required>
+
+                <input type="password" placeholder="Contraseña" id="r_password" name="contra" required>
+
+                <button id="boton_registrarse"> Registrarse</button>
+            </form>
+        </div>
+
+
+        <div class="contenedor_formulario contenedor_login">
+            <form>
+                <h1>Inicia Sesión</h1>
+                <input type="text" placeholder="Usuario" id="i_usuario">
+                <input type="password" placeholder="Contraseña" id="i_password">
+                <button id="boton_acceder">Acceder</button>
+            </form>
+        </div>
+
+        <div class="overlay-contenedor">
+            <div class="overlay">
+                <div class="overlay-panel overlay_izquierdo">
+                    <h1 class="pnl_h1_titulo">Llena el formulario de registro.</h1>
+                    <p>¿Ya tienes una cuenta?</p>
+                    <button tabindex="-1" class="btn_cambio" id="cambio_login">¡Inicia Sesión! &larr; </button>
+                </div>
+                <div class="overlay-panel overlay_derecho">
+                    <h1 class="pnl_h1_titulo">Accede a todo nuestro contenido.</h1>
+                    <p>¿Aun no tienes una cuenta?</p>
+                    <button tabindex="-1" class="btn_cambio" id="cambio_registro">¡Registrate! &rarr;</button>
+                </div>
+            </div>
+        </div>
+
+        <dialog class="dialog_select" id="datos_incorrectos">
+            <h3 class="dialog_h3">El usuario o la contraseña son incorrectos.</h3>
+            <br>
+            <button class="button_ls_close" id="close_datos_incorrectos">
+                <img class="img_ls_close" src="./../media/images/icons/iconLS5.png">
+                <p class="dialog_text_btn_close">Volver a capturar</p>
+            </button>
+        </dialog>
+
+        <dialog class="dialog_select" id="registro_duplicado">
+            <h3 class="dialog_h3">El registro fallo. Prueba registrando a otro usuario</h3>
+            <br>
+            <button class="button_ls_close" id="close_registro_duplicado">
+                <p class="dialog_text_btn_close">Volver a capturar</p>
+            </button>
+        </dialog>
+
+        <dialog class="dialog_select" id="registro_correcto">
+            <h3 class="dialog_h3">Registro exitoso.</h3>
+            <br>
+            <button class="button_ls_close" id="close_registro_correcto">
+                <p class="dialog_text_btn_close">Aceptar</p>
+            </button>
+        </dialog>
+    </div>
+</body>
+
+
+</html>
