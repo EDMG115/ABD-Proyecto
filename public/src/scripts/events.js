@@ -562,7 +562,7 @@ btnSave.addEventListener("click", async () => {
 
         const formData = new FormData();
 
-        formData.append("fecha_evento", fecha)
+        formData.append("fecha_evento", evento.fecha_evento);
         formData.append("accion", "actualizar");
         formData.append("idEvento", idEvento);
         formData.append("nombre_evento", nameInput.value);

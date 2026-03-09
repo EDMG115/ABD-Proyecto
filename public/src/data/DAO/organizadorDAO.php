@@ -3,7 +3,6 @@ require_once "./../conexion.php";
 
 class organizadorDAO{
 
-    private $id;
     private $conexion;
 
     public function __construct(){
@@ -13,7 +12,7 @@ class organizadorDAO{
 
     public function validarOrganizador(string $user, string $password){
         try{
-            $sql = "SELECT * FROM organizadoras WHERE user = :user";
+            $sql = "CALL validarOrganizador(:user)";
 
             $stmt = $this->conexion->prepare($sql);
             $stmt->bindParam(':user', $user); 
@@ -28,12 +27,11 @@ class organizadorDAO{
         }catch (PDOException $e){
             throw new Exception("Error al realizar la consulta: " . $e->getMessage());
         }
-
     }
 
     public function getOrganizadorPorID($idOrganizadora){
         try{
-            $sql = "SELECT * FROM organizadoras WHERE id_organizadora = :id";
+            $sql = "CALL getOrganizadorPorID(:id)";
             $stmt = $this->conexion->prepare($sql);
             $stmt->bindParam(":id", $idOrganizadora, PDO::PARAM_INT);
             $stmt->execute();
@@ -43,5 +41,4 @@ class organizadorDAO{
             throw new Exception("Error al obtener organizador: " . $e->getMessage());
         }
     }
-
 }
