@@ -150,7 +150,7 @@ window.addEventListener("load", async function () {
         if (agencia) {
             agencyEl.textContent = `Agencia: ${agencia.nombre_agencia}`;
             if (agencia.imagen_url) {
-                agencyImg.style.backgroundImage = `url(../../../src/media/images/organizers/${agencia.imagen_url})`;
+                agencyImg.style.backgroundImage = `url(../../../src/media/images/agencias/${agencia.imagen_url})`;
             }
         } else {
             agencyEl.textContent = "Agencia (No logueada)";

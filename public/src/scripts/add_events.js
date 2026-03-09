@@ -158,7 +158,7 @@ window.addEventListener("load", async function () {
 
         if (organizador) {
             organizerEl.textContent = `Organizado por: ${organizador.nombre_agencia}`;
-            if (organizador.image_url) {
+            if (organizador.imagen_url) {
                 organizerImg.style.backgroundImage = `url(../../../src/media/images/organizers/${organizador.imagen_url})`;
             }
         } else {

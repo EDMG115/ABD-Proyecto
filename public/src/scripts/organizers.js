@@ -15,8 +15,17 @@ window.addEventListener("load", function () {
     // Configuracion inicial
     document.title = organizadora.nombre_agencia;
 
-    document.getElementById("imgAgencia").src =
-        `../../../src/media/images/organizers/${organizadora.imagen_url}`;
+    const imgAgencia = document.getElementById("imgAgencia");
+    if (organizadora.imagen_url) {
+        imgAgencia.src = `../../../src/media/images/organizers/${organizadora.imagen_url}`;
+        imgAgencia.onerror = function () {
+            this.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Crect fill='%23e2e8f0' width='120' height='120'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' fill='%2394a3b8' font-size='12'%3EImagen no disponible%3C/text%3E%3C/svg%3E";
+            this.alt = "Imagen no disponible";
+        };
+    } else {
+        imgAgencia.alt = "Sin imagen";
+        imgAgencia.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Crect fill='%23e2e8f0' width='120' height='120'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' fill='%2394a3b8' font-size='12'%3ESin imagen%3C/text%3E%3C/svg%3E";
+    }
 
 
     // Obtener número eventos mes

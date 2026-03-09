@@ -106,47 +106,34 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
             exit;
         }
 
-        // === Ruta física donde se guardarán las imágenes ===
-        $RUTA_FISICA_GUARDADO = __DIR__ . "/../../media/images/paquetes/";
-        if (!is_dir($RUTA_FISICA_GUARDADO)) {
-            mkdir($RUTA_FISICA_GUARDADO, 0755, true);
-        }
+        // 1. Actualizar datos (sin tocar imagen_url) para que el trigger de bitácora no registre "modificación imagen"
+        $actualizado = $paqueteDAO->actualizarPaquete($id_paquete, $nombre, $descripcion, $precio, $id_lugar);
 
-        // Detectar si llegó una nueva imagen
+        // 2. Solo si llegó una nueva imagen: guardar archivo y actualizar BD (evita falsos positivos en bitácora)
         $nuevaImagen = isset($_FILES["imagen"]) && $_FILES["imagen"]["error"] === UPLOAD_ERR_OK;
-
         if ($nuevaImagen) {
+            $RUTA_FISICA_GUARDADO = __DIR__ . "/../../media/images/paquetes/";
+            if (!is_dir($RUTA_FISICA_GUARDADO)) {
+                mkdir($RUTA_FISICA_GUARDADO, 0755, true);
+            }
             $tipo = $_FILES["imagen"]["type"];
             $ext = ($tipo === "image/png") ? "png" : (($tipo === "image/jpeg" || $tipo === "image/jpg") ? "jpg" : null);
             if (!$ext) {
                 echo json_encode(["correcto" => false, "mensaje" => "La imagen debe ser PNG o JPEG."]);
                 exit;
             }
-
-            // Nombre final de la imagen
             $nuevoNombre = "pimg" . $id_paquete . "." . $ext;
             $rutaDestino = $RUTA_FISICA_GUARDADO . $nuevoNombre;
-
-            // Obtener imagen anterior desde BD
-            $imgAnterior = $paqueteDAO->getPaquetePorID($id_paquete)["imagen_url"];
-
-            // Eliminar imagen anterior si existe
+            $imgAnterior = $paqueteDAO->getPaquetePorID($id_paquete)["imagen_url"] ?? "";
             if ($imgAnterior && file_exists($RUTA_FISICA_GUARDADO . $imgAnterior)) {
                 unlink($RUTA_FISICA_GUARDADO . $imgAnterior);
             }
-
-            // Guardar nueva imagen
             if (!move_uploaded_file($_FILES["imagen"]["tmp_name"], $rutaDestino)) {
                 echo json_encode(["correcto" => false, "mensaje" => "Error al guardar imagen"]);
                 exit;
             }
-
-            // Actualizar referencia en BD
             $paqueteDAO->actualizarImagen($id_paquete, $nuevoNombre);
         }
-
-        // Actualizar resto de datos
-        $actualizado = $paqueteDAO->actualizarPaquete($id_paquete, $nombre, $descripcion, $precio, $id_lugar);
 
         echo json_encode([
             "correcto" => $actualizado,
