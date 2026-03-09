@@ -240,8 +240,17 @@ function cargarEventoEnUI() {
     try {
         editMode = false;
 
-        // Imagen
-        img.src = evento.imagen_url ? `../../../src/media/images/events/${evento.imagen_url}` : '';
+        // Imagen del evento
+        const PLACEHOLDER_SVG = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='150' viewBox='0 0 200 150'%3E%3Crect fill='%23e2e8f0' width='200' height='150'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' fill='%2394a3b8' font-size='14'%3EImagen no disponible%3C/text%3E%3C/svg%3E";
+        if (evento.imagen_url) {
+            img.src = `../../../src/media/images/events/${evento.imagen_url}`;
+            img.onerror = function () {
+                this.src = PLACEHOLDER_SVG;
+                this.alt = "Imagen no disponible";
+            };
+        } else {
+            img.src = PLACEHOLDER_SVG;
+        }
         img.alt = evento.nombre_evento || 'Evento';
 
         // Inputs
@@ -259,8 +268,15 @@ function cargarEventoEnUI() {
             ? `Organizado por: ${organizador.nombre_agencia}`
             : "Organizador desconocido";
 
-        if (organizador?.image_url) {
-            organizerImg.style.backgroundImage = `url(../../../src/media/images/organizers/${organizador.imagen_url})`;
+        const PLACEHOLDER_ORG = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Crect fill='%23e2e8f0' width='80' height='80'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' fill='%2394a3b8' font-size='10'%3EImagen no disponible%3C/text%3E%3C/svg%3E";
+        if (organizador?.imagen_url) {
+            const imgUrl = `../../../src/media/images/organizers/${organizador.imagen_url}`;
+            const preload = new Image();
+            preload.onload = () => { organizerImg.style.backgroundImage = `url(${imgUrl})`; };
+            preload.onerror = () => { organizerImg.style.backgroundImage = `url(${PLACEHOLDER_ORG})`; };
+            preload.src = imgUrl;
+        } else {
+            organizerImg.style.backgroundImage = `url(${PLACEHOLDER_ORG})`;
         }
 
         // Estado inicial UI
@@ -598,7 +614,13 @@ btnSave.addEventListener("click", async () => {
         }
 
         // Refrescar imagen si cambió desde server
-        if (evento.imagen_url) img.src = `../../../src/media/images/events/${evento.imagen_url}`;
+        const PLACEHOLDER_SVG = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='150' viewBox='0 0 200 150'%3E%3Crect fill='%23e2e8f0' width='200' height='150'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' fill='%2394a3b8' font-size='14'%3EImagen no disponible%3C/text%3E%3C/svg%3E";
+        if (evento.imagen_url) {
+            img.src = `../../../src/media/images/events/${evento.imagen_url}`;
+            img.onerror = function () { this.src = PLACEHOLDER_SVG; this.alt = "Imagen no disponible"; };
+        } else {
+            img.src = PLACEHOLDER_SVG;
+        }
 
         nuevaImagenArchivo = null;
         editMode = false;

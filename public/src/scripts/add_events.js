@@ -158,8 +158,15 @@ window.addEventListener("load", async function () {
 
         if (organizador) {
             organizerEl.textContent = `Organizado por: ${organizador.nombre_agencia}`;
+            const PLACEHOLDER_ORG = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Crect fill='%23e2e8f0' width='80' height='80'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' fill='%2394a3b8' font-size='10'%3EImagen no disponible%3C/text%3E%3C/svg%3E";
             if (organizador.imagen_url) {
-                organizerImg.style.backgroundImage = `url(../../../src/media/images/organizers/${organizador.imagen_url})`;
+                const imgUrl = `../../../src/media/images/organizers/${organizador.imagen_url}`;
+                const preload = new Image();
+                preload.onload = () => { organizerImg.style.backgroundImage = `url(${imgUrl})`; };
+                preload.onerror = () => { organizerImg.style.backgroundImage = `url(${PLACEHOLDER_ORG})`; };
+                preload.src = imgUrl;
+            } else {
+                organizerImg.style.backgroundImage = `url(${PLACEHOLDER_ORG})`;
             }
         } else {
             organizerEl.textContent = "Organizador (No logueado)";
