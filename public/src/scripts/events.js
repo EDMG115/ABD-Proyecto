@@ -260,7 +260,7 @@ function cargarEventoEnUI() {
             : "Organizador desconocido";
 
         if (organizador?.image_url) {
-            organizerImg.style.backgroundImage = `url(../../../src/media/images/organizers/${organizador.image_url})`;
+            organizerImg.style.backgroundImage = `url(../../../src/media/images/organizers/${organizador.imagen_url})`;
         }
 
         // Estado inicial UI
@@ -627,9 +627,15 @@ btnDelete.addEventListener("click", async () => {
             method: "POST",
             body: formData
         });
-                console.log(await res.text());
 
-        const json = await res.json();
+        const text = await res.text();
+        let json;
+        try {
+            json = JSON.parse(text);
+        } catch (e) {
+            console.error("Respuesta no JSON:", text);
+            throw new Error("El servidor devolvió una respuesta inválida.");
+        }
         console.log(json);
 
         if (!json.correcto) return showAlert('Error', json.mensaje);

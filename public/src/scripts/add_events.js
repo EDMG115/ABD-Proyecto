@@ -159,7 +159,7 @@ window.addEventListener("load", async function () {
         if (organizador) {
             organizerEl.textContent = `Organizado por: ${organizador.nombre_agencia}`;
             if (organizador.image_url) {
-                organizerImg.style.backgroundImage = `url(../../../src/media/images/organizers/${organizador.image_url})`;
+                organizerImg.style.backgroundImage = `url(../../../src/media/images/organizers/${organizador.imagen_url})`;
             }
         } else {
             organizerEl.textContent = "Organizador (No logueado)";

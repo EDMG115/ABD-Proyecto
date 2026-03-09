@@ -74,12 +74,19 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
             exit;
         }
 
-        $eliminar = $paqueteDAO->eliminarPaquete($id_paquete);
-
-        echo json_encode([
-            "correcto" => $eliminar,
-            "mensaje" => $eliminar ? "Paquete eliminado correctamente" : "Error al eliminar paquete"
-        ]); 
+        try {
+            $eliminar = $paqueteDAO->eliminarPaquete($id_paquete);
+            echo json_encode([
+                "correcto" => $eliminar,
+                "mensaje" => $eliminar ? "Paquete eliminado correctamente" : "Error al eliminar paquete"
+            ]);
+        } catch (PDOException $e) {
+            if (strpos($e->getMessage(), "foreign key constraint") !== false) {
+                echo json_encode(["correcto" => false, "mensaje" => "No se puede eliminar el paquete porque tiene viajes asociados."]);
+            } else {
+                echo json_encode(["correcto" => false, "mensaje" => "Error al eliminar paquete: " . $e->getMessage()]);
+            }
+        }
         exit;
 
     } else if ($_POST["accion"] === "actualizar") {
@@ -100,20 +107,24 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
         }
 
         // === Ruta física donde se guardarán las imágenes ===
-        $RUTA_FISICA_GUARDADO = "./../../media/images/paquetes/";
+        $RUTA_FISICA_GUARDADO = __DIR__ . "/../../media/images/paquetes/";
+        if (!is_dir($RUTA_FISICA_GUARDADO)) {
+            mkdir($RUTA_FISICA_GUARDADO, 0755, true);
+        }
 
         // Detectar si llegó una nueva imagen
         $nuevaImagen = isset($_FILES["imagen"]) && $_FILES["imagen"]["error"] === UPLOAD_ERR_OK;
 
         if ($nuevaImagen) {
-
-            if ($_FILES["imagen"]["type"] !== "image/png") {
-                echo json_encode(["correcto" => false, "mensaje" => "La imagen debe ser PNG."]);
+            $tipo = $_FILES["imagen"]["type"];
+            $ext = ($tipo === "image/png") ? "png" : (($tipo === "image/jpeg" || $tipo === "image/jpg") ? "jpg" : null);
+            if (!$ext) {
+                echo json_encode(["correcto" => false, "mensaje" => "La imagen debe ser PNG o JPEG."]);
                 exit;
             }
 
             // Nombre final de la imagen
-            $nuevoNombre = "pimg" . $id_paquete . ".png";
+            $nuevoNombre = "pimg" . $id_paquete . "." . $ext;
             $rutaDestino = $RUTA_FISICA_GUARDADO . $nuevoNombre;
 
             // Obtener imagen anterior desde BD
@@ -179,19 +190,23 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
         }
 
         // === PROCESAMIENTO DE IMAGEN ===
-        $RUTA_FISICA_GUARDADO = "./../../media/images/paquetes/";
+        $RUTA_FISICA_GUARDADO = __DIR__ . "/../../media/images/paquetes/";
+        if (!is_dir($RUTA_FISICA_GUARDADO)) {
+            mkdir($RUTA_FISICA_GUARDADO, 0755, true);
+        }
         $nuevaImagen = isset($_FILES["imagen"]) && $_FILES["imagen"]["error"] === UPLOAD_ERR_OK;
         $nombreImagenFinal = null;
 
         if ($nuevaImagen) {
-            // Validar tipo PNG
-            if ($_FILES["imagen"]["type"] !== "image/png") {
-                echo json_encode(["correcto" => true, "mensaje" => "Paquete creado, pero la imagen fue rechazada (Solo PNG).", "nueva_imagen_url" => null]);
-                exit; 
+            $tipo = $_FILES["imagen"]["type"];
+            $ext = ($tipo === "image/png") ? "png" : (($tipo === "image/jpeg" || $tipo === "image/jpg") ? "jpg" : null);
+            if (!$ext) {
+                echo json_encode(["correcto" => true, "mensaje" => "Paquete creado, pero la imagen fue rechazada (solo PNG o JPEG).", "nueva_imagen_url" => null]);
+                exit;
             }
 
             // Crear nombre basado en el ID recién generado
-            $nombreImagenFinal = "pimg" . $id_nuevo_paquete . ".png";
+            $nombreImagenFinal = "pimg" . $id_nuevo_paquete . "." . $ext;
             $rutaDestino = $RUTA_FISICA_GUARDADO . $nombreImagenFinal;
 
             // Mover archivo

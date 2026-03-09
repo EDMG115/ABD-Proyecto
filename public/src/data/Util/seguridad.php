@@ -92,6 +92,7 @@ function verificarPermisos($accion) {
         "organizadora" => [
             "crear_evento",
             "editar_evento",
+            "eliminar_evento",
             "ver_eventos",
         ],
 

@@ -87,12 +87,20 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
             exit;
         }
 
-        $eliminar = $eventosDAO->eliminarEvento($id_evento);
-
-        echo json_encode([
-            "correcto" => $eliminar,
-            "mensaje" => $eliminar ? "Evento eliminado correctamente" : "Error al eliminar evento"
-        ]); 
+        try {
+            $eliminar = $eventosDAO->eliminarEvento($id_evento);
+            echo json_encode([
+                "correcto" => $eliminar,
+                "mensaje" => $eliminar ? "Evento eliminado correctamente" : "Error al eliminar evento"
+            ]);
+        } catch (PDOException $e) {
+            $msg = $e->getMessage();
+            if (strpos($msg, "foreign key") !== false || strpos($msg, "foreign key constraint") !== false) {
+                echo json_encode(["correcto" => false, "mensaje" => "No se puede eliminar el evento porque tiene reservaciones asociadas."]);
+            } else {
+                echo json_encode(["correcto" => false, "mensaje" => "Error al eliminar evento. Verifica que exista el procedimiento eliminarEvento en la BD."]);
+            }
+        }
         exit;
 
     } else if ($_POST["accion"] === "actualizar") {
@@ -116,20 +124,24 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
         }
 
         // === Ruta física donde se guardarán las imágenes ===
-        $RUTA_FISICA_GUARDADO = "./../../media/images/events/";
+        $RUTA_FISICA_GUARDADO = __DIR__ . "/../../media/images/events/";
+        if (!is_dir($RUTA_FISICA_GUARDADO)) {
+            mkdir($RUTA_FISICA_GUARDADO, 0755, true);
+        }
 
         // Detectar si llegó una nueva imagen
         $nuevaImagen = isset($_FILES["imagen"]) && $_FILES["imagen"]["error"] === UPLOAD_ERR_OK;
 
         if ($nuevaImagen) {
-
-            if ($_FILES["imagen"]["type"] !== "image/png") {
-                echo json_encode(["correcto" => false, "mensaje" => "La imagen debe ser PNG."]);
+            $tipo = $_FILES["imagen"]["type"];
+            $ext = ($tipo === "image/png") ? "png" : (($tipo === "image/jpeg" || $tipo === "image/jpg") ? "jpg" : null);
+            if (!$ext) {
+                echo json_encode(["correcto" => false, "mensaje" => "La imagen debe ser PNG o JPEG."]);
                 exit;
             }
 
             // Nombre final de la imagen
-            $nuevoNombre = "eimg" . $id_evento . ".png";
+            $nuevoNombre = "eimg" . $id_evento . "." . $ext;
             $rutaDestino = $RUTA_FISICA_GUARDADO . $nuevoNombre;
 
             // Obtener imagen anterior desde BD
@@ -213,21 +225,23 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
         }
 
         // === PROCESAMIENTO DE IMAGEN ===
-        $RUTA_FISICA_GUARDADO = "./../../media/images/events/";
+        $RUTA_FISICA_GUARDADO = __DIR__ . "/../../media/images/events/";
+        if (!is_dir($RUTA_FISICA_GUARDADO)) {
+            mkdir($RUTA_FISICA_GUARDADO, 0755, true);
+        }
         $nuevaImagen = isset($_FILES["imagen"]) && $_FILES["imagen"]["error"] === UPLOAD_ERR_OK;
         $nombreImagenFinal = null;
 
         if ($nuevaImagen) {
-            // Validar tipo PNG
-            if ($_FILES["imagen"]["type"] !== "image/png") {
-                // Nota: Si falla la imagen, el evento ya se creó. Podrías decidir borrarlo o dejarlo sin imagen.
-                // Aquí solo avisamos.
-                echo json_encode(["correcto" => true, "mensaje" => "Evento creado, pero la imagen fue rechazada (Solo PNG).", "nueva_imagen_url" => null]);
-                exit; 
+            $tipo = $_FILES["imagen"]["type"];
+            $ext = ($tipo === "image/png") ? "png" : (($tipo === "image/jpeg" || $tipo === "image/jpg") ? "jpg" : null);
+            if (!$ext) {
+                echo json_encode(["correcto" => true, "mensaje" => "Evento creado, pero la imagen fue rechazada (solo PNG o JPEG).", "nueva_imagen_url" => null]);
+                exit;
             }
 
             // Crear nombre basado en el ID recién generado
-            $nombreImagenFinal = "eimg" . $id_nuevo_evento . ".png";
+            $nombreImagenFinal = "eimg" . $id_nuevo_evento . "." . $ext;
             $rutaDestino = $RUTA_FISICA_GUARDADO . $nombreImagenFinal;
 
             // Mover archivo
