@@ -1,68 +1,80 @@
 <?php
 require_once "./../conexion.php";
 
-class viajesDAO
-{
-
+class ViajesDAO {
     private $conexion;
 
-    public function __construct()
-    {
-        $conn = new conexion();
-        $this->conexion = $conn->getConexion();
+    public function __construct() {
+        // Instanciamos la conexión a la base de datos
+        $con = new Conexion(); 
+        $this->conexion = $con->getConexion();
     }
 
-    public function obtenerViajesPorCliente($id_cliente)
-    {
-        try {
-            $sql = "SELECT * FROM viajes WHERE id_cliente = :id_cliente";
-            $stmt = $this->conexion->prepare($sql);
-            $stmt->bindParam(':id_cliente', $id_cliente);
-            $stmt->execute();
+    // ==========================================
+    // LECTURA (SELECT)
+    // ==========================================
 
-            return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch (PDOException $e) {
-            throw new Exception("Error al consultar viajes: " . $e->getMessage());
-        }
-    }
-    public function cancelarViaje($id_viaje)
-    {
-        try {
-            $sql = "UPDATE viajes SET estado = 'cancelado' WHERE id_viaje = :id_viaje";
-            $stmt = $this->conexion->prepare($sql);
-            $stmt->bindParam(':id_viaje', $id_viaje, PDO::PARAM_INT);
-            return $stmt->execute();
-        } catch (PDOException $e) {
-            throw new Exception("Error al cancelar viaje: " . $e->getMessage());
-        }
+    public function getAllViajes() {
+        // Llamada al procedimiento almacenado
+        $sql = "CALL getAllViajes()";
+        $stmt = $this->conexion->prepare($sql);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function obtenerHistorialDetallado($id_cliente)
-    {
-        try {
-            $sql = "SELECT 
-                        v.id_viaje,
-                        v.id_paquete,
-                        v.estado,
-                        v.fecha_viaje,
-                        v.hora_viaje,
-                        p.nombre_paquete,
-                        l.nombre_lugar,
-                        l.ciudad,
-                        l.zona
-                    FROM viajes v
-                    INNER JOIN paquetes p ON v.id_paquete = p.id_paquete
-                    INNER JOIN lugares l ON p.id_lugar = l.id_lugar
-                    WHERE v.id_cliente = :id_cliente
-                    ORDER BY v.fecha_viaje DESC"; // Agregado para ordenar por fecha
+    public function getViajePorID($id_viaje) {
+        $sql = "CALL getViajePorID(?)";
+        $stmt = $this->conexion->prepare($sql);
+        $stmt->execute([$id_viaje]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
 
-            $stmt = $this->conexion->prepare($sql);
-            $stmt->bindParam(':id_cliente', $id_cliente);
-            $stmt->execute();
+    public function getViajesPorCliente($id_cliente) {
+        $sql = "CALL getViajesPorCliente(?)";
+        $stmt = $this->conexion->prepare($sql);
+        $stmt->execute([$id_cliente]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 
-            return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch (PDOException $e) {
-            throw new Exception("Error al consultar historial detallado: " . $e->getMessage());
-        }
+    // ==========================================
+    // INSERCIÓN (INSERT)
+    // ==========================================
+
+    public function crearViaje($id_cliente, $id_paquete, $estado, $fecha_viaje, $hora_viaje) {
+        $sql = "CALL crearViaje(?, ?, ?, ?, ?)";
+        $stmt = $this->conexion->prepare($sql);
+        $stmt->execute([$id_cliente, $id_paquete, $estado, $fecha_viaje, $hora_viaje]);
+        
+        // El procedimiento devuelve un SELECT LAST_INSERT_ID() AS id_generado
+        // Lo capturamos y lo retornamos para poder usarlo en el Controlador
+        $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $resultado['id_generado']; 
+    }
+
+    // ==========================================
+    // ACTUALIZACIÓN (UPDATE)
+    // ==========================================
+
+    public function actualizarViaje($id_viaje, $id_cliente, $id_paquete, $estado, $fecha_viaje, $hora_viaje) {
+        $sql = "CALL actualizarViaje(?, ?, ?, ?, ?, ?)";
+        $stmt = $this->conexion->prepare($sql);
+        return $stmt->execute([$id_viaje, $id_cliente, $id_paquete, $estado, $fecha_viaje, $hora_viaje]);
+    }
+
+    public function actualizarEstadoViaje($id_viaje, $nuevo_estado) {
+        $sql = "CALL actualizarEstadoViaje(?, ?)";
+        $stmt = $this->conexion->prepare($sql);
+        return $stmt->execute([$id_viaje, $nuevo_estado]);
+    }
+
+    // ==========================================
+    // ELIMINACIÓN (DELETE)
+    // ==========================================
+
+    public function eliminarViaje($id_viaje) {
+        $sql = "CALL eliminarViaje(?)";
+        $stmt = $this->conexion->prepare($sql);
+        return $stmt->execute([$id_viaje]);
     }
 }
+?>
