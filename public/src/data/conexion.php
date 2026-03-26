@@ -5,7 +5,7 @@ class Conexion
     private $configuracion = [
         "driver" => "mysql",
         "host" => "localhost",
-        "database" => "arcpw3",
+        "database" => "abdarcproyecto1",
         "port" => "3306",
         "username" => "GeneralARCPW3",
         "password" => "ARCPW3General",
