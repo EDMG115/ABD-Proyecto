@@ -8,7 +8,8 @@ $RUTA_FISICA_GUARDADO = __DIR__ . "/../../media/images/lugares/";
 
 if ($_SERVER["REQUEST_METHOD"] == "GET") {
     // Validar permisos para ver lugares (administradores pueden ver)
-    if (!verificarPermisos("editar_lugar") && !verificarPermisos("crear_lugar")) {
+
+    if (!verificarPermisos("ver_lugar")) {
         redirigirAlIndex();
     }
     

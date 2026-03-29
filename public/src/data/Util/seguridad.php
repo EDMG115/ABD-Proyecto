@@ -85,6 +85,7 @@ function verificarPermisos($accion) {
         "administrador" => [
             "ver_reportes",
             "crear_lugar",
+            "ver_lugar",
             "editar_lugar",
             "eliminar_lugar",
         ],
@@ -92,18 +93,21 @@ function verificarPermisos($accion) {
         "organizadora" => [
             "crear_evento",
             "editar_evento",
+            "ver_lugar",
             "eliminar_evento",
             "ver_eventos",
         ],
 
         "agencia" => [
             "crear_paquete",
+            "ver_lugar",
             "editar_paquete",
             "eliminar_paquete",
         ],
 
         "usuario" => [
             "ver_eventos",
+            "ver_lugar",
             "registrarse_evento",
         ]
     ];

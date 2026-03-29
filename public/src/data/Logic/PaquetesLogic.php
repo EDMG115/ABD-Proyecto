@@ -1,5 +1,7 @@
 <?php
     require_once "./../dao/PaquetesDAO.php";
+    require_once "./../util/seguridad.php";
+
 
     header('Content-Type: application/json');
     $paqueteDAO = new PaquetesDAO();
@@ -8,9 +10,15 @@
     
 
     if ($_SERVER["REQUEST_METHOD"] == "GET") {
+        
+        if (!verificarPermisos("ver_lugar")) {
+            redirigirAlIndex();
+        }
+
         $id_lugar = $_GET["id_lugar"];
+        
         try{
-            $paquetes = $paqueteDAO->getPaquetes($id_lugar);
+            $paquetes = $paqueteDAO->getPaquetePorID($id_lugar);
             
             /*if($paquetes != null){
                 
