@@ -152,3 +152,5 @@ window.addEventListener("load", function () {
                 "<p style='text-align: center; padding: 20px;'>Error al cargar los lugares populares.</p>";
         });
 });
+
+
