@@ -1,112 +1,130 @@
-.box {
+/* ---- Layout Principal ---- */
+.contenedor_principal {
     display: grid;
-    grid-template-columns: 1.2fr 2fr;
-    grid-template-rows: auto 300px auto;
-    grid-template-areas: "viajes        titulo  titulo"
-                         "buscador      ImgMapa desc"
-                         "buscador      paquete .";
-    grid-gap: 5px;
-    width: 95%;
+    grid-template-columns: 320px 1fr; /* Columna izquierda fija, derecha flexible */
+    gap: 25px;
+    width: 80%; /* Ocupa el 80% de la ventana */
+    max-width: 1400px;
+    margin: 30px auto;
+    align-items: stretch; /* Estira ambas columnas para que ocupen todo el espacio vertical */
+    min-height: 80vh; /* Ocupa el 80% del alto de la pantalla */
 }
 
-#imgMapa {
-    height: 100%;
+/* Cajas blancas para separar visualmente */
+.panel_blanco {
+    background-color: rgba(255, 255, 255, 0.95);
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    padding: 25px;
 }
-#desc{
-    grid-area: desc;
-    
+
+/* ---- Panel Izquierdo (Lugares) ---- */
+#buscador {
+    display: flex;
+    flex-direction: column;
+    height: 100%; /* Ocupa todo el espacio vertical del contenedor */
 }
 
 #viajes {
-    grid-area: viajes;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 2rem;
-    /*border: 2px solid black;*/
-}
-
-#titulo {
-    grid-area: titulo;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 2rem;
-    /*border: 2px solid black;*/
-}
-
-#containerImgMapa {
-    grid-area: ImgMapa;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    overflow: hidden;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    font-size: 1.8rem;
+    color: #023E8A;
+    border-bottom: 2px solid #cbd1e3;
+    padding-bottom: 10px;
+    margin-bottom: 15px;
     text-align: center;
 }
 
-
-#buscador {
-    grid-area: buscador;
-    display: grid;
-    grid-template-rows: 0.1fr 2fr;
-    grid-template-areas: "buscar"
-        "selecciones"
-        "selecciones";
-}
-
-#buscar {
-    grid-area: buscar;
-    /*border: 2px solid black;*/
-}
-
 #selecciones {
-    grid-area: selecciones;
+    flex-grow: 1; /* Toma todo el espacio sobrante debajo del título */
     overflow-y: auto;
-    height: 315px;
-    /*border: 2px solid black;*/
+    padding-right: 10px;
+    list-style: none; 
+}
+
+/* Scrollbar personalizado para la lista */
+#selecciones::-webkit-scrollbar {
+    width: 8px;
+}
+#selecciones::-webkit-scrollbar-thumb {
+    background: #cbd1e3;
+    border-radius: 4px;
+}
+
+/* ---- Panel Derecho (Detalles) ---- */
+#detalle_lugar {
+    display: flex;
+    flex-direction: column;
+}
+
+#titulo {
+    font-size: 2.2rem;
+    color: #1f3461;
+    margin-bottom: 20px;
+}
+
+#containerImgMapa {
+    position: relative;
+    width: 100%;
+    height: 350px;
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 30px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+}
+
+#imgMapa {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+}
+
+#containerImgMapa:hover #imgMapa {
+    transform: scale(1.05); /* Pequeño zoom al pasar el mouse */
+}
+
+/* Un overlay oscuro sobre la imagen para que la descripción se lea bien */
+#desc_overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+    padding: 30px 20px 20px;
+    color: white;
+}
+
+#desc {
+    font-size: 1.1rem;
+    line-height: 1.5;
+    margin: 0;
+}
+
+/* ---- Paquetes ---- */
+.subtitulo_paquetes {
+    font-size: 1.5rem;
+    color: #023E8A;
+    margin-bottom: 15px;
+    border-bottom: 2px solid #cbd1e3;
+    padding-bottom: 5px;
 }
 
 #paquete {
-    grid-area: paquete;
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    grid-template-areas: "paq1 paq2 paq3";
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
 }
 
-#paq1 {
-    grid-area: paq1;
-    /*border: 2px solid black;*/
-    height: 100px;
-}
-
-#paq2 {
-    grid-area: paq2;
-    /*border: 2px solid black;*/
-    height: 100px;
-}
-
-#paq3 {
-    grid-area: paq3;
-    /*border: 2px solid black;*/
-    height: 100px;
-}
-
-#comentar {
-    grid-area: comentar;
-    /*border: 2px solid black;*/
-}
-
+/* ---- Tarjetas Personalizadas (Aplicado según tus estilos) ---- */
 .minicard {
-    background-color: white;
+    height: 80px;
+    cursor: pointer;
+    background-color: #caccd4;
     border-left: 5px solid #023E8A;
     border-radius: 8px;
     padding: 12px;
     align-items: center;
-    gap: 10px;
-    margin-top: 10px;
+    margin-bottom: 10px;
     display: grid;
     grid-template-columns: 1fr;
     gap: 10px;
@@ -116,7 +134,6 @@
         transform 0.25s ease,
         border-left-color 0.3s ease;
 }
-
 
 .minicard span {
     font-size: 0.95rem;
@@ -129,36 +146,72 @@
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     transform: translateY(-2px);
 }
+
+/* ---- Modal (Dialog) ---- */
 .dialog_select {
-    background-color: rgba(255, 255, 255, 0.7);
-    border: 0px solid rgba(255, 255, 255, 0.4);
-    transform: translate(-50%, -50%);
-    backdrop-filter: blur(2px);
-    border-radius: 10px;
-    position: fixed;
-    padding: 20px;
-    margin: 0;
-    left: 50%;
-    top: 50%;
-    text-align: center;
+    background-color: #ffffff;
+    border: none;
+    border-radius: 12px;
+    padding: 30px;
+    width: 90%;
+    max-width: 450px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+    text-align: left;
+}
+
+.dialog_select::backdrop {
+    background-color: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(5px);
 }
 
 .dialog_h3 {
-    font-size: 1.5rem;
-}
-
-.button_ls_close {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    color: #023E8A;
+    margin-bottom: 15px;
+    font-size: 1.6rem;
     text-align: center;
-    margin: 0 auto;
-    width: 80%;
-    gap: 10px;
 }
 
-.dialog_text_btn_close {
-    display: inline-block;
-    margin: 0;
-    line-height: 1;
+.dialog_p {
+    color: #555;
+    margin-bottom: 20px;
+    text-align: center;
+    font-style: italic;
+}
+
+.dialog_inputs {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.dialog_buttons {
+    display: flex;
+    gap: 15px;
+}
+
+.btn_aceptar, .btn_cancelar {
+    flex: 1;
+    padding: 12px;
+    font-size: 1rem;
+    font-weight: bold;
+}
+
+.btn_cancelar {
+    background-color: #e63946;
+}
+
+.btn_cancelar:hover {
+    background-color: #c1121f;
+}
+
+/* ---- Responsividad ---- */
+@media (max-width: 900px) {
+    .contenedor_principal {
+        grid-template-columns: 1fr;
+        width: 95%; /* Vuelve a tomar casi todo el ancho en celulares */
+    }
+    #buscador {
+        height: 400px; /* Limita la altura en móviles para que no quite toda la pantalla */
+    }
 }

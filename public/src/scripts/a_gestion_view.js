@@ -75,9 +75,10 @@ window.addEventListener("load", async function () {
 
                     const card = document.createElement("div");
                     card.classList.add("cards");
-                    const imgSrc = lugar.imagen_url && !lugar.imagen_url.startsWith("http")
-                        ? `./../../media/images/lugares/${lugar.imagen_url}`
-                        : lugar.imagen_url || "./../../media/images/layout/imgLayout4.jpg";
+                    
+                    const imgSrc = lugar.imagen_url;
+
+                    console.log(lugar.imagen_url);
 
                     card.innerHTML = `
                 <div class="div-info-card">

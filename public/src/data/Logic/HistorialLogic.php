@@ -54,7 +54,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $id_cliente = intval($data['id_cliente']);
 
             try {
-                $viajes = $viajesDAO->obtenerHistorialDetallado($id_cliente);
+                $viajes = $viajesDAO->getViajesPorCliente($id_cliente);
 
                 echo json_encode([
                     'correcto' => true,

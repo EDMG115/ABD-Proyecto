@@ -2,7 +2,7 @@ import { renderizarLayout } from "../components/layoutManager.js";
 import { CarouselManager } from "../components/carouselManager.js";
 
 window.addEventListener("load", async function () {
-    const base = "./src/";
+    const base = "./src/"; 
 
     await renderizarLayout({
         header: {

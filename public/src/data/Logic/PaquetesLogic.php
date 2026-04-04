@@ -1,10 +1,10 @@
 <?php
-    require_once "./../dao/PaquetesDAO.php";
+    require_once "./../dao/paqueteDAO.php";
     require_once "./../util/seguridad.php";
 
 
     header('Content-Type: application/json');
-    $paqueteDAO = new PaquetesDAO();
+    $paqueteDAO = new paqueteDAO();
     $RUTA_IMG_ESTANDAR = "./../../media/images/lugares/";
     $RUTA_FISICA_GUARDADO = __DIR__ . "/../../media/images/lugares/";
     
@@ -18,7 +18,7 @@
         $id_lugar = $_GET["id_lugar"];
         
         try{
-            $paquetes = $paqueteDAO->getPaquetePorID($id_lugar);
+            $paquetes = $paqueteDAO->getPaquetesPorLugar($id_lugar);
             
             /*if($paquetes != null){
                 

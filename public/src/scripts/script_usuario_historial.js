@@ -38,6 +38,8 @@ window.addEventListener("load", async function () {
         }
     });
 
+    // Codigo ---------
+
     fetch("../../data/logic/HistorialLogic.php", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
