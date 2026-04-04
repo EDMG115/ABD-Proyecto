@@ -1,3 +1,6 @@
+import { renderizarLayout } from "../components/layoutManager.js";
+import { CalendarManager } from "../components/calendarManager.js";
+
 // =====================================================
 // 1. CONFIGURACIÓN INICIAL Y REFERENCIAS
 // =====================================================
@@ -151,7 +154,34 @@ function mostrarModalSeleccion(titulo, lista, config, callback) {
 // =====================================================
 window.addEventListener("load", async function () {
     try {
-        footer_header(); 
+        await CalendarManager.init();
+
+        const base = "./../../../src/";
+        const tituloNav = organizador?.nombre_agencia || "Crear nuevo evento";
+        await renderizarLayout({
+            header: {
+                basePath: base,
+                titulo: tituloNav,
+                fondo: `${base}media/images/layout/img_background_header.jpg`,
+                enlaces: [
+                    { url: "./organizer.html", texto: "Pagina Principal", icono: `${base}media/images/icons/icon_home.png` },
+                    { url: "./add_events.html", texto: "Crear evento", icono: `${base}media/images/icons/icon_event.png` },
+                    {
+                        tipo: "boton",
+                        id: "btn_is_r",
+                        url: "#",
+                        icono: `${base}media/images/icons/icon_user.png`,
+                        onClick: () => {
+                            window.location.href = "../../../index.html";
+                        }
+                    }
+                ]
+            },
+            footer: {
+                basePath: base,
+                fondo: `${base}media/images/layout/imgLayout20.jpg`
+            }
+        });
 
         if (btnEdit) btnEdit.style.display = "none";
         if (btnDelete) btnDelete.style.display = "none";
@@ -468,37 +498,3 @@ btnSave.addEventListener("click", async () => {
         showAlert('Error Inesperado', 'Ocurrió un error al intentar guardar el evento.');
     }
 });
-
-
-// =====================================================
-// 7. HEADER Y FOOTER 
-// =====================================================
-function footer_header() {
-    fetch("./../../../src/components/header.html")
-        .then(response => response.text())
-        .then(data => {
-            document.body.insertAdjacentHTML("afterbegin", data);
-            const script = document.createElement("script");
-            script.src = "./../../../src/scripts/header_script.js";
-            document.body.appendChild(script);
-
-            const s_header = document.getElementById("s_header");
-            if (s_header) s_header.style.backgroundImage = "url(./../../../src/media/images/layout/img_background_header.jpg)";
-
-            if (document.getElementById("n_h2")) document.getElementById("n_h2").innerText = "Crear nuevo evento";
-            if (document.getElementById("s_icon")) document.getElementById("s_icon").setAttribute("src", "./../../../src/media/images/icons/icon_arc.png");
-            
-        });
-
-    fetch("./../../../src/components/footer.html")
-        .then(response => response.text())
-        .then(data => {
-            document.body.insertAdjacentHTML("beforeend", data);
-            if (document.getElementById("f_icon")) document.getElementById("f_icon").src = "./../../../src/media/images/icons/icon_arc.png";
-            const f_general = document.getElementById("f_general");
-            if (f_general) {
-                f_general.style.backgroundImage = "url(./../../../src/media/images/layout/imgLayout20.jpg)";
-                f_general.style.backgroundPosition = "50% 80%";
-            }
-        });
-}

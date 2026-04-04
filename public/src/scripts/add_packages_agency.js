@@ -1,3 +1,5 @@
+import { renderizarLayout } from "../components/layoutManager.js";
+
 // =====================================================
 // 1. CONFIGURACIÓN INICIAL Y REFERENCIAS
 // =====================================================
@@ -144,7 +146,32 @@ function mostrarModalSeleccion(titulo, lista, config, callback) {
 // =====================================================
 window.addEventListener("load", async function () {
     try {
-        footer_header();
+        const base = "./../../../src/";
+        const tituloNav = agencia?.nombre_agencia || "Crear paquete";
+        await renderizarLayout({
+            header: {
+                basePath: base,
+                titulo: tituloNav,
+                fondo: `${base}media/images/layout/img_background_header.jpg`,
+                enlaces: [
+                    { url: "./agency.html", texto: "Pagina Principal", icono: `${base}media/images/icons/icon_home.png` },
+                    { url: "./add_packages.html", texto: "Crear paquete", icono: `${base}media/images/icons/icon_travel.png` },
+                    {
+                        tipo: "boton",
+                        id: "btn_is_r",
+                        url: "#",
+                        icono: `${base}media/images/icons/icon_user.png`,
+                        onClick: () => {
+                            window.location.href = "../../../index.html";
+                        }
+                    }
+                ]
+            },
+            footer: {
+                basePath: base,
+                fondo: `${base}media/images/layout/imgLayout20.jpg`
+            }
+        });
 
         // Prellenar datos de la agencia logueada
         if (agencia) {
@@ -363,37 +390,3 @@ btnSave.addEventListener("click", async () => {
         showAlert('Error Inesperado', 'Ocurrió un error al intentar guardar el paquete.');
     }
 });
-
-// =====================================================
-// 7. HEADER Y FOOTER 
-// =====================================================
-function footer_header() {
-    fetch("./../../../src/components/header.html")
-        .then(response => response.text())
-        .then(data => {
-            document.body.insertAdjacentHTML("afterbegin", data);
-            const script = document.createElement("script");
-            script.src = "./../../../src/scripts/header_script.js";
-            document.body.appendChild(script);
-
-            const s_header = document.getElementById("s_header");
-            if (s_header) s_header.style.backgroundImage = "url(./../../../src/media/images/layout/img_background_header.jpg)";
-
-            if (document.getElementById("n_h2")) document.getElementById("n_h2").innerText = "Crear nuevo paquete";
-            if (document.getElementById("s_icon")) document.getElementById("s_icon").setAttribute("src", "./../../../src/media/images/icons/icon_arc.png");
-            
-        });
-
-    fetch("./../../../src/components/footer.html")
-        .then(response => response.text())
-        .then(data => {
-            document.body.insertAdjacentHTML("beforeend", data);
-            if (document.getElementById("f_icon")) document.getElementById("f_icon").src = "./../../../src/media/images/icons/icon_arc.png";
-            const f_general = document.getElementById("f_general");
-            if (f_general) {
-                f_general.style.backgroundImage = "url(./../../../src/media/images/layout/imgLayout20.jpg)";
-                f_general.style.backgroundPosition = "50% 80%";
-            }
-        });
-}
-

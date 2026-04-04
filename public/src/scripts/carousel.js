@@ -5,8 +5,12 @@ export async function crearCarrusel({
     type = "paquete",
     title = "Recomendados",
     filtro = null,
-    maxVisible = 5
+    maxVisible = 5,
+    mediaBase = "./src/media/images/",
+    dataBasePath = "./src/data/"
 }) {
+    const mediaRoot = mediaBase.replace(/\/?$/, "/");
+    const dataRoot = dataBasePath.replace(/\/?$/, "/");
     const container = document.querySelector(containerSelector);
     if (!container) {
         return console.error(`No se encontró el contenedor "${containerSelector}"`);
@@ -21,8 +25,7 @@ export async function crearCarrusel({
     } 
     // Si se proporciona un archivo, cargarlo
     else if (dataFile) {
-        let baseDataPath = "./src/data/";
-        const res = await fetch(`${baseDataPath}${dataFile}`);
+        const res = await fetch(`${dataRoot}${dataFile}`);
         if (!res.ok) throw new Error(`Error cargando JSON: ${dataFile}`);
         let jsonData = await res.json();
         if (!Array.isArray(jsonData)) jsonData = jsonData.paquetes || jsonData.eventos || [];
@@ -47,15 +50,15 @@ export async function crearCarrusel({
             } 
             // Si es un array de imágenes (formato JSON antiguo)
             else if (Array.isArray(imagenes) && imagenes.length > 0) {
-                rutaImagen = `./src/media/images/lugares/${getRandomImage(imagenes)}`;
+                rutaImagen = `${mediaRoot}lugares/${getRandomImage(imagenes)}`;
             }
             // Si es un string simple (nombre de archivo)
             else if (typeof imagenes === 'string' && imagenes.length > 0) {
-                rutaImagen = `./src/media/images/lugares/${imagenes}`;
+                rutaImagen = `${mediaRoot}lugares/${imagenes}`;
             }
             // Fallback a imagen por defecto
             else {
-                rutaImagen = './src/media/images/error.jpg';
+                rutaImagen = `${mediaRoot}error.jpg`;
             }
             nombre = item.nombre_paquete;
             descripcion = item.descripcion_paquete;
@@ -64,7 +67,7 @@ export async function crearCarrusel({
             if (imagenes && typeof imagenes === 'string' && (imagenes.startsWith('./') || imagenes.startsWith('../'))) {
                 rutaImagen = imagenes;
             } else {
-                rutaImagen = `./src/media/images/events/${getRandomImage(imagenes)}`;
+                rutaImagen = `${mediaRoot}events/${getRandomImage(imagenes)}`;
             }
             nombre = item.nombre_evento;
             descripcion = item.descripcion;
@@ -76,7 +79,7 @@ export async function crearCarrusel({
 
         return `
             <div class="card">
-                <img src="${rutaImagen}" alt="${nombre}" onerror="this.onerror=null; this.src='../../media/images/error.jpg'; ">
+                <img src="${rutaImagen}" alt="${nombre}" onerror="this.onerror=null; this.src='${mediaRoot}error.jpg'; ">
                 <h3 ${estiloNombre}>${nombre}</h3>
                 <p>${descripcion}</p>
             </div>

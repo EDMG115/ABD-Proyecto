@@ -1,4 +1,5 @@
 // packages_agency.js - Versión para Editar Paquetes de Agencias
+import { renderizarLayout } from "../components/layoutManager.js";
 
 // =====================================================
 // 1. VALIDACIÓN DE SESIÓN Y REFERENCIAS
@@ -216,7 +217,7 @@ window.addEventListener("load", async function () {
         }
 
         cargarPaqueteEnUI();
-        footer_header();
+        await footer_header();
 
     } catch (e) {
         console.error("Error:", e);
@@ -562,59 +563,30 @@ btnDelete.addEventListener("click", async () => {
 });
 
 
-function footer_header() {
-    fetch("./../../../src/components/header.html")
-        .then(response => response.text())
-        .then(data => {
-            document.body.insertAdjacentHTML("afterbegin", data);
-
-            const script = document.createElement("script");
-            script.src = "./../../../src/scripts/header_script.js";
-            document.body.appendChild(script);
-
-            const s_header = document.getElementById("s_header");
-            s_header.style.backgroundImage = "url(./../../../src/media/images/layout/img_background_header.jpg)";
-
-            document.getElementById("n_h2").innerText = paquete.nombre_paquete;
-            document.getElementById("s_icon").setAttribute("src", "./../../../src/media/images/icons/icon_arc.png");
-            const bnav = document.getElementById("underline_nav");
-
-            const a1 = document.createElement("a");
-            a1.id = "a1";
-            a1.href = "agency.html";
-            const ai1 = document.createElement("img");
-            ai1.src = "./../../../src/media/images/icons/icon_home.png";
-            ai1.classList.add("icon_nav");
-            a1.appendChild(ai1);
-            a1.append("Pagina Principal");
-            bnav.appendChild(a1);
-
-            const btn_is_r = document.createElement("button");
-            btn_is_r.id = "btn_is_r";
-            const btn_a = document.createElement("a");
-            const icon_user = document.createElement("img");
-            icon_user.src = "./../../../src/media/images/icons/icon_user.png";
-            icon_user.classList.add("icon_user");
-            btn_a.appendChild(icon_user);
-            btn_is_r.appendChild(btn_a);
-            bnav.appendChild(btn_is_r);
-            btn_is_r.addEventListener("click", () => {
-                window.location.href = "../../../index.html";
-            });
-        });
-
-    fetch("./../../../src/components/footer.html")
-        .then(response => response.text())
-        .then(data => {
-            document.body.insertAdjacentHTML("beforeend", data);
-
-            document.getElementById("f_icon").src = "./../../../src/media/images/icons/icon_arc.png";
-
-            document.querySelector(".f_link").href = "#";
-
-            const f_general = document.getElementById("f_general");
-            f_general.style.backgroundImage = "url(./../../../src/media/images/layout/imgLayout20.jpg)";
-            f_general.style.backgroundPosition = "50% 80%";
-        });
+async function footer_header() {
+    const base = "./../../../src/";
+    await renderizarLayout({
+        header: {
+            basePath: base,
+            titulo: paquete.nombre_paquete,
+            fondo: `${base}media/images/layout/img_background_header.jpg`,
+            enlaces: [
+                { url: "agency.html", texto: "Pagina Principal", icono: `${base}media/images/icons/icon_home.png` },
+                {
+                    tipo: "boton",
+                    id: "btn_is_r",
+                    url: "#",
+                    icono: `${base}media/images/icons/icon_user.png`,
+                    onClick: () => {
+                        window.location.href = "../../../index.html";
+                    }
+                }
+            ]
+        },
+        footer: {
+            basePath: base,
+            fondo: `${base}media/images/layout/imgLayout20.jpg`
+        }
+    });
 }
 

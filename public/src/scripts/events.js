@@ -1,4 +1,6 @@
 // events.js - Versión Completa y Mejorada
+import { renderizarLayout } from "../components/layoutManager.js";
+import { CalendarManager } from "../components/calendarManager.js";
 
 // =====================================================
 // 1. VALIDACIÓN DE SESIÓN Y REFERENCIAS
@@ -207,6 +209,8 @@ function mostrarModalSeleccion(titulo, lista, config, callback) {
 // =====================================================
 window.addEventListener("load", async function () {
     try {
+        await CalendarManager.init();
+
         const res = await fetch(`../../data/Logic/eventController.php?accion=evento&idEvento=${idEvento}`);
         const json = await res.json();
 
@@ -228,7 +232,7 @@ window.addEventListener("load", async function () {
         if (jsonTipoA.correcto) tipoActividad = jsonTipoA.data;
 
         cargarEventoEnUI();
-        footer_header(); //Crear footer y header
+        await footer_header();
 
     } catch (e) {
         console.error("Error:", e);
@@ -672,76 +676,29 @@ btnDelete.addEventListener("click", async () => {
 });
 
 
-function footer_header() {
-
-    fetch("./../../../src/components/header.html")
-        .then(response => response.text())
-        .then(data => {
-            document.body.insertAdjacentHTML("afterbegin", data);
-
-            const script = document.createElement("script");
-            script.src = "./../../../src/scripts/header_script.js";
-            document.body.appendChild(script);
-
-            /*HEADER DINAMICO */
-            /*Cambio de la imagen del header */
-            const s_header = document.getElementById("s_header");
-            s_header.style.backgroundImage = "url(./../../../src/media/images/layout/img_background_header.jpg)";
-
-            /*Cambiar el titulo del header */
-            document.getElementById("n_h2").innerText = evento.nombre_evento;
-            document.getElementById("s_icon").setAttribute("src", "./../../../src/media/images/icons/icon_arc.png");
-            const bnav = document.getElementById("underline_nav");
-
-
-            /*Primero*/
-            const a1 = document.createElement("a");
-            a1.id = "a1";
-            a1.href = "organizer.html";
-            const ai1 = document.createElement("img");
-            ai1.src = "./../../../src/media/images/icons/icon_home.png";
-            ai1.classList.add("icon_nav");
-            a1.appendChild(ai1);
-            a1.append("Pagina Principal");
-            bnav.appendChild(a1);
-
-            /*Boton de registro o iniciar sesion*/
-            const btn_is_r = document.createElement("button");
-            btn_is_r.id = "btn_is_r";
-            const btn_a = document.createElement("a");
-            const icon_user = document.createElement("img");
-            icon_user.src = "./../../../src/media/images/icons/icon_user.png";
-            icon_user.classList.add("icon_user");
-            btn_a.appendChild(icon_user);
-            btn_is_r.appendChild(btn_a);
-            bnav.appendChild(btn_is_r);
-
-            btn_is_r.addEventListener("click", () => {
-                window.location.href = "../../../index.html";
-            });
-
-        });
-
-    fetch("./../../../src/components/footer.html")
-        .then(response => response.text())
-        .then(data => {
-            document.body.insertAdjacentHTML("beforeend", data);
-
-            document.getElementById("f_icon").src =
-                "./../../../src/media/images/icons/icon_arc.png";
-
-            document.querySelector(".f_link").href = "#";
-
-            const f_general = document.getElementById("f_general");
-            f_general.style.backgroundImage =
-                "url(./../../../src/media/images/layout/imgLayout20.jpg)";
-            f_general.style.backgroundPosition = "50% 80%";
-        });
-
-    function img(src) {
-        const i = document.createElement("img");
-        i.src = src;
-        i.classList.add("icon_nav");
-        return i;
-    }
+async function footer_header() {
+    const base = "./../../../src/";
+    await renderizarLayout({
+        header: {
+            basePath: base,
+            titulo: evento.nombre_evento,
+            fondo: `${base}media/images/layout/img_background_header.jpg`,
+            enlaces: [
+                { url: "organizer.html", texto: "Pagina Principal", icono: `${base}media/images/icons/icon_home.png` },
+                {
+                    tipo: "boton",
+                    id: "btn_is_r",
+                    url: "#",
+                    icono: `${base}media/images/icons/icon_user.png`,
+                    onClick: () => {
+                        window.location.href = "../../../index.html";
+                    }
+                }
+            ]
+        },
+        footer: {
+            basePath: base,
+            fondo: `${base}media/images/layout/imgLayout20.jpg`
+        }
+    });
 }

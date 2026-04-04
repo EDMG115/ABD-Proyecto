@@ -1,121 +1,63 @@
+import { renderizarLayout } from "../components/layoutManager.js";
+import { CarouselManager } from "../components/carouselManager.js";
 
-window.addEventListener("load", function () {
+window.addEventListener("load", async function () {
+    const base = "./../";
 
-    fetch("./../components/header.html")
-        .then(response => response.text())
-        .then(data => {
-            document.body.insertAdjacentHTML("afterbegin", data);
-
-            const script = document.createElement("script");
-            script.src = "./../scripts/header_script.js";
-            document.body.appendChild(script);
-
-            /*HEADER DINAMICO */
-            /*Cambio de la imagen del header */
-            const s_header = document.getElementById("s_header");
-            s_header.style.backgroundImage = "url(./../media/images/layout/img_background_header.jpg)";
-
-            /*Cambiar el titulo del header */
-            document.getElementById("n_h2").innerText = "PAGINA PRINCIPAL FALSA";
-            document.getElementById("s_icon").setAttribute("src", "./../media/images/icons/icon_arc.png");
-            const bnav = document.getElementById("underline_nav");
-
-            /*Agregar los elementos al nav */
-            /*Primero*/
-            const a1 = document.createElement("a");
-            a1.id = "a1";
-            a1.href = "#";
-            const ai1 = document.createElement("img");
-            ai1.src = "./../media/images/icons/icon_home.png";
-            ai1.classList.add("icon_nav");
-            a1.appendChild(ai1);
-            a1.append("Pagina Principal");
-            bnav.appendChild(a1);
-            /*Segundo*/
-            const a2 = document.createElement("a");
-            a2.id = "a2";
-            a2.href = "#";
-            const ai2 = document.createElement("img");
-            ai2.src = "./../media/images/icons/icon_travel.png";
-            ai2.classList.add("icon_nav");
-            a2.appendChild(ai2);
-            a2.append("Lugares Populares");
-            bnav.appendChild(a2);
-            /*Tercero*/
-            const a3 = document.createElement("a");
-            a3.id = "a3";
-            a3.href = "#";
-            const ai3 = document.createElement("img");
-            ai3.src = "./../media/images/icons/icon_event.png";
-            ai3.classList.add("icon_nav");
-            a3.appendChild(ai3);
-            a3.append("Eventos Recientes");
-            bnav.appendChild(a3);
-            /*Boton de registro o iniciar sesion*/
-            const btn_is_r = document.createElement("button");
-            btn_is_r.id = "btn_is_r";
-            const btn_a = document.createElement("a");
-            const icon_user = document.createElement("img");
-            icon_user.src = "./../media/images/icons/icon_user.png";
-            icon_user.classList.add("icon_user");
-            btn_a.appendChild(icon_user);
-            btn_is_r.appendChild(btn_a);
-            bnav.appendChild(btn_is_r);
-
-            const select_login = document.getElementById("select_login");
-            btn_is_r.addEventListener("click", function () {
-                select_login.showModal();
-            });
-        });
-
-    /*Copiar y pegar eso para añadir el footer en la pagina que sea */
-    fetch("./../components/footer.html")
-        .then(response => response.text())
-        .then(data => {
-            document.body.insertAdjacentHTML("beforeend", data);
-
-            /*Cambio del icono ARC (Solo para actualizar la ruta relativa) */
-            document.getElementById("f_icon").setAttribute("src", "./../media/images/icons/icon_arc.png");
-
-            /*Cambio link del boton hacia la pagina About Us (Solo para actualizar la ruta relativa) */
-            document.querySelector(".f_link").href = "#";
-
-            /*Cambio de la imagen del footer derecho*/
-            const f_general = document.getElementById("f_general");
-            f_general.style.backgroundImage = "url(./../media/images/layout/img_background_footer.jpeg)";
-            f_general.style.backgroundImage = "url(./../media/images/layout/imgLayout20.jpg)";
-            /*Cambiar que parte de la imagen se ve, el primer 50 es horizontalmente(no cambiarlo) y el segundo es para la altura que se visualiza */
-            f_general.style.backgroundPosition = "50% 80%";
-        });
+    await renderizarLayout({
+        header: {
+            basePath: base,
+            titulo: "PAGINA PRINCIPAL FALSA",
+            fondo: `${base}media/images/layout/img_background_header.jpg`,
+            headerScriptPath: `${base}scripts/header_script.js`,
+            enlaces: [
+                { url: "#", texto: "Pagina Principal", icono: `${base}media/images/icons/icon_home.png` },
+                { url: "#", texto: "Lugares Populares", icono: `${base}media/images/icons/icon_travel.png` },
+                { url: "#", texto: "Eventos Recientes", icono: `${base}media/images/icons/icon_event.png` },
+                {
+                    tipo: "boton",
+                    id: "btn_is_r",
+                    url: "#",
+                    icono: `${base}media/images/icons/icon_user.png`,
+                    onClick: () => {
+                        document.getElementById("select_login").showModal();
+                    }
+                }
+            ]
+        },
+        footer: {
+            basePath: base,
+            fondo: `${base}media/images/layout/imgLayout20.jpg`
+        }
+    });
 
     const select_login = document.getElementById("select_login");
-    const close_select_login = document.getElementById("close_select_login");
-    close_select_login.addEventListener("click", function () {
-        select_login.close();
-    });
+    const btn_is_r = document.getElementById("btn_is_r");
+    if (btn_is_r && select_login) {
+        btn_is_r.addEventListener("click", function () {
+            select_login.showModal();
+        });
+    }
 
-    const btnUsuario = document.getElementById("btn_usuario");
-    const btnAdmin = document.getElementById("btn_admin");
-    const btnOrganizador = document.getElementById("btn_organizador");
-    const btnAgencia = document.getElementById("btn_agencia");
+    fetch(`${base}data/Logic/IndexCarruselLogic.php`)
+        .then((response) => response.json())
+        .then(async (data) => {
+            if (data.correcto && data.lugares && data.lugares.length > 0) {
+                const lugaresFormateados = data.lugares.map((lugar) => ({
+                    nombre_paquete: lugar.nombre_lugar,
+                    descripcion_paquete: lugar.descripcion || "Lugar destacado",
+                    imagen_url: lugar.imagen_url
+                }));
 
-    btnUsuario.addEventListener("click", function () {
-        sessionStorage.setItem("tipo_usuario", "1");
-        window.location.href = "./ingreso.html";
-    });
-
-    btnAdmin.addEventListener("click", function () {
-        sessionStorage.setItem("tipo_usuario", "2");
-        window.location.href = "./ingreso.html";
-    });
-
-    btnOrganizador.addEventListener("click", function () {
-        sessionStorage.setItem("tipo_usuario", "3");
-        window.location.href = "./ingreso.html";
-    });
-
-    btnAgencia.addEventListener("click", function () {
-        sessionStorage.setItem("tipo_usuario", "4");
-        window.location.href = "./ingreso.html";
-    });
+                await CarouselManager.mount({
+                    containerSelector: "#carrusel-paquetes",
+                    dataArray: lugaresFormateados,
+                    type: "paquete",
+                    title: "Lugares más populares",
+                    mediaBase: `${base}media/images/`,
+                    dataBasePath: `${base}data/`
+                });
+            }
+        })
+        .catch(() => {});
 });
