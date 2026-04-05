@@ -101,25 +101,24 @@ function renderCalendar(month, year) {
 
     // ========== MODO DE SELECCIÓN DE DÍAS ==========
     li.addEventListener("click", (e) => {
-      // Evita que abrir modales interfiera (solo seleccion)
       e.stopPropagation();
 
-      // Quitar seleccion previa
       const prev = document.querySelector(".selected-day");
       if (prev) prev.classList.remove("selected-day");
 
-      // Marcar nuevo seleccionado
       li.classList.add("selected-day");
 
-      // Guardar valores actuales
-      window.calendarState.selectedDay = {
+      const selected = {
         day,
         month: currentMonth + 1,
         year: currentYear
       };
 
+      window.calendarState.selectedDay = selected;
 
-      console.log("Día seleccionado:", window.calendarState.selectedDay);
+      window.dispatchEvent(new CustomEvent("fechaSeleccionada", {
+        detail: selected
+      }));
     });
 
 

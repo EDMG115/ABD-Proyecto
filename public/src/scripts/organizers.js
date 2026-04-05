@@ -4,6 +4,7 @@ import { CalendarManager } from "../components/calendarManager.js";
 let organizadora = JSON.parse(sessionStorage.getItem("organizador_logeado"));
 
 window.addEventListener("load", async function () {
+    // ESTO AHORA INYECTA EL HTML Y CARGA LA LÓGICA
     await CalendarManager.init();
 
     console.log(organizadora)
@@ -12,7 +13,6 @@ window.addEventListener("load", async function () {
     if (!organizadora) {
         window.location.href = "../../../index.html";
     }
-
 
     console.log(organizadora.imagen_url);
     // Configuracion inicial
@@ -86,7 +86,6 @@ window.addEventListener("load", async function () {
         });
     }
 
-
     // Filtrar 
     function filtrarEventos() {
         let filtrados = [...eventos];
@@ -129,7 +128,6 @@ window.addEventListener("load", async function () {
     });
 
     btnCalendar.addEventListener("click", () => {
-
         const fecha = new Date();
         window.dispatchEvent(new CustomEvent("abrirCalendario", {
             detail: {
@@ -138,14 +136,12 @@ window.addEventListener("load", async function () {
                 source: "organizer" //organizer
             }
         }));
-
     });
 
     // Botones de la tabla
     tbody.addEventListener("click", (e) => {
-
         if (e.target.classList.contains("btn-modificar")) {
-            this.sessionStorage.setItem("evento_seleccionado", e.target.dataset.id);
+            sessionStorage.setItem("evento_seleccionado", e.target.dataset.id);
             window.location.href = "events.html";
 
         } else if (e.target.classList.contains("btn-calendario") && e.target.id != "btnCalendar") {
@@ -164,7 +160,6 @@ window.addEventListener("load", async function () {
                 }));
             }
         }
-
     });
 
     btnAgregar.addEventListener("click", function () {

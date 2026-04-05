@@ -96,7 +96,7 @@ window.addEventListener("load", async function () {
                                 })
                                     .then((response) => response.json())
                                     .then((res) => {
-                                        console.log("funcionó??" + res.mensaje);
+                                        showAlert("Exito", "Reservación registrada con exito");
                                     });
                                 con++;
                                 modal.close();
@@ -104,7 +104,7 @@ window.addEventListener("load", async function () {
                         };
 
                         if (contenedorPaquete.innerHTML === "") {
-                            alert("No tiene paquetes disponibles");
+                            showAlert("Error", "No tiene paquetes disponibles");
                         }
                     });
                 });
@@ -114,10 +114,52 @@ window.addEventListener("load", async function () {
             contenedorLugar.appendChild(ol);
         })
         .catch(() => {
-            alert("Error de conexión al servidor. No se pudieron obtener los lugares.");
+            showAlert("Error", "No se puedieron obtener los lugares. Pruebe a cargar la pagina.");
         });
 
     btn_noAceptar.addEventListener("click", () => {
         modal.close();
     });
 });
+
+// =====================================================
+// UTILIDADES DE MODALES (Alerta, Confirm)
+// =====================================================
+
+function ensureModalContainer() {
+    if (!document.getElementById('app-modals')) {
+        const c = document.createElement('div');
+        c.id = 'app-modals';
+        document.body.appendChild(c);
+    }
+}
+
+function showAlert(title = 'Aviso', message = '', okText = 'Entendido') {
+    ensureModalContainer();
+    return new Promise((resolve) => {
+        const container = document.getElementById('app-modals');
+        const modal = document.createElement('div');
+        modal.className = 'app-modal active';
+        modal.innerHTML = `
+            <div class="app-modal__overlay"></div>
+            <div class="app-modal__content" style="max-width: 450px;">
+                <div class="app-modal__header">
+                    <h2>${title}</h2>
+                    <button class="app-modal__close">×</button>
+                </div>
+                <div class="app-modal__body">
+                    <p style="margin:0; color:#475569; font-size:1rem; line-height:1.6;">${message}</p>
+                </div>
+                <div class="app-modal__actions">
+                    <button class="btn-modal btn-modal--primary app-modal__ok">${okText}</button>
+                </div>
+            </div>
+        `;
+        container.appendChild(modal);
+
+        const close = () => { modal.classList.remove('active'); setTimeout(() => modal.remove(), 250); resolve(); };
+        modal.querySelector('.app-modal__close').addEventListener('click', close);
+        modal.querySelector('.app-modal__ok').addEventListener('click', close);
+        modal.querySelector('.app-modal__overlay').addEventListener('click', close);
+    });
+}

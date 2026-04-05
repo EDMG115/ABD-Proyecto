@@ -8,14 +8,14 @@
     <link rel="stylesheet" href="../../styles/header_style.css">
     <link rel="stylesheet" href="../../styles/footer_style.css">
     <link rel="stylesheet" href="../../styles/UsuarioViajesCSS.css">
-    <script src="./../../scripts/Script_usuario_viajes.js" type="module"></script>
+    <link rel="stylesheet" href="../../components/calendar/calendar.css"> <script src="./../../scripts/Script_usuario_viajes.js" type="module"></script>
 </head>
 <body>
     <main class="contenedor_principal">
         <aside id="buscador" class="panel_blanco">
             <h2 id="viajes">Lugares</h2>
             <div id="selecciones">
-                </div>
+            </div>
         </aside>
 
         <section id="detalle_lugar" class="panel_blanco">
@@ -30,7 +30,7 @@
             
             <h3 class="subtitulo_paquetes">Paquetes Disponibles</h3>
             <div id="paquete">
-                </div>
+            </div>
         </section>
 
         <dialog class="dialog_select" id="fecha_select">
@@ -39,7 +39,7 @@
             
             <div class="dialog_inputs">
                 <label for="fecha">Fecha del viaje:</label>
-                <input type="date" id="fecha">
+                <input type="text" id="fecha" readonly placeholder="Haz clic para elegir la fecha" style="cursor: pointer; background-color: #f8f9fa;">
                 
                 <label for="hora">Hora de salida:</label>
                 <input type="time" id="hora" value="08:00">

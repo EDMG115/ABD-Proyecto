@@ -1,10 +1,9 @@
 /* ---- Layout Principal ---- */
 .contenedor_principal {
     display: grid;
-    grid-template-columns: 320px 1fr; /* Columna izquierda fija, derecha flexible */
+    grid-template-columns: 370px 1fr; /* Columna izquierda fija, derecha flexible */
     gap: 25px;
-    width: 80%; /* Ocupa el 80% de la ventana */
-    max-width: 1400px;
+    width: 90%; /* Ocupa el 80% de la ventana */
     margin: 30px auto;
     align-items: stretch; /* Estira ambas columnas para que ocupen todo el espacio vertical */
     min-height: 80vh; /* Ocupa el 80% del alto de la pantalla */
@@ -156,12 +155,22 @@
     width: 90%;
     max-width: 450px;
     box-shadow: 0 10px 40px rgba(0,0,0,0.3);
-    text-align: left;
+    text-align: center;
+    
+    /* --- LÍNEAS NUEVAS PARA CENTRAR --- */
+    position: fixed;
+    top: 50%;
+    z-index: 1;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    margin: 0; /* Previene conflictos con márgenes automáticos del navegador */
 }
+
 
 .dialog_select::backdrop {
     background-color: rgba(0, 0, 0, 0.6);
     backdrop-filter: blur(5px);
+    text-align: center;
 }
 
 .dialog_h3 {
