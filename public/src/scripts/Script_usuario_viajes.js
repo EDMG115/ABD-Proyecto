@@ -191,6 +191,17 @@ window.addEventListener("load", async function () {
             });
 
             contenedorLugar.appendChild(ol);
+
+            const buscarLugares = document.getElementById("buscar_lugares");
+            if (buscarLugares) {
+                buscarLugares.addEventListener("input", (e) => {
+                    const q = e.target.value.trim().toLowerCase();
+                    ol.querySelectorAll("li").forEach((li) => {
+                        const t = (li.textContent || "").toLowerCase();
+                        li.style.display = q === "" || t.includes(q) ? "" : "none";
+                    });
+                });
+            }
         })
         .catch((error) => {
             console.log("Error en fetch:", error);

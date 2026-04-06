@@ -1,57 +1,57 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Usuario Eventos</title>
+    <title>ARC - Actividades y eventos</title>
     <link rel="stylesheet" href="../../styles/style_generico.css">
     <link rel="stylesheet" href="../../styles/header_style.css">
     <link rel="stylesheet" href="../../styles/footer_style.css">
     <link rel="stylesheet" href="../../styles/UsuarioViajesCSS.css">
+    <link rel="stylesheet" href="../../components/calendar/calendar.css">
     <script src="./../../scripts/Script_UsuarioEventos.js" type="module"></script>
-
 </head>
-
 <body>
-    <main class="box">
-        <div id="viajes">Eventos</div>
-        <div id="titulo">Titulo del evento seleccionado</div>
-
-        <div id="containerImgMapa">
-            <img src="./../../media/images/layout/imgLayout4.jpg" id="imgMapa">
-            <div id="desc">.</div>
-        </div>
-        <div id="paquete">
-           
-        </div>
-        
-        <div id="buscador">
-            <div>
-                
-                <!--<input type="text" id="Txt_Buscar" placeholder="Busca por el nombre del lugar">-->
-            </div>
+    <main class="contenedor_principal">
+        <aside id="buscador" class="panel_blanco">
+            <h2 id="viajes">Eventos</h2>
+            <input type="search" id="buscar_eventos" class="modal-search" placeholder="Buscar por nombre del evento…" autocomplete="off" aria-label="Buscar evento por nombre">
             <div id="selecciones">
-            
+            </div>
+        </aside>
+
+        <section id="detalle_lugar" class="panel_blanco">
+            <h1 id="titulo">Selecciona un evento</h1>
+
+            <div id="containerImgMapa">
+                <img src="./../../media/images/layout/imgLayout4.jpg" id="imgMapa" alt="Vista del evento">
+                <div id="desc_overlay">
+                    <p id="desc">Selecciona un evento de la lista izquierda para ver más detalles.</p>
+                </div>
             </div>
 
-        </div>
+            <h3 class="subtitulo_paquetes">Reservar entrada</h3>
+            <div id="paquete">
+            </div>
+        </section>
+
         <dialog class="dialog_select" id="fecha_select">
-            <h3 class="dialog_h3">Confirma tu reservacion</h3>
-            <p id="Fecha"></p>
-            <p id="Hora"></p>
-            <br>
-        <!--<input type="date" value="2025-12-23" id="fecha"><br>
-            <input type="time" name="" id="hora">-->
-            <button class="button_ls_close" id="button_continuar">
-                <p class="dialog_text_btn_close">Aceptar</p>
-            </button><br>
-            <button class="button_ls_close" id="button_noContinuar">
-                <p class="dialog_text_btn_close">Cancelar</p>
-            </button><br>
+            <h3 class="dialog_h3">Confirma tu reservación</h3>
+            <p id="descripcion" class="dialog_p"></p>
+
+            <div class="dialog_inputs">
+                <label for="fecha">Fecha del evento:</label>
+                <input type="text" id="fecha" readonly placeholder="Haz clic para elegir la fecha" style="cursor: pointer; background-color: #f8f9fa;">
+
+                <label for="hora">Hora:</label>
+                <input type="time" id="hora" value="08:00">
+            </div>
+
+            <div class="dialog_buttons">
+                <button class="btn_aceptar" id="button_continuar">Confirmar</button>
+                <button class="btn_cancelar" id="button_noContinuar">Cancelar</button>
+            </div>
         </dialog>
     </main>
-    
 </body>
-
 </html>

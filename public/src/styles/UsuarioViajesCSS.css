@@ -33,6 +33,14 @@
     text-align: center;
 }
 
+/* Barra de búsqueda (misma clase .modal-search que add_events / style_generico) */
+#buscador .modal-search {
+    width: 100%;
+    box-sizing: border-box;
+    margin-bottom: 12px;
+    flex-shrink: 0;
+}
+
 #selecciones {
     flex-grow: 1; /* Toma todo el espacio sobrante debajo del título */
     overflow-y: auto;
