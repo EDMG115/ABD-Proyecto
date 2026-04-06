@@ -9,6 +9,7 @@ window.addEventListener("load", async function () {
             basePath: base,
             titulo: "PAGINA PRINCIPAL",
             fondo: `${base}media/images/layout/img_background_header.jpg`,
+            closeSessionMenu: false,
             enlaces: [
                 { url: "#", texto: "Pagina Principal", icono: `${base}media/images/icons/icon_home.png` },
                 { url: "#", texto: "Lugares Populares", icono: `${base}media/images/icons/icon_travel.png` },

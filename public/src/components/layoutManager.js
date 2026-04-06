@@ -3,6 +3,8 @@
  * Las rutas basePath son relativas al documento HTML (no al .js).
  */
 
+import { attachCloseSessionMenu } from "./closeSessionManager.js";
+
 /**
  * @param {Object} config
  * @param {string} config.basePath - Ruta hasta la carpeta src/ (ej: "./src/", "./../../")
@@ -12,17 +14,35 @@
  * @param {string} [config.htmlPath="components/header.html"]
  * @param {string} [config.headerScriptPath] - Por defecto basePath + scripts/header_script.js
  * @param {function} [config.onHeaderReady] - async (ctx) => {} con { s_header, n_h2, s_icon, bnav }
+ * @param {boolean} [config.closeSessionMenu=true] - Si es true, añade #btn_is_r si falta y menú "Cerrar sesión". En index usar false.
+ * @param {string} [config.indexHref] - URL al index (opcional; por defecto relativa desde basePath)
  */
 export async function renderizarHeader(config) {
     const {
         basePath,
         titulo = "",
         fondo,
-        enlaces = [],
+        enlaces: enlacesIn = [],
         htmlPath = "components/header.html",
         headerScriptPath,
-        onHeaderReady
+        onHeaderReady,
+        closeSessionMenu = true,
+        indexHref
     } = config;
+
+    const enlaces = [...enlacesIn];
+    const tieneBtnSesion = enlaces.some(
+        (e) => e.tipo === "boton" && e.id === "btn_is_r"
+    );
+    if (closeSessionMenu && !tieneBtnSesion) {
+        enlaces.push({
+            tipo: "boton",
+            id: "btn_is_r",
+            url: "#",
+            icono: `${basePath}media/images/icons/icon_user.png`,
+            onClick: () => {}
+        });
+    }
 
     const scriptPath = headerScriptPath || `${basePath}scripts/header_script.js`;
 
@@ -79,6 +99,10 @@ export async function renderizarHeader(config) {
 
         if (typeof onHeaderReady === "function") {
             await onHeaderReady({ s_header, n_h2, s_icon, bnav: document.getElementById("underline_nav") });
+        }
+
+        if (closeSessionMenu && document.getElementById("btn_is_r")) {
+            attachCloseSessionMenu({ basePath, indexHref });
         }
     } catch (error) {
         console.error("Error al renderizar el header:", error);
