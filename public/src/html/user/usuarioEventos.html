@@ -8,7 +8,6 @@
     <link rel="stylesheet" href="../../styles/header_style.css">
     <link rel="stylesheet" href="../../styles/footer_style.css">
     <link rel="stylesheet" href="../../styles/UsuarioViajesCSS.css">
-    <link rel="stylesheet" href="../../components/calendar/calendar.css">
     <script src="./../../scripts/Script_UsuarioEventos.js" type="module"></script>
 </head>
 <body>
@@ -39,12 +38,9 @@
             <h3 class="dialog_h3">Confirma tu reservación</h3>
             <p id="descripcion" class="dialog_p"></p>
 
-            <div class="dialog_inputs">
-                <label for="fecha">Fecha del evento:</label>
-                <input type="text" id="fecha" readonly placeholder="Haz clic para elegir la fecha" style="cursor: pointer; background-color: #f8f9fa;">
-
-                <label for="hora">Hora:</label>
-                <input type="time" id="hora" value="08:00">
+            <div class="dialog_inputs dialog_inputs--info">
+                <p class="dialog_info_line"><strong>Fecha del evento:</strong> <span id="info_fecha"></span></p>
+                <p class="dialog_info_line"><strong>Hora:</strong> <span id="info_hora"></span></p>
             </div>
 
             <div class="dialog_buttons">

@@ -433,14 +433,24 @@ window.addEventListener("abrirCalendario", async (e) => {
   }
 
   // ========================================================
-  // Carga de SELECTOR de dia
+  // Carga de SELECTOR de día (reservas usuario / elegir fecha)
   // ========================================================
   if (source === "selection") {
+    const m = month !== undefined && month !== null ? month : new Date().getMonth();
+    const y = year !== undefined && year !== null ? year : new Date().getFullYear();
+    eventos = [];
+    renderCalendar(m, y);
+    return;
+  }
 
-    let month = new Date().getMonth();
-    let year = new Date().getFullYear();
-
-    renderCalendar(month, year);
+  // ========================================================
+  // Crear evento (organizador): calendario vacío, solo elegir día
+  // ========================================================
+  if (source === "create_event") {
+    const m = month !== undefined && month !== null ? month : new Date().getMonth();
+    const y = year !== undefined && year !== null ? year : new Date().getFullYear();
+    eventos = [];
+    renderCalendar(m, y);
     return;
   }
 

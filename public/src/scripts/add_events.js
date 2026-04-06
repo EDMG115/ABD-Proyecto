@@ -416,9 +416,28 @@ typeEl.addEventListener('click', async () => {
 btnCalendar.addEventListener("click", () => {
     const hoy = new Date();
     window.dispatchEvent(new CustomEvent("abrirCalendario", {
-        detail: { month: hoy.getMonth(), year: hoy.getFullYear(), source: "create_event" }
+        detail: {
+            month: hoy.getMonth(),
+            year: hoy.getFullYear(),
+            source: "create_event"
+        }
     }));
-    document.getElementById("calendar-modal").classList.add("active");
+});
+
+window.addEventListener("fechaSeleccionada", (e) => {
+    if (!document.getElementById("event-calendar")) return;
+
+    const { year, month, day } = e.detail;
+    const fechaStr = `${year}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+
+    const calModal = document.getElementById("calendar-modal");
+    if (!calModal || !calModal.classList.contains("active")) return;
+
+    calModal.classList.add("closing");
+    setTimeout(() => {
+        calModal.classList.remove("active", "closing");
+        showAlert("Fecha seleccionada", `Se seleccionó el ${fechaStr}`);
+    }, 250);
 });
 
 

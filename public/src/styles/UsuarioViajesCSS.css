@@ -202,6 +202,27 @@
     margin-bottom: 25px;
 }
 
+/* Fecha/hora solo informativos (reserva de eventos; estilo tipo detalle del calendario) */
+.dialog_inputs--info {
+    text-align: left;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 16px 18px;
+}
+
+.dialog_info_line {
+    margin: 0;
+    font-size: 1rem;
+    line-height: 1.55;
+    color: #334155;
+}
+
+.dialog_info_line strong {
+    color: #023E8A;
+    font-weight: 600;
+}
+
 .dialog_buttons {
     display: flex;
     gap: 15px;

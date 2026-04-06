@@ -1,5 +1,4 @@
 import { renderizarLayout } from "../components/layoutManager.js";
-import { CalendarManager } from "../components/calendarManager.js";
 
 function toDateInputValue(fecha) {
     if (!fecha) return "";
@@ -8,16 +7,28 @@ function toDateInputValue(fecha) {
     return d.length >= 10 ? d.slice(0, 10) : "";
 }
 
-function toTimeInputValue(horaVal) {
-    if (!horaVal) return "08:00";
+function formatHoraLegible(horaVal) {
+    if (!horaVal) return "—";
     const s = String(horaVal).trim();
     if (s.length >= 5 && /^\d{1,2}:\d{2}/.test(s)) return s.slice(0, 5);
-    return "08:00";
+    return s;
+}
+
+function formatFechaLegible(fecha) {
+    const raw = toDateInputValue(fecha);
+    if (!raw) return "—";
+    const [y, m, d] = raw.split("-").map(Number);
+    const dt = new Date(y, m - 1, d);
+    if (Number.isNaN(dt.getTime())) return raw;
+    return dt.toLocaleDateString("es-MX", {
+        weekday: "long",
+        year: "numeric",
+        month: "long",
+        day: "numeric"
+    });
 }
 
 window.addEventListener("load", async function () {
-    await CalendarManager.init();
-
     const usuarioSession = sessionStorage.getItem("usuario_logeado");
     if (usuarioSession == null) {
         window.location.href = "./../../../index.html";
@@ -57,49 +68,11 @@ window.addEventListener("load", async function () {
     const btn_aceptar = document.getElementById("button_continuar");
     const btn_noAceptar = document.getElementById("button_noContinuar");
     const descripcion = document.getElementById("descripcion");
+    const infoFecha = document.getElementById("info_fecha");
+    const infoHora = document.getElementById("info_hora");
     const tit = document.getElementById("titulo");
     const desc = document.getElementById("desc");
-    const inputFecha = document.getElementById("fecha");
-    const inputHora = document.getElementById("hora");
     const ol = document.createElement("ol");
-
-    inputFecha.addEventListener("click", () => {
-        modal.close();
-
-        const fechaActual = new Date();
-        const parsed = inputFecha.value ? new Date(inputFecha.value + "T12:00:00") : fechaActual;
-        const month = Number.isNaN(parsed.getTime()) ? fechaActual.getMonth() : parsed.getMonth();
-        const year = Number.isNaN(parsed.getTime()) ? fechaActual.getFullYear() : parsed.getFullYear();
-
-        window.dispatchEvent(new CustomEvent("abrirCalendario", {
-            detail: {
-                month,
-                year,
-                source: "selection"
-            }
-        }));
-    });
-
-    window.addEventListener("fechaSeleccionada", (e) => {
-        const { year, month, day } = e.detail;
-
-        inputFecha.value = `${year}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
-
-        const calModal = document.getElementById("calendar-modal");
-
-        if (calModal) {
-            calModal.classList.add("closing");
-
-            setTimeout(() => {
-                calModal.classList.remove("active", "closing");
-
-                showAlert("Fecha seleccionada", "Se seleccionó el " + inputFecha.value)
-                    .then(() => {
-                        modal.show();
-                    });
-            }, 250);
-        }
-    });
 
     fetch("./../../data/logic/eventoLogic.php")
         .then((response) => response.json())
@@ -139,20 +112,13 @@ window.addEventListener("load", async function () {
 
                     div.addEventListener("click", function () {
                         descripcion.innerText = ev.descripcion || "Confirma los datos para completar tu reservación.";
-                        inputFecha.value = toDateInputValue(ev.fecha_evento);
-                        inputHora.value = toTimeInputValue(ev.hora_evento);
+                        if (infoFecha) infoFecha.textContent = formatFechaLegible(ev.fecha_evento);
+                        if (infoHora) infoHora.textContent = formatHoraLegible(ev.hora_evento);
                         modal.show();
 
                         btn_aceptar.onclick = () => {
                             if (con === 0) {
-                                const fecha = document.getElementById("fecha").value;
-                                const hora = document.getElementById("hora").value;
                                 const usuario = JSON.parse(usuarioSession);
-
-                                if (!fecha) {
-                                    showAlert("Información incompleta", "Por favor, selecciona una fecha en el calendario.");
-                                    return;
-                                }
 
                                 const formData = new FormData();
                                 formData.append("id_evento", ev.id_evento);
