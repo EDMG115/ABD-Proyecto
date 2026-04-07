@@ -2,7 +2,7 @@ import { renderizarLayout } from "../components/layoutManager.js";
 import { CarouselManager } from "../components/carouselManager.js";
 
 window.addEventListener("load", async function () {
-    const base = "./src/"; 
+    const base = "./src/";
 
     await renderizarLayout({
         header: {
@@ -61,11 +61,12 @@ window.addEventListener("load", async function () {
         window.location.href = "./src/html/ingreso.html";
     });
 
-    fetch("./src/data/Logic/IndexCarruselLogic.php")
+    fetch("./src/data/Logic/IndexCarruselLogic.php?tipo=lugares")
         .then((response) => response.json())
-        .then(async (data) => {
-            if (data.correcto && data.lugares && data.lugares.length > 0) {
-                const lugaresFormateados = data.lugares.map((lugar) => ({
+        .then(async (l) => {
+            if (l.correcto && l.tipo === 'lugares' && l.data && l.data.length > 0) {
+
+                const lugaresFormateados = l.data.map((lugar) => ({
                     nombre_paquete: lugar.nombre_lugar,
                     descripcion_paquete: lugar.descripcion || "Lugar destacado",
                     imagen_url: lugar.imagen_url
@@ -79,8 +80,9 @@ window.addEventListener("load", async function () {
                     mediaBase: `${base}media/images/`,
                     dataBasePath: `${base}data/`
                 });
+
             } else {
-                console.error("Error al cargar lugares populares:", data.mensaje || "No se encontraron lugares");
+                console.error("Error al cargar lugares populares:", l.mensaje || "No se encontraron lugares");
                 document.getElementById("carrusel-paquetes").innerHTML =
                     "<p style='text-align: center; padding: 20px;'>No hay lugares populares disponibles en este momento.</p>";
             }

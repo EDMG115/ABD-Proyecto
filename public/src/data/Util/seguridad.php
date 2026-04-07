@@ -101,6 +101,7 @@ function verificarPermisos($accion) {
         "agencia" => [
             "crear_paquete",
             "ver_lugar",
+            "ver_paquete",
             "editar_paquete",
             "eliminar_paquete",
         ],
@@ -109,6 +110,7 @@ function verificarPermisos($accion) {
             "ver_eventos",
             "ver_lugar",
             "registrarse_evento",
+            "registrarse_paquete",
         ]
     ];
 

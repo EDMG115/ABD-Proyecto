@@ -1,10 +1,13 @@
 import * as metodosBusqueda from "./validLogin.js";
+
+
 window.addEventListener("load", function () {
     sessionStorage.removeItem("admin_logeado");
     sessionStorage.removeItem("usuario_logeado");
     sessionStorage.removeItem("agencia_logeado");
     sessionStorage.removeItem("organizador_logeado");
     document.querySelector("body").style.backgroundImage = "none";
+
     const datos_incorrectos = document.getElementById("datos_incorrectos");
     const boton_registro = document.getElementById("cambio_registro");
     const boton_login = document.getElementById("cambio_login");
@@ -15,9 +18,11 @@ window.addEventListener("load", function () {
         container.classList.add("panel_derecho_activo");
         configurarInputsAyuda();
     });
+
     boton_login.addEventListener("click", function () {
         container.classList.remove("panel_derecho_activo");
     });
+
     boton_acceder.addEventListener("click", function (e) {
         const tipo_usuario = sessionStorage.getItem("tipo_usuario");
         const i_usuario = document.getElementById("i_usuario");
@@ -93,25 +98,14 @@ window.addEventListener("load", function () {
     const close_registro_correcto = document.getElementById("close_registro_correcto");
     const registro_duplicado = document.getElementById("registro_duplicado");
     const close_registro_duplicado = document.getElementById("close_registro_duplicado");
+
     boton_registrarse.addEventListener("click", (e) => {
-        /*
-        const r_nombre = document.getElementById("r_nombre");
-        const r_apellido = document.getElementById("r_apellido");
-        const r_correo = document.getElementById("r_correo");
-        const r_telefono = document.getElementById("r_telefono");
-        const r_usuario = document.getElementById("r_usuario");
-        const r_password = document.getElementById("r_password");
-        const nombre = r_nombre.value;
-        const apellido = r_apellido.value;
-        const correo = r_correo.value;
-        const telefono = r_telefono.value;
-        const usuario = r_usuario.value;
-        const contra = r_password.value;
-        */
+
         e.preventDefault();
         const form_registro = document.getElementById("form_registro");
         const formData = new FormData(form_registro);
         formData.append('tipo_registro', tipo_usuario);
+        
         fetch("./../data/Logic/registroLogic.php", {
             method: 'POST',
             body: formData

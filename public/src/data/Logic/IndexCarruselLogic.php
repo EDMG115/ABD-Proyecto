@@ -1,54 +1,97 @@
 <?php
-require_once "./../dao/IndexCarruselDAO.php";
+require_once "./../dao/CarruselDAO.php";
 header('Content-Type: application/json');
 
-$indexCarruselDAO = new IndexCarruselDAO();
-// Ruta relativa desde index.html (./src/data/Logic/)
-$RUTA_IMG_ESTANDAR = "./src/media/images/lugares/";
+$indexCarruselDAO = new CarruselDAO();
+
+// Rutas de imágenes
+$RUTA_IMG_LUGARES = "./src/media/images/lugares/";
+$RUTA_IMG_EVENTOS = "./src/media/images/eventos/";
 
 if ($_SERVER["REQUEST_METHOD"] == "GET") {
     try {
-        // Obtener los 30 lugares más populares
-        $lugares = $indexCarruselDAO->getLugaresMasPopulares(30);
-        
-        if ($lugares != null && !empty($lugares)) {
-            // Formatear las URLs de las imágenes (ruta relativa desde index.html)
-            foreach ($lugares as &$lugar) {
-                if (!empty($lugar['imagen_url']) && $lugar['imagen_url'] !== 'nourl') {
-                    $lugar['imagen_url'] = $RUTA_IMG_ESTANDAR . $lugar['imagen_url'];
-                } else {
-                    // Si no hay imagen, usar una por defecto
-                    $lugar['imagen_url'] = $RUTA_IMG_ESTANDAR . 'default.jpg';
+        // Obtener el tipo desde GET (lugares o eventos)
+        $tipo = isset($_GET['tipo']) ? $_GET['tipo'] : 'lugares';
+
+        if ($tipo === 'lugares') {
+
+            $lugares = $indexCarruselDAO->getLugaresMasPopulares(30);
+
+            if (!empty($lugares)) {
+
+                foreach ($lugares as &$lugar) {
+                    if (!empty($lugar['imagen_url']) && $lugar['imagen_url'] !== 'nourl') {
+                        $lugar['imagen_url'] = $RUTA_IMG_LUGARES . $lugar['imagen_url'];
+                    } else {
+                        $lugar['imagen_url'] = $RUTA_IMG_LUGARES . 'default.jpg';
+                    }
                 }
+
+                $respuesta = [
+                    'correcto' => true,
+                    'tipo' => 'lugares',
+                    'data' => $lugares
+                ];
+            } else {
+                $respuesta = [
+                    'correcto' => false,
+                    'mensaje' => 'No se encontraron lugares populares',
+                    'data' => []
+                ];
             }
-            
-            $respuesta = [
-                'correcto' => true, 
-                'lugares' => $lugares
-            ];
+
+        } elseif ($tipo === 'eventos') {
+
+            $eventos = $indexCarruselDAO->getEventosDisponibles(20);
+
+            if (!empty($eventos)) {
+
+                foreach ($eventos as &$evento) {
+                    if (!empty($evento['imagen_url']) && $evento['imagen_url'] !== 'nourl') {
+                        $evento['imagen_url'] = $RUTA_IMG_EVENTOS . $evento['imagen_url'];
+                    } else {
+                        $evento['imagen_url'] = $RUTA_IMG_EVENTOS . 'default.jpg';
+                    }
+                }
+
+                $respuesta = [
+                    'correcto' => true,
+                    'tipo' => 'eventos',
+                    'data' => $eventos
+                ];
+            } else {
+                $respuesta = [
+                    'correcto' => false,
+                    'mensaje' => 'No se encontraron eventos disponibles',
+                    'data' => []
+                ];
+            }
+
         } else {
             $respuesta = [
-                'correcto' => false, 
-                'mensaje' => 'No se encontraron lugares populares',
-                'lugares' => []
+                'correcto' => false,
+                'mensaje' => 'Tipo no válido (usa: lugares o eventos)',
+                'data' => []
             ];
         }
-        
+
         echo json_encode($respuesta);
+
     } catch (Exception $e) {
-        $respuesta = [
-            'correcto' => false, 
+        echo json_encode([
+            'correcto' => false,
             'mensaje' => 'Error - ' . $e->getMessage(),
-            'lugares' => []
-        ];
-        echo json_encode($respuesta);
+            'data' => []
+        ]);
     }
+
 } else {
-    $respuesta = [
-        'correcto' => false, 
+    echo json_encode([
+        'correcto' => false,
         'mensaje' => 'Método no permitido',
-        'lugares' => []
-    ];
-    echo json_encode($respuesta);
+        'data' => []
+    ]);
 }
+
+
 
