@@ -22,32 +22,16 @@ class ReservacionesDAO
     public function obtenerHistorialDetallado($id_cliente)
     {
         try {
-            $sql = "SELECT 
-                        r.id_reservacion,
-                        r.estado AS estado_reservacion,
-                        e.nombre_evento,
-                        e.fecha_evento,
-                        e.hora_evento,
-                        e.precio_boleto,
-                        e.descripcion,
-                        l.nombre_lugar,
-                        l.ciudad,
-                        l.zona,
-                        t.nombre_tipo_actividad AS tipo_actividad, 
-                        o.nombre_agencia
-                    FROM reservaciones r
-                    INNER JOIN eventos e ON r.id_evento = e.id_evento
-                    INNER JOIN lugares l ON e.id_lugar = l.id_lugar
-                    INNER JOIN tipoactividad t ON e.id_tipo_actividad = t.id_tipo_actividad
-                    INNER JOIN organizadoras o ON e.id_organizadora = o.id_organizadora
-                    WHERE r.id_cliente = :id_cliente
-                    ORDER BY e.fecha_evento DESC";
-
+            $sql = "CALL obtenerHistorialDetallado(:id_cliente)";
             $stmt = $this->conexion->prepare($sql);
-            $stmt->bindParam(':id_cliente', $id_cliente);
+
+            $stmt->bindParam(':id_cliente', $id_cliente, PDO::PARAM_INT);
             $stmt->execute();
 
-            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $stmt->closeCursor();
+
+            return $result;
         } catch (PDOException $e) {
             // Se lanza una excepción para que ReservacionLogic.php la maneje.
             throw new Exception("Error al consultar historial de reservaciones: " . $e->getMessage());
@@ -60,11 +44,15 @@ class ReservacionesDAO
     public function cancelarReservacion($id_reservacion)
     {
         try {
-            $sql = "UPDATE reservaciones SET estado = 'cancelado' WHERE id_reservacion = :id_reservacion AND estado <> 'cancelado'";
+            $sql = "CALL cancelarReservacion(:id_reservacion)";
             $stmt = $this->conexion->prepare($sql);
+
             $stmt->bindParam(':id_reservacion', $id_reservacion, PDO::PARAM_INT);
-            
-            return $stmt->execute();
+
+            $result = $stmt->execute();
+            $stmt->closeCursor();
+
+            return $result; // true si se actualizó, false si no
         } catch (PDOException $e) {
             throw new Exception("Error al cancelar reservación: " . $e->getMessage());
         }

@@ -12,23 +12,25 @@ class adminDAO{
     }
 
     public function validarAdmin(string $user, string $password){
-        try{
-            $sql = "SELECT id_admin, user, password, nombre FROM administradores WHERE user = :user";
-
+        try {
+            $sql = "CALL getAdminPorUsuario(:user)";
             $stmt = $this->conexion->prepare($sql);
-            $stmt->bindParam(':user', $user); 
+            $stmt->bindParam(':user', $user);
             $stmt->execute();
 
             $admin = $stmt->fetch(PDO::FETCH_ASSOC);
 
             if ($admin && $admin['password'] === $password) {
+                $stmt->closeCursor(); // importante
                 return $admin;
             }
+
+            $stmt->closeCursor();
             return null;
-        }catch (PDOException $e){
+
+        } catch (PDOException $e) {
             throw new Exception("Error al realizar la consulta: " . $e->getMessage());
         }
-
     }
 }
 ?>

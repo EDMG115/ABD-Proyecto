@@ -16,12 +16,13 @@ class actividadDAO
     public function getActividades()
     {
         try {
-            $sql = "SELECT * FROM tipoactividad";
+            $sql = "CALL getTipoactividad()";
             $stmt = $this->conexion->prepare($sql);
             $stmt->execute();
 
-            $tipoActividad = $stmt->fetchALL(PDO::FETCH_ASSOC);
+            $tipoActividad = $stmt->fetchAll(PDO::FETCH_ASSOC);
             return $tipoActividad;
+
         } catch (PDOException $e) {
             throw new Exception("Error al obtener tipo de actividades: " . $e->getMessage());
         }

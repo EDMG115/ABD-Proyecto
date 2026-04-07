@@ -1,0 +1,1339 @@
+
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `actualizarEstadoViaje`(
+    IN p_id_viaje INT, 
+    IN p_nuevo_estado VARCHAR(255)
+)
+BEGIN
+    UPDATE viajes 
+    SET estado = p_nuevo_estado 
+    WHERE id_viaje = p_id_viaje;
+END ;;
+DELIMITER ;
+
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `actualizarEvento`(
+    IN p_id_evento INT, IN p_nombre VARCHAR(255), IN p_descripcion TEXT,
+    IN p_hora_evento TIME, IN p_precio_boleto DECIMAL(10,2), 
+    IN p_id_lugar INT, IN p_id_tipo_actividad INT
+)
+BEGIN
+    UPDATE eventos SET 
+        nombre_evento = p_nombre, 
+        descripcion = p_descripcion, 
+        hora_evento = p_hora_evento, 
+        precio_boleto = p_precio_boleto, 
+        id_lugar = p_id_lugar, 
+        id_tipo_actividad = p_id_tipo_actividad 
+    WHERE id_evento = p_id_evento;
+END ;;
+DELIMITER ;
+
+DELIMITER ;;
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `actualizarFechaEvento`(IN p_id_evento INT, IN p_nueva_fecha DATE)
+BEGIN
+    UPDATE eventos SET fecha_evento = p_nueva_fecha WHERE id_evento = p_id_evento;
+END ;;
+DELIMITER ;
+
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `actualizarImagen`(IN p_id_evento INT, IN p_imagen_url VARCHAR(255))
+BEGIN
+    UPDATE eventos SET imagen_url = p_imagen_url WHERE id_evento = p_id_evento;
+END ;;
+DELIMITER ;
+
+
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `actualizarImagenLugar`(
+    IN p_id INT,
+    IN p_imagen VARCHAR(255)
+)
+BEGIN
+    UPDATE lugares 
+    SET imagen_url = p_imagen 
+    WHERE id_lugar = p_id;
+END ;;
+DELIMITER ;
+
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `actualizarImagenPaquete`(
+    IN p_id INT,
+    IN p_imagen VARCHAR(255)
+)
+BEGIN
+    UPDATE paquetes
+    SET imagen_url = p_imagen
+    WHERE id_paquete = p_id;
+END ;;
+DELIMITER ;
+
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `actualizarLugar`(
+    IN p_id INT,
+    IN p_nombre VARCHAR(150),
+    IN p_descripcion TEXT,
+    IN p_direccion VARCHAR(255),
+    IN p_ciudad VARCHAR(100),
+    IN p_zona VARCHAR(100)
+)
+BEGIN
+    UPDATE lugares 
+    SET 
+        nombre_lugar = p_nombre,
+        descripcion = p_descripcion,
+        direccion = p_direccion,
+        ciudad = p_ciudad,
+        zona = p_zona
+    WHERE id_lugar = p_id;
+END ;;
+DELIMITER ;
+
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `actualizarPaquete`(
+    IN p_id INT,
+    IN p_nombre VARCHAR(150),
+    IN p_descripcion TEXT,
+    IN p_precio DECIMAL(10,2),
+    IN p_id_lugar INT
+)
+BEGIN
+    UPDATE paquetes SET
+        nombre_paquete = p_nombre,
+        descripcion_paquete = p_descripcion,
+        precio = p_precio,
+        id_lugar = p_id_lugar
+    WHERE id_paquete = p_id;
+END ;;
+DELIMITER ;
+
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `actualizarViaje`(
+    IN p_id_viaje INT,
+    IN p_id_cliente INT,
+    IN p_id_paquete INT,
+    IN p_estado VARCHAR(255),
+    IN p_fecha_viaje DATE,
+    IN p_hora_viaje TIME
+)
+BEGIN
+    UPDATE viajes 
+    SET id_cliente = p_id_cliente,
+        id_paquete = p_id_paquete,
+        estado = p_estado,
+        fecha_viaje = p_fecha_viaje,
+        hora_viaje = p_hora_viaje
+    WHERE id_viaje = p_id_viaje;
+END ;;
+DELIMITER ;
+
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `actualiza_agencia`(
+	in id int, 
+    in descripcion text,
+	in nombre varchar(255),
+	in direccion varchar(255), 
+    in imagen varchar(255),
+    in usuario varchar(255), 
+	in clave varchar(255),
+    in cel varchar(10),
+ 	in correo varchar(255))
+BEGIN
+			UPDATE agencias
+			set 
+				descripcion=upper(descripcion), 
+				nombre_agencia=upper(nombre), 
+                direccion=upper(direccion),
+				imagen_url=imagen, 
+				user=usuario,
+				password=clave,
+				telefono=cel,
+				correo=upper(correo)
+			WHERE id_agencia=id;
+		END ;;
+DELIMITER ;
+
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `altas_agencia`( 
+	in descripcion text,
+	in nombre varchar(255),
+	in fecha date,
+	in direccion varchar(255),
+	in imagen varchar(255), 
+	in usuario varchar(255), 
+	in clave varchar(255),
+	in cel varchar(10),
+	in correo varchar(255))
+BEGIN
+		INSERT INTO agencias(descripcion, nombre_agencia, fecha_registro, direccion, 
+		imagen_url, user, password, telefono, correo)
+		values(
+			upper(descripcion), 
+			upper(nombre), 
+			fecha,
+			upper(direccion), 
+			imagen, 
+			usuario, 
+			clave, 
+			cel, 
+			upper(correo));
+    END ;;
+DELIMITER ;
+
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `bajas_agencia`(
+	in p_id int)
+BEGIN
+			IF EXISTS (SELECT 1 FROM agencias WHERE id_agencia = p_id) THEN
+				DELETE FROM agencias
+				WHERE id_agencia=p_id;
+            END IF;
+		END ;;
+DELIMITER ;
+
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `cancelarReservacion`(
+    IN p_id_reservacion INT
+)
+BEGIN
+    UPDATE reservaciones
+    SET estado = 'cancelado'
+    WHERE id_reservacion = p_id_reservacion
+    AND estado <> 'cancelado';
+END ;;
+DELIMITER ;
+
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `consultar_idagencia`( 
+	in p_id int)
+BEGIN
+			IF EXISTS (SELECT 1 FROM agencias WHERE id_agencia = p_id) THEN
+				SELECT * FROM agencias
+				WHERE id_agencia=p_id;
+			END IF;
+		END ;;
+DELIMITER ;
+
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `consultar_useragencia`( 
+	in p_user varchar(255))
+BEGIN
+			IF EXISTS (SELECT 1 FROM agencias WHERE user = p_user) THEN
+				SELECT * FROM agencias
+				WHERE user = p_user;
+			END IF;
+		END ;;
+DELIMITER ;
+
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `crearEvento`(
+    IN p_nombre_evento VARCHAR(255), IN p_descripcion TEXT, IN p_fecha_evento DATE,
+    IN p_hora_evento TIME, IN p_fecha_registro DATE, IN p_precio_boleto DECIMAL(10,2),
+    IN p_imagen_url VARCHAR(255), IN p_id_lugar INT, IN p_id_tipo_actividad INT, IN p_id_organizadora INT
+)
+BEGIN
+    INSERT INTO eventos (
+        nombre_evento, descripcion, fecha_evento, hora_evento, fecha_registro,
+        precio_boleto, imagen_url, id_lugar, id_tipo_actividad, id_organizadora
+    ) VALUES (
+        p_nombre_evento, p_descripcion, p_fecha_evento, p_hora_evento, p_fecha_registro,
+        p_precio_boleto, p_imagen_url, p_id_lugar, p_id_tipo_actividad, p_id_organizadora
+    );
+    SELECT LAST_INSERT_ID() AS id_generado;
+END ;;
+DELIMITER ;
+
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `crearLugar`(
+    IN p_nombre VARCHAR(150),
+    IN p_descripcion TEXT,
+    IN p_direccion VARCHAR(255),
+    IN p_ciudad VARCHAR(100),
+    IN p_zona VARCHAR(100),
+    IN p_id_admin INT
+)
+BEGIN
+    INSERT INTO lugares (
+        nombre_lugar, descripcion, direccion, ciudad, zona, imagen_url, id_admin
+    )
+    VALUES (
+        p_nombre, p_descripcion, p_direccion, p_ciudad, p_zona, 'nourl', p_id_admin
+    );
+
+    SELECT LAST_INSERT_ID() AS id_lugar;
+END ;;
+DELIMITER ;
+
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `crearPaquete`(
+    IN p_nombre VARCHAR(150),
+    IN p_descripcion TEXT,
+    IN p_precio DECIMAL(10,2),
+    IN p_imagen VARCHAR(255),
+    IN p_id_lugar INT,
+    IN p_id_agencia INT
+)
+BEGIN
+    INSERT INTO paquetes (
+        nombre_paquete,
+        descripcion_paquete,
+        precio,
+        imagen_url,
+        id_lugar,
+        id_agencia
+    )
+    VALUES (
+        p_nombre,
+        p_descripcion,
+        p_precio,
+        p_imagen,
+        p_id_lugar,
+        p_id_agencia
+    );
+
+    SELECT LAST_INSERT_ID() AS id_paquete;
+END ;;
+DELIMITER ;
+
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `crearReservacion`(
+    IN p_id_evento INT,
+    IN p_id_cliente INT,
+    IN p_estado VARCHAR(50)
+)
+BEGIN
+    INSERT INTO reservaciones (id_evento, id_cliente, estado) 
+    VALUES (p_id_evento, p_id_cliente, p_estado);
+
+    SELECT LAST_INSERT_ID() AS id_reservacion;
+END ;;
+DELIMITER ;
+
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `crearViaje`(
+    IN p_id_cliente INT,
+    IN p_id_paquete INT,
+    IN p_estado VARCHAR(255),
+    IN p_fecha_viaje DATE,
+    IN p_hora_viaje TIME
+)
+BEGIN
+    INSERT INTO viajes (id_cliente, id_paquete, estado, fecha_viaje, hora_viaje)
+    VALUES (p_id_cliente, p_id_paquete, p_estado, p_fecha_viaje, p_hora_viaje);
+    
+    -- Retorna el último ID insertado
+    SELECT LAST_INSERT_ID() AS id_generado;
+END ;;
+DELIMITER ;
+
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `eliminarEvento`(IN p_id_evento INT)
+BEGIN
+    DELETE FROM eventos WHERE id_evento = p_id_evento;
+END ;;
+DELIMITER ;
+
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `eliminarLugar`(
+    IN p_id INT
+)
+BEGIN
+    DELETE FROM lugares 
+    WHERE id_lugar = p_id;
+END ;;
+DELIMITER ;
+
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `eliminarPaquete`(
+    IN p_id INT
+)
+BEGIN
+    DELETE FROM paquetes
+    WHERE id_paquete = p_id;
+END ;;
+DELIMITER ;
+
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `eliminarViaje`(IN p_id_viaje INT)
+BEGIN
+    DELETE FROM viajes WHERE id_viaje = p_id_viaje;
+END ;;
+DELIMITER ;
+
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `existeUsuario`(IN p_user VARCHAR(100))
+BEGIN
+    SELECT 
+        (SELECT COUNT(*) FROM clientes WHERE user = p_user) +
+        (SELECT COUNT(*) FROM organizadoras WHERE user = p_user) +
+        (SELECT COUNT(*) FROM agencias WHERE user = p_user)
+    AS total;
+END ;;
+DELIMITER ;
+
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `filtrarEventosPorFecha`(IN p_id_organizadora INT, IN p_inicio DATE, IN p_fin DATE)
+BEGIN
+    SELECT * FROM eventos
+    WHERE id_organizadora = p_id_organizadora
+      AND fecha_evento BETWEEN p_inicio AND p_fin;
+END ;;
+DELIMITER ;
+
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `filtrarEventosPorLugar`(IN p_id_organizadora INT, IN p_lugar VARCHAR(255))
+BEGIN
+    SELECT * FROM eventos e
+    JOIN lugares l ON l.id_lugar = e.id_lugar
+    WHERE e.id_organizadora = p_id_organizadora 
+    
+      AND LOWER(l.nombre_lugar) LIKE LOWER(CONCAT('%', p_lugar, '%'));
+END ;;
+DELIMITER ;
+
+
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `filtrarPaquetesPorLugar`(
+    IN p_id_agencia INT,
+    IN p_lugar VARCHAR(150)
+)
+BEGIN
+    SELECT P.*, L.nombre_lugar AS lugar
+    FROM paquetes P
+    LEFT JOIN lugares L ON P.id_lugar = L.id_lugar
+    WHERE P.id_agencia = p_id_agencia
+    AND LOWER(L.nombre_lugar) LIKE LOWER(CONCAT('%', p_lugar, '%'));
+END ;;
+DELIMITER ;
+
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `getAdminPorUsuario`(
+    IN p_user VARCHAR(100)
+)
+BEGIN
+    SELECT id_admin, user, password, nombre
+    FROM administradores
+    WHERE user = p_user;
+END ;;
+DELIMITER ;
+
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `getAllEventos`()
+BEGIN
+    SELECT * FROM eventos;
+END ;;
+DELIMITER ;
+
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `getAllViajes`()
+BEGIN
+    SELECT * FROM viajes;
+END ;;
+DELIMITER ;
+
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `getEventoPorID`(IN p_id_evento INT)
+BEGIN
+    SELECT * FROM eventos WHERE id_evento = p_id_evento;
+END ;;
+DELIMITER ;
+
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `getEventosDisponibles`(
+    IN p_limite INT
+)
+BEGIN
+    SELECT 
+        e.nombre_evento, 
+        e.id_lugar, 
+        l.nombre_lugar, 
+        e.descripcion, 
+        l.direccion, 
+        l.ciudad, 
+        l.zona, 
+        e.imagen_url, 
+        e.precio_boleto, 
+        e.fecha_evento,
+        COUNT(r.id_reservacion) AS total_asistencias
+    FROM eventos e 
+    LEFT JOIN lugares l 
+        ON e.id_lugar = l.id_lugar 
+    LEFT JOIN tipoactividad t 
+        ON t.id_tipo_actividad = e.id_tipo_actividad
+    LEFT JOIN reservaciones r 
+        ON r.id_evento = e.id_evento 
+    WHERE e.fecha_evento > NOW()
+    GROUP BY 
+        e.id_evento, 
+        e.nombre_evento, 
+        e.id_lugar, 
+        l.nombre_lugar, 
+        e.descripcion, 
+        l.direccion, 
+        l.ciudad, 
+        l.zona, 
+        e.imagen_url, 
+        e.precio_boleto, 
+        e.fecha_evento
+    ORDER BY total_asistencias DESC, e.nombre_evento ASC
+    LIMIT p_limite;
+
+END ;;
+DELIMITER ;
+
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `getEventosParaCalendario`(IN p_id_organizadora INT)
+BEGIN
+    SELECT E.id_evento, E.nombre_evento, E.descripcion, E.fecha_evento, 
+           E.hora_evento, E.precio_boleto, E.imagen_url, L.nombre_lugar 
+    FROM eventos E
+    JOIN lugares L ON E.id_lugar = L.id_lugar
+    WHERE E.id_organizadora = p_id_organizadora;
+END ;;
+DELIMITER ;
+
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `getEventosPorOrganizadora`(IN p_id_organizadora INT)
+BEGIN
+    SELECT * FROM eventos WHERE id_organizadora = p_id_organizadora;
+END ;;
+DELIMITER ;
+
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `getLugares`()
+BEGIN
+    SELECT * FROM lugares
+    ORDER BY zona;
+END ;;
+DELIMITER ;
+
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `getLugaresMasPopulares`(
+    IN p_limite INT
+)
+BEGIN
+    SELECT 
+        l.id_lugar, 
+        l.nombre_lugar, 
+        l.descripcion, 
+        l.direccion, 
+        l.ciudad, 
+        l.zona, 
+        l.imagen_url, 
+        (COUNT(r.id_reservacion) + COUNT(v.id_viaje)) AS total_asistencias 
+    FROM lugares l 
+    LEFT JOIN reservaciones r 
+        ON r.estado = 'completado' 
+    LEFT JOIN paquetes p 
+        ON l.id_lugar = p.id_lugar 
+    LEFT JOIN viajes v 
+        ON p.id_paquete = v.id_paquete 
+        AND v.estado = 'completado' 
+    GROUP BY l.id_lugar
+    ORDER BY total_asistencias DESC, l.nombre_lugar ASC 
+    LIMIT p_limite;
+    
+END ;;
+DELIMITER ;
+
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `getLugarPorId`(
+    IN p_id INT
+)
+BEGIN
+    SELECT * FROM lugares 
+    WHERE id_lugar = p_id;
+END ;;
+DELIMITER ;
+
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `getNumeroEventosEsteMes`(IN p_id_organizadora INT)
+BEGIN
+    SELECT COUNT(*) AS total
+    FROM eventos
+    WHERE id_organizadora = p_id_organizadora
+      AND MONTH(fecha_evento) = MONTH(CURDATE())
+      AND YEAR(fecha_evento) = YEAR(CURDATE());
+END ;;
+DELIMITER ;
+
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `getNumeroPaquetesPorAgencia`(
+    IN p_id_agencia INT
+)
+BEGIN
+    SELECT COUNT(*) AS total
+    FROM paquetes
+    WHERE id_agencia = p_id_agencia;
+END ;;
+DELIMITER ;
+
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `getOrganizadorPorID`(IN p_id_organizadora INT)
+BEGIN
+    SELECT * FROM organizadoras WHERE id_organizadora = p_id_organizadora;
+END ;;
+DELIMITER ;
+
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `getPaquetePorId`(
+    IN p_id INT
+)
+BEGIN
+    SELECT * FROM paquetes
+    WHERE id_paquete = p_id;
+END ;;
+DELIMITER ;
+
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `getPaquetesOrdenadosPorPrecio`(
+    IN p_id_agencia INT,
+    IN p_orden VARCHAR(4) -- 'ASC' o 'DESC'
+)
+BEGIN
+    IF p_orden = 'DESC' THEN
+        SELECT P.*, L.nombre_lugar AS lugar
+        FROM paquetes P
+        LEFT JOIN lugares L ON P.id_lugar = L.id_lugar
+        WHERE P.id_agencia = p_id_agencia
+        ORDER BY P.precio DESC;
+    ELSE
+        SELECT P.*, L.nombre_lugar AS lugar
+        FROM paquetes P
+        LEFT JOIN lugares L ON P.id_lugar = L.id_lugar
+        WHERE P.id_agencia = p_id_agencia
+        ORDER BY P.precio ASC;
+    END IF;
+END ;;
+DELIMITER ;
+
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `getPaquetesPorAgencia`(
+    IN p_id_agencia INT
+)
+BEGIN
+    SELECT P.*, L.nombre_lugar AS lugar
+    FROM paquetes P
+    LEFT JOIN lugares L ON P.id_lugar = L.id_lugar
+    WHERE P.id_agencia = p_id_agencia;
+END ;;
+DELIMITER ;
+
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `getPaquetesPorLugar`(
+    IN p_id_lugar INT
+)
+BEGIN
+    SELECT * FROM paquetes
+    WHERE id_lugar = p_id_lugar;
+END ;;
+DELIMITER ;
+
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `getTipoactividad`()
+BEGIN
+    SELECT * FROM tipoactividad;
+END ;;
+DELIMITER ;
+
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `getTipoActividadPorID`(IN p_id_tipo_actividad INT)
+BEGIN
+    SELECT * FROM tipoactividad WHERE id_tipo_actividad = p_id_tipo_actividad;
+END ;;
+DELIMITER ;
+
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `getTodosTiposActividad`()
+BEGIN
+    SELECT * FROM tipo_actividad ORDER BY nombre_tipo;
+END ;;
+DELIMITER ;
+
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `getViajePorID`(IN p_id_viaje INT)
+BEGIN
+    SELECT * FROM viajes WHERE id_viaje = p_id_viaje;
+END ;;
+DELIMITER ;
+
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `getViajesPorCliente`(IN p_id_cliente INT)
+BEGIN
+    SELECT v.id_viaje, v.estado, v.fecha_viaje, v.hora_viaje, p.nombre_paquete, p.precio 
+    FROM viajes v
+    JOIN paquetes p ON v.id_paquete = p.id_paquete
+    WHERE v.id_cliente = p_id_cliente
+    ORDER BY v.fecha_viaje DESC;
+END ;;
+DELIMITER ;
+
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `obtenerHistorialDetallado`(
+    IN p_id_cliente INT
+)
+BEGIN
+    SELECT 
+        r.id_reservacion,
+        r.estado AS estado_reservacion,
+        e.nombre_evento,
+        e.fecha_evento,
+        e.hora_evento,
+        e.precio_boleto,
+        e.descripcion,
+        l.nombre_lugar,
+        l.ciudad,
+        l.zona,
+        t.nombre_tipo_actividad AS tipo_actividad,
+        o.nombre_agencia
+    FROM reservaciones r
+    INNER JOIN eventos e ON r.id_evento = e.id_evento
+    INNER JOIN lugares l ON e.id_lugar = l.id_lugar
+    INNER JOIN tipoactividad t ON e.id_tipo_actividad = t.id_tipo_actividad
+    INNER JOIN organizadoras o ON e.id_organizadora = o.id_organizadora
+    WHERE r.id_cliente = p_id_cliente
+    ORDER BY e.fecha_evento DESC;
+END ;;
+DELIMITER ;
+
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `ordenarEventosPorFecha`(IN p_id_organizadora INT, IN p_asc TINYINT(1))
+BEGIN
+    IF p_asc = 1 THEN
+        SELECT * FROM eventos WHERE id_organizadora = p_id_organizadora ORDER BY fecha_evento ASC;
+    ELSE
+        SELECT * FROM eventos WHERE id_organizadora = p_id_organizadora ORDER BY fecha_evento DESC;
+    END IF;
+END ;;
+DELIMITER ;
+
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `registroAgencia`(
+    IN p_user VARCHAR(100),
+    IN p_password VARCHAR(255),
+    IN p_descripcion TEXT,
+    IN p_nombre_agencia VARCHAR(150),
+    IN p_fecha DATE,
+    IN p_direccion VARCHAR(255),
+    IN p_imagen VARCHAR(255),
+    IN p_telefono VARCHAR(20),
+    IN p_correo VARCHAR(150)
+)
+BEGIN
+    INSERT INTO agencias (
+        user, password, descripcion, nombre_agencia,
+        fecha_registro, direccion, imagen_url, telefono, correo
+    )
+    VALUES (
+        p_user, p_password, p_descripcion, p_nombre_agencia,
+        p_fecha, p_direccion, p_imagen, p_telefono, p_correo
+    );
+
+    SELECT LAST_INSERT_ID() AS id;
+END ;;
+DELIMITER ;
+
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `registroCliente`(
+    IN p_user VARCHAR(100),
+    IN p_password VARCHAR(255),
+    IN p_nombre VARCHAR(100),
+    IN p_apellido VARCHAR(100),
+    IN p_correo VARCHAR(150),
+    IN p_telefono VARCHAR(20)
+)
+BEGIN
+    INSERT INTO clientes (user, password, nombre, ap1, correo, telefono)
+    VALUES (p_user, p_password, p_nombre, p_apellido, p_correo, p_telefono);
+
+    SELECT LAST_INSERT_ID() AS id;
+END ;;
+DELIMITER ;
+
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `registroOrganizadora`(
+    IN p_user VARCHAR(100),
+    IN p_password VARCHAR(255),
+    IN p_descripcion TEXT,
+    IN p_nombre_agencia VARCHAR(150),
+    IN p_fecha DATE,
+    IN p_direccion VARCHAR(255),
+    IN p_imagen VARCHAR(255),
+    IN p_telefono VARCHAR(20),
+    IN p_correo VARCHAR(150)
+)
+BEGIN
+    INSERT INTO organizadoras (
+        user, password, descripcion_agencia, nombre_agencia, 
+        fecha_registro, direccion, imagen_url, telefono, correo
+    )
+    VALUES (
+        p_user, p_password, p_descripcion, p_nombre_agencia,
+        p_fecha, p_direccion, p_imagen, p_telefono, p_correo
+    );
+
+    SELECT LAST_INSERT_ID() AS id;
+END ;;
+DELIMITER ;
+
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_getAgenciasMejorRemuneradas`()
+BEGIN
+    SELECT 
+        a.id_agencia, 
+        a.nombre_agencia, 
+        a.direccion, 
+        a.telefono, 
+        a.correo, 
+        a.imagen_url,
+        COUNT(DISTINCT p.id_paquete) AS total_paquetes,
+        SUM(
+            CASE 
+                WHEN v.estado = 'completado' THEN p.precio 
+                ELSE 0 
+            END
+        ) AS remuneracion_total
+    FROM agencias a
+    LEFT JOIN paquetes p 
+        ON a.id_agencia = p.id_agencia
+    LEFT JOIN viajes v 
+        ON p.id_paquete = v.id_paquete
+    GROUP BY a.id_agencia
+    ORDER BY remuneracion_total DESC, a.nombre_agencia ASC
+    LIMIT 5;
+END ;;
+DELIMITER ;
+
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_getAgenciasPeorRemuneradas`()
+BEGIN
+    SELECT 
+        a.id_agencia, 
+        a.nombre_agencia, 
+        a.direccion, 
+        a.telefono, 
+        a.correo, 
+        a.imagen_url,
+        COUNT(DISTINCT p.id_paquete) AS total_paquetes,
+        SUM(
+            CASE 
+                WHEN v.estado = 'completado' THEN p.precio 
+                ELSE 0 
+            END
+        ) AS remuneracion_total
+    FROM agencias a
+    LEFT JOIN paquetes p 
+        ON a.id_agencia = p.id_agencia
+    LEFT JOIN viajes v 
+        ON p.id_paquete = v.id_paquete
+    GROUP BY a.id_agencia
+    ORDER BY remuneracion_total ASC, a.nombre_agencia ASC
+    LIMIT 5;
+END ;;
+DELIMITER ;
+
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_getAsistenciasCompletadas`()
+BEGIN
+    SELECT COUNT(id_reservacion) AS count 
+    FROM reservaciones 
+    WHERE estado = 'completado';
+END ;;
+DELIMITER ;
+
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_getDetalleOrganizadora`(IN p_id_organizadora INT)
+BEGIN
+    SELECT 
+        o.id_organizadora, 
+        o.nombre_agencia, 
+        o.descripcion_agencia, 
+        o.direccion, 
+        o.telefono, 
+        o.correo, 
+        o.imagen_url,
+        COUNT(e.id_evento) AS total_eventos,
+        SUM(
+            CASE 
+                WHEN r.estado = 'completado' THEN e.precio_boleto 
+                ELSE 0 
+            END
+        ) AS remuneracion_total
+    FROM organizadoras o
+    LEFT JOIN eventos e 
+        ON o.id_organizadora = e.id_organizadora
+    LEFT JOIN reservaciones r 
+        ON e.id_evento = r.id_evento
+    WHERE o.id_organizadora = p_id_organizadora
+    GROUP BY o.id_organizadora;
+END ;;
+DELIMITER ;
+
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_getEventosMasPopulares`()
+BEGIN
+    SELECT 
+        e.id_evento, 
+        e.nombre_evento, 
+        e.descripcion, 
+        e.fecha_evento, 
+        e.hora_evento, 
+        e.imagen_url,
+        l.nombre_lugar,
+        COUNT(r.id_reservacion) AS total_asistencias
+    FROM eventos e 
+    LEFT JOIN lugares l 
+        ON e.id_lugar = l.id_lugar 
+    LEFT JOIN reservaciones r 
+        ON e.id_evento = r.id_evento 
+        AND r.estado = 'completado' 
+    GROUP BY 
+        e.id_evento, 
+        e.nombre_evento, 
+        e.descripcion, 
+        e.fecha_evento, 
+        e.hora_evento, 
+        e.imagen_url, 
+        l.nombre_lugar
+    ORDER BY total_asistencias DESC, e.nombre_evento ASC 
+    LIMIT 5;
+END ;;
+DELIMITER ;
+
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_getEventosMejorRemunerados`()
+BEGIN
+    SELECT 
+        e.id_evento, 
+        e.nombre_evento, 
+        e.precio_boleto, 
+        e.descripcion, 
+        e.fecha_evento, 
+        e.hora_evento, 
+        e.imagen_url,
+        l.nombre_lugar,
+        COUNT(r.id_reservacion) AS total_asistencias,
+        (
+            SUM(
+                CASE 
+                    WHEN r.estado = 'completado' THEN 1 
+                    ELSE 0 
+                END
+            ) * e.precio_boleto
+        ) AS recaudacion_total
+    FROM eventos e 
+    LEFT JOIN lugares l 
+        ON e.id_lugar = l.id_lugar 
+    LEFT JOIN reservaciones r 
+        ON e.id_evento = r.id_evento
+    GROUP BY 
+        e.id_evento, 
+        e.nombre_evento, 
+        e.precio_boleto, 
+        l.nombre_lugar
+    ORDER BY recaudacion_total DESC, e.nombre_evento ASC 
+    LIMIT 5;
+END ;;
+DELIMITER ;
+
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_getEventosMenosPopulares`()
+BEGIN
+    SELECT 
+        e.id_evento, 
+        e.nombre_evento, 
+        e.descripcion, 
+        e.fecha_evento, 
+        e.hora_evento, 
+        e.imagen_url,
+        l.nombre_lugar,
+        COUNT(r.id_reservacion) AS total_asistencias
+    FROM eventos e 
+    LEFT JOIN lugares l 
+        ON e.id_lugar = l.id_lugar 
+    LEFT JOIN reservaciones r 
+        ON e.id_evento = r.id_evento 
+        AND r.estado = 'completado' 
+    GROUP BY 
+        e.id_evento, 
+        e.nombre_evento, 
+        e.descripcion, 
+        e.fecha_evento, 
+        e.hora_evento, 
+        e.imagen_url, 
+        l.nombre_lugar
+    ORDER BY total_asistencias ASC, e.nombre_evento ASC 
+    LIMIT 5;
+END ;;
+DELIMITER ;
+
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_getEventosPeorRemunerados`()
+BEGIN
+    SELECT 
+        e.id_evento, 
+        e.nombre_evento,  
+        e.precio_boleto,  
+        e.descripcion, 
+        e.fecha_evento, 
+        e.hora_evento, 
+        e.imagen_url,
+        l.nombre_lugar,
+        COUNT(r.id_reservacion) AS total_asistencias,
+        (
+            SUM(
+                CASE 
+                    WHEN r.estado = 'completado' THEN 1 
+                    ELSE 0 
+                END
+            ) * e.precio_boleto
+        ) AS recaudacion_total
+    FROM eventos e 
+    LEFT JOIN lugares l 
+        ON e.id_lugar = l.id_lugar 
+    LEFT JOIN reservaciones r 
+        ON e.id_evento = r.id_evento
+    GROUP BY 
+        e.id_evento, 
+        e.nombre_evento, 
+        e.precio_boleto, 
+        l.nombre_lugar
+    ORDER BY recaudacion_total ASC, e.nombre_evento ASC 
+    LIMIT 5;
+END ;;
+DELIMITER ;
+
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_getEventosPorLugar`(IN p_id_lugar INT)
+BEGIN
+    SELECT 
+        e.id_evento, 
+        e.nombre_evento, 
+        e.id_organizadora 
+    FROM eventos e
+    WHERE e.id_lugar = p_id_lugar
+    ORDER BY e.nombre_evento ASC;
+END ;;
+DELIMITER ;
+
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_getLugares`()
+BEGIN
+    SELECT 
+        id_lugar, 
+        nombre_lugar 
+    FROM lugares 
+    ORDER BY nombre_lugar ASC;
+END ;;
+DELIMITER ;
+
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_getMasPopulares`()
+BEGIN
+    SELECT 
+        l.id_lugar, 
+        l.nombre_lugar, 
+        l.descripcion, 
+        l.direccion, 
+        l.ciudad, 
+        l.zona, 
+        l.imagen_url, 
+        (COUNT(r.id_reservacion) + COUNT(v.id_viaje)) AS total_asistencias 
+    FROM lugares l 
+    LEFT JOIN eventos e ON l.id_lugar = e.id_lugar 
+    LEFT JOIN reservaciones r 
+        ON e.id_evento = r.id_evento 
+        AND r.estado = 'completado' 
+    LEFT JOIN paquetes p ON l.id_lugar = p.id_lugar 
+    LEFT JOIN viajes v 
+        ON p.id_paquete = v.id_paquete 
+        AND v.estado = 'completado' 
+    GROUP BY l.id_lugar
+    ORDER BY total_asistencias DESC, l.nombre_lugar ASC 
+    LIMIT 5;
+END ;;
+DELIMITER ;
+
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_getMenosPopulares`()
+BEGIN
+    SELECT 
+        l.id_lugar, 
+        l.nombre_lugar, 
+        l.descripcion, 
+        l.direccion, 
+        l.ciudad, 
+        l.zona, 
+        l.imagen_url, 
+        (COUNT(r.id_reservacion) + COUNT(v.id_viaje)) AS total_asistencias 
+    FROM lugares l 
+    LEFT JOIN eventos e ON l.id_lugar = e.id_lugar 
+    LEFT JOIN reservaciones r 
+        ON e.id_evento = r.id_evento 
+        AND r.estado = 'completado' 
+    LEFT JOIN paquetes p ON l.id_lugar = p.id_lugar 
+    LEFT JOIN viajes v 
+        ON p.id_paquete = v.id_paquete 
+        AND v.estado = 'completado' 
+    GROUP BY l.id_lugar
+    ORDER BY total_asistencias ASC, l.nombre_lugar ASC 
+    LIMIT 5;
+END ;;
+DELIMITER ;
+
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_getOrganizadoraFiltrada`(IN p_id_organizadora INT)
+BEGIN
+    SELECT 
+        o.id_organizadora, 
+        o.nombre_agencia, 
+        o.direccion, 
+        o.telefono, 
+        o.correo, 
+        o.imagen_url,
+        SUM(
+            CASE 
+                WHEN r.estado = 'completado' THEN e.precio_boleto 
+                ELSE 0 
+            END
+        ) AS remuneracion_total
+    FROM organizadoras o
+    LEFT JOIN eventos e 
+        ON o.id_organizadora = e.id_organizadora
+    LEFT JOIN reservaciones r 
+        ON e.id_evento = r.id_evento
+    WHERE o.id_organizadora = p_id_organizadora
+    GROUP BY o.id_organizadora;
+END ;;
+DELIMITER ;
+
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_getOrganizadoraPorEvento`(IN p_id_evento INT)
+BEGIN
+    SELECT 
+        o.id_organizadora, 
+        o.nombre_agencia 
+    FROM organizadoras o
+    INNER JOIN eventos e 
+        ON o.id_organizadora = e.id_organizadora
+    WHERE e.id_evento = p_id_evento;
+END ;;
+DELIMITER ;
+
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_getOrganizadorasMejorRemuneradas`()
+BEGIN
+    SELECT 
+        o.id_organizadora, 
+        o.nombre_agencia, 
+        o.direccion, 
+        o.telefono, 
+        o.correo, 
+        o.imagen_url,
+        SUM(
+            CASE 
+                WHEN r.estado = 'completado' THEN e.precio_boleto 
+                ELSE 0 
+            END
+        ) AS remuneracion_total
+    FROM organizadoras o
+    LEFT JOIN eventos e 
+        ON o.id_organizadora = e.id_organizadora
+    LEFT JOIN reservaciones r 
+        ON e.id_evento = r.id_evento
+    GROUP BY o.id_organizadora
+    ORDER BY remuneracion_total DESC, o.nombre_agencia ASC
+    LIMIT 5;
+END ;;
+DELIMITER ;
+
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_getOrganizadorasPeorRemuneradas`()
+BEGIN
+    SELECT 
+        o.id_organizadora, 
+        o.nombre_agencia, 
+        o.direccion, 
+        o.telefono, 
+        o.correo, 
+        o.imagen_url,
+        SUM(
+            CASE 
+                WHEN r.estado = 'completado' THEN e.precio_boleto 
+                ELSE 0 
+            END
+        ) AS remuneracion_total
+    FROM organizadoras o
+    LEFT JOIN eventos e 
+        ON o.id_organizadora = e.id_organizadora
+    LEFT JOIN reservaciones r 
+        ON e.id_evento = r.id_evento
+    GROUP BY o.id_organizadora
+    ORDER BY remuneracion_total ASC, o.nombre_agencia ASC
+    LIMIT 5;
+END ;;
+DELIMITER ;
+
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_getReservacionesCanceladas`()
+BEGIN
+    SELECT COUNT(id_reservacion) AS count 
+    FROM reservaciones 
+    WHERE estado = 'cancelado';
+END ;;
+DELIMITER ;
+
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_getReservacionesPendientes`()
+BEGIN
+    SELECT COUNT(id_reservacion) AS count 
+    FROM reservaciones 
+    WHERE estado = 'pendiente';
+END ;;
+DELIMITER ;
+
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_getReservacionesTotales`()
+BEGIN
+    SELECT COUNT(id_reservacion) AS count 
+    FROM reservaciones;
+END ;;
+DELIMITER ;
+
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_getViajesMasPopulares`()
+BEGIN
+    SELECT 
+        p.id_paquete, 
+        p.nombre_paquete, 
+        p.descripcion_paquete, 
+        p.precio, 
+        p.imagen_url,
+        l.nombre_lugar, 
+        a.nombre_agencia,
+        COUNT(v.id_viaje) AS total_viajes
+    FROM paquetes p 
+    LEFT JOIN lugares l 
+        ON p.id_lugar = l.id_lugar 
+    LEFT JOIN agencias a 
+        ON p.id_agencia = a.id_agencia
+    LEFT JOIN viajes v 
+        ON p.id_paquete = v.id_paquete 
+        AND v.estado = 'completado' 
+    GROUP BY 
+        p.id_paquete, 
+        l.nombre_lugar, 
+        a.nombre_agencia
+    ORDER BY total_viajes DESC, p.nombre_paquete ASC 
+    LIMIT 5;
+END ;;
+DELIMITER ;
+
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_getViajesMejorRemunerados`()
+BEGIN
+    SELECT 
+        p.id_paquete, 
+        p.nombre_paquete, 
+        p.descripcion_paquete, 
+        p.precio, 
+        p.imagen_url,
+        l.nombre_lugar, 
+        a.nombre_agencia,
+        COUNT(v.id_viaje) AS total_viajes,
+        (COUNT(v.id_viaje) * p.precio) AS remuneracion_total
+    FROM paquetes p 
+    LEFT JOIN lugares l 
+        ON p.id_lugar = l.id_lugar 
+    LEFT JOIN agencias a 
+        ON p.id_agencia = a.id_agencia
+    LEFT JOIN viajes v 
+        ON p.id_paquete = v.id_paquete 
+        AND v.estado = 'completado' 
+    GROUP BY 
+        p.id_paquete, 
+        l.nombre_lugar, 
+        a.nombre_agencia
+    ORDER BY remuneracion_total DESC, p.nombre_paquete ASC 
+    LIMIT 5;
+END ;;
+DELIMITER ;
+
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_getViajesMenosPopulares`()
+BEGIN
+    SELECT 
+        p.id_paquete, 
+        p.nombre_paquete, 
+        p.descripcion_paquete, 
+        p.precio, 
+        p.imagen_url,
+        l.nombre_lugar, 
+        a.nombre_agencia,
+        COUNT(v.id_viaje) AS total_viajes
+    FROM paquetes p 
+    LEFT JOIN lugares l 
+        ON p.id_lugar = l.id_lugar 
+    LEFT JOIN agencias a 
+        ON p.id_agencia = a.id_agencia
+    LEFT JOIN viajes v 
+        ON p.id_paquete = v.id_paquete 
+        AND v.estado = 'completado' 
+    GROUP BY 
+        p.id_paquete, 
+        l.nombre_lugar, 
+        a.nombre_agencia
+    ORDER BY total_viajes ASC, p.nombre_paquete ASC 
+    LIMIT 5;
+END ;;
+DELIMITER ;
+
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_getViajesPeorRemunerados`()
+BEGIN
+    SELECT 
+        p.id_paquete, 
+        p.nombre_paquete, 
+        p.descripcion_paquete, 
+        p.precio, 
+        p.imagen_url,
+        l.nombre_lugar, 
+        a.nombre_agencia,
+        COUNT(v.id_viaje) AS total_viajes,
+        (COUNT(v.id_viaje) * p.precio) AS remuneracion_total
+    FROM paquetes p 
+    LEFT JOIN lugares l 
+        ON p.id_lugar = l.id_lugar 
+    LEFT JOIN agencias a 
+        ON p.id_agencia = a.id_agencia
+    LEFT JOIN viajes v 
+        ON p.id_paquete = v.id_paquete 
+        AND v.estado = 'completado' 
+    GROUP BY 
+        p.id_paquete, 
+        l.nombre_lugar, 
+        a.nombre_agencia
+    ORDER BY remuneracion_total ASC, p.nombre_paquete ASC 
+    LIMIT 5;
+END ;;
+DELIMITER ;
+
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `validarOrganizador`(IN p_user VARCHAR(255))
+BEGIN
+    SELECT * FROM organizadoras WHERE user = p_user;
+END ;;
+DELIMITER ;
+
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `validarUsuario`(
+    IN p_user VARCHAR(50)
+)
+BEGIN
+    SELECT id_cliente, user, password, nombre
+    FROM clientes
+    WHERE user = p_user
+    LIMIT 1;
+END ;;
+DELIMITER ;

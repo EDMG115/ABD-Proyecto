@@ -13,14 +13,16 @@ class usuarioDAO{
 
     public function validarUsuario(string $user, string $password){
         try{
-            $sql = "SELECT id_cliente, user, password, nombre FROM clientes WHERE user = :user";
-
+            $sql = "CALL validarUsuario(:user)";
             $stmt = $this->conexion->prepare($sql);
-            $stmt->bindParam(':user', $user); 
+
+            $stmt->bindParam(':user', $user, PDO::PARAM_STR);
             $stmt->execute();
 
             $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
+            $stmt->closeCursor();
 
+            // Validación de contraseña en PHP
             if ($usuario && $usuario['password'] === $password) {
                 return $usuario;
             }

@@ -13,14 +13,16 @@ class paqueteDAO{
 
     public function getPaquetesPorAgencia($idAgencia){
         try{
-            $sql = "SELECT P.*, L.nombre_lugar as lugar FROM paquetes P 
-                    LEFT JOIN lugares L ON P.id_lugar = L.id_lugar 
-                    WHERE P.id_agencia = :id";
+            $sql = "CALL getPaquetesPorAgencia(:id)";
             $stmt = $this->conexion->prepare($sql);
+
             $stmt->bindParam(":id", $idAgencia, PDO::PARAM_INT);
             $stmt->execute();
 
-            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $stmt->closeCursor();
+
+            return $result;
         } catch(PDOException $e){
             throw new Exception("Error al obtener paquetes: " . $e->getMessage());
         }
@@ -28,12 +30,16 @@ class paqueteDAO{
 
     public function getPaquetePorID($idPaquete){
         try{
-            $sql = "SELECT * FROM paquetes WHERE id_paquete = :id";
+            $sql = "CALL getPaquetePorID(:id)";
             $stmt = $this->conexion->prepare($sql);
+            
             $stmt->bindParam(":id", $idPaquete, PDO::PARAM_INT);
             $stmt->execute();
 
-            return $stmt->fetch(PDO::FETCH_ASSOC);
+            $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $stmt->closeCursor();
+
+            return $result;
         } catch(PDOException $e){
             throw new Exception("Error al obtener paquete: " . $e->getMessage());
         }
@@ -41,14 +47,16 @@ class paqueteDAO{
 
     public function getPaquetesPorLugar($id_lugar){
         try{
-            $sql = "SELECT * FROM paquetes WHERE id_lugar = :id_lugar";
+            $sql = "CALL getPaquetesPorLugar(:id_lugar)";
             
             $stmt = $this->conexion->prepare($sql);
             $stmt -> bindParam(':id_lugar', $id_lugar, PDO::PARAM_INT);
             $stmt->execute();
 
-            $paquete = $stmt->fetchALL(PDO::FETCH_ASSOC);
-            return $paquete;
+            $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $stmt->closeCursor();
+
+            return $result;
         } catch (PDOException $e){
             throw new Exception("Error al realizar la consulta en la base de datos: " . $e->getMessage());
         }
@@ -57,17 +65,15 @@ class paqueteDAO{
 
     public function getNumeroPaquetesEsteMes($idAgencia){
         try{
-            // Como los paquetes no tienen fecha_registro, contamos todos los paquetes de la agencia
-            // O podrías usar la fecha de creación si la agregas a la tabla
-            $sql = "SELECT COUNT(*) AS total
-                    FROM paquetes
-                    WHERE id_agencia = :id";
-
+            $sql = "CALL getNumeroPaquetesPorAgencia(:id)";
             $stmt = $this->conexion->prepare($sql);
+
             $stmt->bindParam(":id", $idAgencia, PDO::PARAM_INT);
             $stmt->execute();
 
             $res = $stmt->fetch(PDO::FETCH_ASSOC);
+            $stmt->closeCursor();
+
             return $res['total'];
         } catch(PDOException $e) {
             throw new Exception("Error al contar paquetes: " . $e->getMessage());
@@ -76,17 +82,18 @@ class paqueteDAO{
 
     public function filtrarPaquetesPorLugar($idAgencia, $lugar){
         try{
-            $sql = "SELECT P.*, L.nombre_lugar as lugar FROM paquetes P
-                    LEFT JOIN lugares L ON P.id_lugar = L.id_lugar
-                    WHERE P.id_agencia = :id
-                    AND LOWER(L.nombre_lugar) LIKE LOWER(:lugar)";
-
+            $sql = "CALL filtrarPaquetesPorLugar(:id, :lugar)";
             $stmt = $this->conexion->prepare($sql);
+
             $stmt->bindParam(":id", $idAgencia, PDO::PARAM_INT);
-            $stmt->bindValue(":lugar", "%$lugar%", PDO::PARAM_STR);
+            $stmt->bindValue(":lugar", $lugar);
+
             $stmt->execute();
 
-            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $stmt->closeCursor();
+
+            return $result;
         } catch(PDOException $e){
             throw new Exception("Error al filtrar por lugar: " . $e->getMessage());
         }
@@ -94,18 +101,20 @@ class paqueteDAO{
 
     public function ordenarPaquetesPorPrecio($idAgencia, $asc = true){
         try{
-            $orden = $asc ? "ASC" : "DESC";
-
-            $sql = "SELECT P.*, L.nombre_lugar as lugar FROM paquetes P
-                    LEFT JOIN lugares L ON P.id_lugar = L.id_lugar
-                    WHERE P.id_agencia = :id
-                    ORDER BY P.precio $orden";
-
+            $sql = "CALL getPaquetesOrdenadosPorPrecio(:id, :orden)";
             $stmt = $this->conexion->prepare($sql);
+
+            $orden = $asc ? 'ASC' : 'DESC';
+
             $stmt->bindParam(":id", $idAgencia, PDO::PARAM_INT);
+            $stmt->bindParam(":orden", $orden);
+
             $stmt->execute();
 
-            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $stmt->closeCursor();
+
+            return $result;
         } catch(PDOException $e){
             throw new Exception("Error al ordenar paquetes: " . $e->getMessage());
         }
@@ -113,38 +122,22 @@ class paqueteDAO{
 
     public function crearPaquete($nombre_paquete, $descripcion_paquete, $precio, $imagen_url, $id_lugar, $id_agencia) {
         try {
-            $sql = "INSERT INTO paquetes (
-                        nombre_paquete, 
-                        descripcion_paquete, 
-                        precio, 
-                        imagen_url,
-                        id_lugar, 
-                        id_agencia
-                    ) VALUES (
-                        :nombre_paquete, 
-                        :descripcion_paquete, 
-                        :precio, 
-                        :imagen_url, 
-                        :id_lugar, 
-                        :id_agencia 
-                    )";
-
+            $sql = "CALL crearPaquete(:nombre, :descripcion, :precio, :imagen, :id_lugar, :id_agencia)";
             $stmt = $this->conexion->prepare($sql);
 
-            // Vinculación de parámetros
-            $stmt->bindParam(":nombre_paquete", $nombre_paquete);
-            $stmt->bindParam(":descripcion_paquete", $descripcion_paquete);
-            $stmt->bindValue(":precio", (float)$precio, PDO::PARAM_STR);
-            $stmt->bindParam(":imagen_url", $imagen_url);
+            $stmt->bindParam(":nombre", $nombre_paquete);
+            $stmt->bindParam(":descripcion", $descripcion_paquete);
+            $stmt->bindParam(":precio", $precio);
+            $stmt->bindParam(":imagen", $imagen_url);
             $stmt->bindParam(":id_lugar", $id_lugar);
-            $stmt->bindParam(":id_agencia", $id_agencia); 
+            $stmt->bindParam(":id_agencia", $id_agencia);
 
-            if ($stmt->execute()) {
-                return $this->conexion->lastInsertId();
-            } else {
-                return false;
-            }
+            $stmt->execute();
 
+            $res = $stmt->fetch(PDO::FETCH_ASSOC);
+            $stmt->closeCursor();
+
+            return $res['id_paquete'];
         } catch (PDOException $e) {
             error_log("Error en PaqueteDAO::crearPaquete: " . $e->getMessage());
             return false;
@@ -153,22 +146,19 @@ class paqueteDAO{
 
     public function actualizarPaquete($id_paquete, $nombre_paquete, $descripcion_paquete, $precio, $id_lugar) {
         try {
-            $sql = "UPDATE paquetes SET 
-                nombre_paquete = :nombre_paquete, 
-                descripcion_paquete = :descripcion_paquete, 
-                precio = :precio, 
-                id_lugar = :id_lugar 
-                WHERE id_paquete = :id_paquete";
-
+            $sql = "CALL actualizarPaquete(:id, :nombre, :descripcion, :precio, :id_lugar)";
             $stmt = $this->conexion->prepare($sql);
-            
-            $stmt->bindParam(':id_paquete', $id_paquete, PDO::PARAM_INT);
-            $stmt->bindParam(':nombre_paquete', $nombre_paquete, PDO::PARAM_STR);
-            $stmt->bindParam(':descripcion_paquete', $descripcion_paquete, PDO::PARAM_STR);
-            $stmt->bindValue(':precio', (float)$precio, PDO::PARAM_STR);
-            $stmt->bindParam(':id_lugar', $id_lugar, PDO::PARAM_INT);
 
-            return $stmt->execute();
+            $stmt->bindParam(':id', $id_paquete);
+            $stmt->bindParam(':nombre', $nombre_paquete);
+            $stmt->bindParam(':descripcion', $descripcion_paquete);
+            $stmt->bindParam(':precio', $precio);
+            $stmt->bindParam(':id_lugar', $id_lugar);
+
+            $result = $stmt->execute();
+            $stmt->closeCursor();
+
+            return $result;
         } catch (PDOException $e) {
             throw new Exception("Error al actualizar paquete: " . $e->getMessage());
         }
@@ -179,24 +169,28 @@ class paqueteDAO{
             throw new Exception("El nombre de la imagen no puede estar vacío.");
         }
 
-        $sql = "UPDATE paquetes SET imagen_url = :imagen WHERE id_paquete = :id_paquete";
-        
+        $sql = "CALL actualizarImagenPaquete(:id, :imagen)";
         $stmt = $this->conexion->prepare($sql);
 
-        $stmt->bindParam(':imagen', $nuevoNombreImagen, PDO::PARAM_STR);
-        $stmt->bindParam(':id_paquete', $id_paquete, PDO::PARAM_INT);
+        $stmt->bindParam(':id', $id_paquete);
+        $stmt->bindParam(':imagen', $nuevoNombreImagen);
 
-        return $stmt->execute();
+        $result = $stmt->execute();
+        $stmt->closeCursor();
+
+        return $result;
     }
 
     public function eliminarPaquete($id_paquete) {
-        $sql = "DELETE FROM paquetes WHERE id_paquete = :id_paquete";
-        
+        $sql = "CALL eliminarPaquete(:id)";
         $stmt = $this->conexion->prepare($sql);
 
-        $stmt->bindParam(':id_paquete', $id_paquete, PDO::PARAM_INT);
+        $stmt->bindParam(':id', $id_paquete);
 
-        return $stmt->execute();
+        $result = $stmt->execute();
+        $stmt->closeCursor();
+
+        return $result;
     }
 
 }

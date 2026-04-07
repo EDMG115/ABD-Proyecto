@@ -89,7 +89,7 @@ class agenciaDAO{
 
     public function getAgenciaPorID($idAgencia){
         try{
-            $sql = "CALL consultar_agencia(:id)";//$sql = "SELECT * FROM agencias WHERE id_agencia = :id";
+            $sql = "CALL consultar_idagencia(:id)";//$sql = "SELECT * FROM agencias WHERE id_agencia = :id";
             $stmt = $this->conexion->prepare($sql);
             $stmt->bindParam(":id", $idAgencia, PDO::PARAM_INT);
             $stmt->execute();

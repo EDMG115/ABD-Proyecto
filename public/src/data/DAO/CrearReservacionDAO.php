@@ -10,22 +10,25 @@ class CrearReservacionDAO{
         $this->conexion = $conn->getConexion();
     }
 
-    public function crearReservacion($id_evento,$id_cliente, $estado)
+    public function crearReservacion($id_evento, $id_cliente, $estado)
     {
         try {
-            $sql = "INSERT INTO reservaciones (id_evento, id_cliente, estado) 
-                    VALUES (:id_evento, :id_cliente, :estado)";
-
-            $temp_url = "nourl";
+            $sql = "CALL crearReservacion(:id_evento, :id_cliente, :estado)";
             $stmt = $this->conexion->prepare($sql);
+
             $stmt->bindParam(':id_evento', $id_evento);
             $stmt->bindParam(':id_cliente', $id_cliente);
             $stmt->bindParam(':estado', $estado);
+
             $stmt->execute();
 
-            return $this->conexion->lastInsertId();
+            $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
+            $stmt->closeCursor();
+
+            return $resultado['id_reservacion'];
+
         } catch (PDOException $e) {
-            throw new Exception("Error en la creacion del lugar en la base de datos: " . $e->getMessage());
+            throw new Exception("Error en la creación de la reservación: " . $e->getMessage());
         }
     }
 }
