@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ARC - Pagina Princiapl</title>
+    <title>ARC - Pagina Principal</title>
     <link rel="stylesheet" href="./src/styles/header_style.css">
     <link rel="stylesheet" href="./src/styles/footer_style.css">
     <link rel="stylesheet" href="./src/styles/style_generico.css">
@@ -14,7 +14,7 @@
 </head>
 
 <body>
-    <main class="box">
+    <main class="box index-main">
         <dialog class="dialog_select" id="select_login">
             <h3 class="dialog_h3">¿Como quieres acceder?</h3>
             <div class="dialog_options">
@@ -41,8 +41,82 @@
             </button>
 
         </dialog>
-        <section>
-            <div id="carrusel-paquetes"></div>
+
+        <!-- Vista: inicio -->
+        <section id="view-inicio" class="index-view index-view--active" aria-label="Página principal">
+            <header class="index-hero">
+                <h1 class="index-hero__title">Bienvenido a ARC</h1>
+                <p class="index-hero__text">
+                    Explora destinos favoritos de la comunidad y descubre eventos próximos. Elige en el menú superior
+                    <strong>Lugares populares</strong> para inspirarte en viajes y paquetes, o <strong>Eventos recientes</strong>
+                    para vivir experiencias culturales y de entretenimiento.
+                </p>
+            </header>
+            <div id="carrusel-home-lugares" class="index-carousel-slot"></div>
+            <div id="carrusel-home-eventos" class="index-carousel-slot"></div>
+        </section>
+
+        <!-- Vista: viajes / lugares populares -->
+        <section id="view-lugares" class="index-view" hidden aria-label="Lugares populares y viajes">
+            <header class="index-block">
+                <h2 class="index-block__title">Viajes y destinos destacados</h2>
+                <p class="index-block__text">
+                    Los lugares más visitados conectan cultura, paisajes y experiencias únicas. Revisa el carrusel de
+                    destinos y, más abajo, paquetes publicados por nuestras agencias: filtra por lugar o ordena por precio
+                    para acercarte a tu próximo viaje. Para reservar necesitas una cuenta de usuario.
+                </p>
+            </header>
+
+            <div class="index-filters" id="filters-viajes">
+                <label class="index-filters__item">
+                    <span>Paquetes por lugar</span>
+                    <select id="filter-paquete-lugar">
+                        <option value="">Todos los lugares destacados</option>
+                    </select>
+                </label>
+                <label class="index-filters__item">
+                    <span>Ordenar paquetes por precio</span>
+                    <select id="filter-paquete-orden">
+                        <option value="">Sin orden específico</option>
+                        <option value="asc">Menor a mayor</option>
+                        <option value="desc">Mayor a menor</option>
+                    </select>
+                </label>
+                <button type="button" class="button index-filters__btn" id="btn-aplicar-paquetes">Aplicar filtros</button>
+            </div>
+
+            <div id="carrusel-viajes-lugares" class="index-carousel-slot"></div>
+
+            <h3 class="index-subheading">Paquetes disponibles</h3>
+            <p class="index-hint">Precios orientativos según agencia. Inicia sesión como usuario para reservar.</p>
+            <div id="carrusel-viajes-paquetes" class="index-carousel-slot"></div>
+        </section>
+
+        <!-- Vista: eventos -->
+        <section id="view-eventos" class="index-view" hidden aria-label="Eventos disponibles">
+            <header class="index-block">
+                <h2 class="index-block__title">Eventos y experiencias</h2>
+                <p class="index-block__text">
+                    Conciertos, talleres y actividades en los mejores espacios de la ciudad. Filtra por nombre o ciudad
+                    y encuentra el plan que encaje contigo. Las fechas mostradas son próximas a hoy.
+                </p>
+            </header>
+
+            <div class="index-filters" id="filters-eventos">
+                <label class="index-filters__item index-filters__item--grow">
+                    <span>Buscar por nombre</span>
+                    <input type="search" id="filter-evento-q" placeholder="Nombre o palabra clave…" autocomplete="off">
+                </label>
+                <label class="index-filters__item">
+                    <span>Ciudad</span>
+                    <select id="filter-evento-ciudad">
+                        <option value="">Todas</option>
+                    </select>
+                </label>
+                <button type="button" class="button index-filters__btn" id="btn-aplicar-eventos">Aplicar filtros</button>
+            </div>
+
+            <div id="carrusel-page-eventos" class="index-carousel-slot"></div>
         </section>
 
     </main>

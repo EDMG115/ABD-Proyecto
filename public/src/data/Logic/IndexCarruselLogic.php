@@ -1,12 +1,15 @@
 <?php
 require_once "./../dao/CarruselDAO.php";
+require_once "./../dao/paqueteDAO.php";
 header('Content-Type: application/json');
 
 $indexCarruselDAO = new CarruselDAO();
+$paqueteDAO = new paqueteDAO();
 
-// Rutas de imágenes
+// Rutas de imágenes (relativas al index en public/)
 $RUTA_IMG_LUGARES = "./src/media/images/lugares/";
 $RUTA_IMG_EVENTOS = "./src/media/images/eventos/";
+$RUTA_IMG_PAQUETES = "./src/media/images/paquetes/";
 
 if ($_SERVER["REQUEST_METHOD"] == "GET") {
     try {
@@ -42,7 +45,27 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
 
         } elseif ($tipo === 'eventos') {
 
-            $eventos = $indexCarruselDAO->getEventosDisponibles(20);
+            // Listado amplio para poder filtrar en cliente (nombre, ciudad) sin perder variedad
+            $limite = 80;
+
+            $eventos = $indexCarruselDAO->getEventosDisponibles($limite);
+
+            $q = isset($_GET['q']) ? trim($_GET['q']) : '';
+            $ciudad = isset($_GET['ciudad']) ? trim($_GET['ciudad']) : '';
+
+            if ($q !== '') {
+                $eventos = array_values(array_filter($eventos, function ($e) use ($q) {
+                    $nombre = $e['nombre_evento'] ?? '';
+                    $desc = $e['descripcion'] ?? '';
+                    return (stripos($nombre, $q) !== false || stripos($desc, $q) !== false);
+                }));
+            }
+
+            if ($ciudad !== '') {
+                $eventos = array_values(array_filter($eventos, function ($e) use ($ciudad) {
+                    return isset($e['ciudad']) && strcasecmp(trim($e['ciudad']), $ciudad) === 0;
+                }));
+            }
 
             if (!empty($eventos)) {
 
@@ -53,6 +76,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
                         $evento['imagen_url'] = $RUTA_IMG_EVENTOS . 'default.jpg';
                     }
                 }
+                unset($evento);
 
                 $respuesta = [
                     'correcto' => true,
@@ -67,10 +91,75 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
                 ];
             }
 
+        } elseif ($tipo === 'paquetes') {
+
+            $id_lugar = isset($_GET['id_lugar']) ? (int)$_GET['id_lugar'] : 0;
+
+            if ($id_lugar > 0) {
+                $paquetes = $paqueteDAO->getPaquetesPorLugar($id_lugar);
+            } else {
+                $lugaresTop = $indexCarruselDAO->getLugaresMasPopulares(25);
+                $vistos = [];
+                $paquetes = [];
+                foreach ($lugaresTop as $lug) {
+                    $lid = (int)($lug['id_lugar'] ?? 0);
+                    if ($lid <= 0) {
+                        continue;
+                    }
+                    $rows = $paqueteDAO->getPaquetesPorLugar($lid);
+                    foreach ($rows as $row) {
+                        $pid = (int)($row['id_paquete'] ?? 0);
+                        if ($pid > 0 && !isset($vistos[$pid])) {
+                            $vistos[$pid] = true;
+                            $paquetes[] = $row;
+                        }
+                    }
+                }
+            }
+
+            $orden = isset($_GET['orden']) ? strtolower(trim($_GET['orden'])) : '';
+            if ($orden === 'desc') {
+                usort($paquetes, function ($a, $b) {
+                    return (float)($b['precio'] ?? 0) <=> (float)($a['precio'] ?? 0);
+                });
+            } elseif ($orden === 'asc') {
+                usort($paquetes, function ($a, $b) {
+                    return (float)($a['precio'] ?? 0) <=> (float)($b['precio'] ?? 0);
+                });
+            }
+
+            if (!empty($paquetes)) {
+                foreach ($paquetes as &$p) {
+                    if (!empty($p['imagen_url']) && $p['imagen_url'] !== 'nourl') {
+                        $p['imagen_url'] = $RUTA_IMG_PAQUETES . $p['imagen_url'];
+                    } else {
+                        $p['imagen_url'] = $RUTA_IMG_LUGARES . 'default.jpg';
+                    }
+                    $precio = $p['precio'] ?? '';
+                    $desc = $p['descripcion_paquete'] ?? '';
+                    if ($precio !== '' && $precio !== null) {
+                        $p['descripcion_paquete'] = $desc . ' · Desde $' . $precio;
+                    }
+                }
+                unset($p);
+
+                $respuesta = [
+                    'correcto' => true,
+                    'tipo' => 'paquetes',
+                    'data' => $paquetes
+                ];
+            } else {
+                $respuesta = [
+                    'correcto' => false,
+                    'mensaje' => 'No se encontraron paquetes',
+                    'data' => []
+                ];
+            }
+
         } else {
             $respuesta = [
                 'correcto' => false,
-                'mensaje' => 'Tipo no válido (usa: lugares o eventos)',
+                'mensaje' => 'Tipo no válido (usa: lugares, eventos o paquetes)',
                 'data' => []
             ];
         }
