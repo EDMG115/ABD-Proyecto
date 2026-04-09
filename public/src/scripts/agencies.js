@@ -118,7 +118,7 @@ window.addEventListener("load", async function () {
     // Botones de la tabla
     tbody.addEventListener("click", (e) => {
         if (e.target.classList.contains("btn-modificar")) {
-            this.sessionStorage.setItem("paquete_seleccionado", e.target.dataset.id);
+            sessionStorage.setItem("paquete_seleccionado", e.target.dataset.id);
             window.location.href = "packages.html";
         }
     });
