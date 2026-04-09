@@ -65,7 +65,10 @@ export async function crearCarrusel({
         } else {
             // Para eventos, mantener la lógica original
             if (imagenes && typeof imagenes === 'string' && (imagenes.startsWith('./') || imagenes.startsWith('../'))) {
+                imagenes = imagenes.replace("eventos/", "events/");
                 rutaImagen = imagenes;
+            } else if (typeof imagenes === 'string' && imagenes.length > 0) {
+                rutaImagen = `${mediaRoot}events/${imagenes}`;
             } else {
                 rutaImagen = `${mediaRoot}events/${getRandomImage(imagenes)}`;
             }

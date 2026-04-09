@@ -510,7 +510,7 @@ btnSave.addEventListener("click", async () => {
         }
 
         await showAlert('Éxito', '¡El evento ha sido creado correctamente!');
-        window.location.href = "./organizers.html";
+        window.location.href = "./organizer.html";
 
     } catch (err) {
         console.error(err);
