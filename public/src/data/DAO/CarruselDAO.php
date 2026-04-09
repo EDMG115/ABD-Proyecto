@@ -14,7 +14,7 @@ class CarruselDAO
     public function getLugaresMasPopulares($limite = 30)
     {
         try {
-            $sql = "CALL getLugaresMasPopulares(:limite)";
+            $sql = "CALL sp_get_lugares_mas_populares(:limite)";
             $stmt = $this->conexion->prepare($sql);
             $stmt->bindValue(':limite', (int)$limite, PDO::PARAM_INT);
             $stmt->execute();
@@ -32,7 +32,7 @@ class CarruselDAO
     public function getEventosDisponibles($limite = 20)
     {
         try {
-            $sql = "CALL getEventosDisponibles(:limite)";
+            $sql = "CALL sp_get_eventos_disponibles(:limite)";
             $stmt = $this->conexion->prepare($sql);
             $stmt->bindValue(':limite', (int)$limite, PDO::PARAM_INT);
             $stmt->execute();

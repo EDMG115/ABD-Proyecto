@@ -22,7 +22,7 @@ class ReservacionesDAO
     public function obtenerHistorialDetallado($id_cliente)
     {
         try {
-            $sql = "CALL obtenerHistorialDetallado(:id_cliente)";
+            $sql = "CALL sp_obtener_historial_reservaciones_cliente(:id_cliente)";
             $stmt = $this->conexion->prepare($sql);
 
             $stmt->bindParam(':id_cliente', $id_cliente, PDO::PARAM_INT);
@@ -44,7 +44,7 @@ class ReservacionesDAO
     public function cancelarReservacion($id_reservacion)
     {
         try {
-            $sql = "CALL cancelarReservacion(:id_reservacion)";
+            $sql = "CALL sp_cancelar_reservacion(:id_reservacion)";
             $stmt = $this->conexion->prepare($sql);
 
             $stmt->bindParam(':id_reservacion', $id_reservacion, PDO::PARAM_INT);

@@ -12,7 +12,7 @@ class eventosDAO{
 
     public function getEventosPorOrganizadora($idOrganizadora){
         try{
-            $sql = "CALL getEventosPorOrganizadora(:id)";
+            $sql = "CALL sp_get_eventos_por_organizadora(:id)";
             $stmt = $this->conexion->prepare($sql);
             $stmt->bindParam(":id", $idOrganizadora, PDO::PARAM_INT);
             $stmt->execute();
@@ -25,7 +25,7 @@ class eventosDAO{
     
     public function getEventosParaCalendario($idOrganizadora){
         try{
-            $sql = "CALL getEventosParaCalendario(:id)";
+            $sql = "CALL sp_get_eventos_para_calendario(:id)";
             $stmt = $this->conexion->prepare($sql);
             $stmt->bindParam(":id", $idOrganizadora, PDO::PARAM_INT);
             $stmt->execute();
@@ -38,7 +38,7 @@ class eventosDAO{
 
     public function getNumeroEventosEsteMes($idOrganizadora){
         try{
-            $sql = "CALL getNumeroEventosEsteMes(:id)";
+            $sql = "CALL sp_get_numero_eventos_este_mes(:id)";
             $stmt = $this->conexion->prepare($sql);
             $stmt->bindParam(":id", $idOrganizadora, PDO::PARAM_INT);
             $stmt->execute();
@@ -52,7 +52,7 @@ class eventosDAO{
 
     public function getTipoActividadPorID($idTipoActividad){
         try{
-            $sql = "CALL getTipoActividadPorID(:id)";
+            $sql = "CALL sp_get_tipo_actividad_por_id(:id)";
             $stmt = $this->conexion->prepare($sql);
             $stmt->bindParam(":id", $idTipoActividad, PDO::PARAM_INT);
             $stmt->execute();
@@ -65,7 +65,7 @@ class eventosDAO{
 
     public function getTodosTiposActividad(){
         try{
-            $sql = "CALL getTodosTiposActividad()";
+            $sql = "CALL sp_get_tipos_actividad()";
             $stmt = $this->conexion->prepare($sql);
             $stmt->execute();
 
@@ -77,7 +77,7 @@ class eventosDAO{
 
     public function getEventoPorID($idEvento){
         try{
-            $sql = "CALL getEventoPorID(:id)";
+            $sql = "CALL sp_get_evento_por_id(:id)";
             $stmt = $this->conexion->prepare($sql);
             $stmt->bindParam(":id", $idEvento, PDO::PARAM_INT);
             $stmt->execute();
@@ -90,7 +90,7 @@ class eventosDAO{
 
     public function filtrarEventosPorLugar($idOrganizadora, $lugar){
         try{
-            $sql = "CALL filtrarEventosPorLugar(:id, :lugar)";
+            $sql = "CALL sp_filtrar_eventos_por_lugar(:id, :lugar)";
             $stmt = $this->conexion->prepare($sql);
             $stmt->bindParam(":id", $idOrganizadora, PDO::PARAM_INT);
             $stmt->bindParam(":lugar", $lugar, PDO::PARAM_STR);
@@ -104,7 +104,7 @@ class eventosDAO{
 
     public function filtrarEventosPorFecha($idOrganizadora, $inicio, $fin){
         try{
-            $sql = "CALL filtrarEventosPorFecha(:id, :inicio, :fin)";
+            $sql = "CALL sp_filtrar_eventos_por_fecha(:id, :inicio, :fin)";
             $stmt = $this->conexion->prepare($sql);
             $stmt->bindParam(":id", $idOrganizadora, PDO::PARAM_INT);
             $stmt->bindParam(":inicio", $inicio);
@@ -119,7 +119,7 @@ class eventosDAO{
 
     public function ordenarEventosPorFecha($idOrganizadora, $asc = true){
         try{
-            $sql = "CALL ordenarEventosPorFecha(:id, :asc_flag)";
+            $sql = "CALL sp_ordenar_eventos_por_fecha(:id, :asc_flag)";
             $stmt = $this->conexion->prepare($sql);
             
             $asc_flag = $asc ? 1 : 0;
@@ -136,7 +136,7 @@ class eventosDAO{
 
     public function actualizarFechaEvento($idEvento, $nuevaFecha) {
         try {
-            $sql = "CALL actualizarFechaEvento(:id, :fecha)";
+            $sql = "CALL sp_actualizar_fecha_evento(:id, :fecha)";
             $stmt = $this->conexion->prepare($sql);
             $stmt->bindParam(":id", $idEvento, PDO::PARAM_INT);
             $stmt->bindParam(":fecha", $nuevaFecha, PDO::PARAM_STR);
@@ -148,7 +148,7 @@ class eventosDAO{
     }
 
     public function actualizarEvento($id_evento, $nombre, $descripcion, $hora_evento, $precio_boleto, $id_lugar, $id_tipo_actividad) {
-        $sql = "CALL actualizarEvento(:id_evento, :nombre, :descripcion, :hora_evento, :precio_boleto, :id_lugar, :id_tipo_actividad)";
+        $sql = "CALL sp_actualizar_evento(:id_evento, :nombre, :descripcion, :hora_evento, :precio_boleto, :id_lugar, :id_tipo_actividad)";
         $stmt = $this->conexion->prepare($sql);
         
         $stmt->bindParam(':id_evento', $id_evento, PDO::PARAM_INT);
@@ -167,7 +167,7 @@ class eventosDAO{
             throw new Exception("El nombre de la imagen no puede estar vacío.");
         }
 
-        $sql = "CALL actualizarImagen(:id_evento, :imagen)";
+        $sql = "CALL sp_actualizar_imagen_evento(:id_evento, :imagen)";
         $stmt = $this->conexion->prepare($sql);
 
         $stmt->bindParam(':imagen', $nuevoNombreImagen, PDO::PARAM_STR);
@@ -178,7 +178,7 @@ class eventosDAO{
 
     public function crearEvento($nombre_evento, $descripcion, $fecha_evento, $hora_evento, $fecha_registro, $precio_boleto, $imagen_url, $id_lugar, $id_tipo_actividad, $id_organizadora) {
         try {
-            $sql = "CALL crearEvento(:nombre_evento, :descripcion, :fecha_evento, :hora_evento, :fecha_registro, :precio_boleto, :imagen_url, :id_lugar, :id_tipo_actividad, :id_organizadora)";
+            $sql = "CALL sp_crear_evento(:nombre_evento, :descripcion, :fecha_evento, :hora_evento, :fecha_registro, :precio_boleto, :imagen_url, :id_lugar, :id_tipo_actividad, :id_organizadora)";
             $stmt = $this->conexion->prepare($sql);
 
             $stmt->bindParam(":nombre_evento", $nombre_evento);
@@ -206,7 +206,7 @@ class eventosDAO{
     }
 
     public function eliminarEvento($id_evento) {
-        $sql = "CALL eliminarEvento(:id_evento)";
+        $sql = "CALL sp_eliminar_evento(:id_evento)";
         $stmt = $this->conexion->prepare($sql);
         $stmt->bindParam(':id_evento', $id_evento, PDO::PARAM_INT);
 

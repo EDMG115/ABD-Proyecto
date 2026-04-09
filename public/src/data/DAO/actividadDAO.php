@@ -16,7 +16,7 @@ class actividadDAO
     public function getActividades()
     {
         try {
-            $sql = "CALL getTipoactividad()";
+            $sql = "CALL sp_get_tipos_actividad()";
             $stmt = $this->conexion->prepare($sql);
             $stmt->execute();
 

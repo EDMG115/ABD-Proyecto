@@ -16,21 +16,21 @@ class ViajesDAO {
 
     public function getAllViajes() {
         // Llamada al procedimiento almacenado
-        $sql = "CALL getAllViajes()";
+        $sql = "CALL sp_get_all_viajes()";
         $stmt = $this->conexion->prepare($sql);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     public function getViajePorID($id_viaje) {
-        $sql = "CALL getViajePorID(?)";
+        $sql = "CALL sp_get_viaje_por_id(?)";
         $stmt = $this->conexion->prepare($sql);
         $stmt->execute([$id_viaje]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
     public function getViajesPorCliente($id_cliente) {
-        $sql = "CALL getViajesPorCliente(?)";
+        $sql = "CALL sp_get_viajes_por_cliente(?)";
         $stmt = $this->conexion->prepare($sql);
         $stmt->execute([$id_cliente]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -41,7 +41,7 @@ class ViajesDAO {
     // ==========================================
 
     public function crearViaje($id_cliente, $id_paquete, $estado, $fecha_viaje, $hora_viaje) {
-        $sql = "CALL crearViaje(?, ?, ?, ?, ?)";
+        $sql = "CALL sp_crear_viaje(?, ?, ?, ?, ?)";
         $stmt = $this->conexion->prepare($sql);
         $stmt->execute([$id_cliente, $id_paquete, $estado, $fecha_viaje, $hora_viaje]);
         
@@ -56,15 +56,19 @@ class ViajesDAO {
     // ==========================================
 
     public function actualizarViaje($id_viaje, $id_cliente, $id_paquete, $estado, $fecha_viaje, $hora_viaje) {
-        $sql = "CALL actualizarViaje(?, ?, ?, ?, ?, ?)";
+        $sql = "CALL sp_actualizar_viaje(?, ?, ?, ?, ?, ?)";
         $stmt = $this->conexion->prepare($sql);
         return $stmt->execute([$id_viaje, $id_cliente, $id_paquete, $estado, $fecha_viaje, $hora_viaje]);
     }
 
     public function actualizarEstadoViaje($id_viaje, $nuevo_estado) {
-        $sql = "CALL actualizarEstadoViaje(?, ?)";
+        $sql = "CALL sp_actualizar_estado_viaje(?, ?)";
         $stmt = $this->conexion->prepare($sql);
         return $stmt->execute([$id_viaje, $nuevo_estado]);
+    }
+
+    public function cancelarViaje($id_viaje) {
+        return $this->actualizarEstadoViaje($id_viaje, 'cancelado');
     }
 
     // ==========================================
@@ -72,7 +76,7 @@ class ViajesDAO {
     // ==========================================
 
     public function eliminarViaje($id_viaje) {
-        $sql = "CALL eliminarViaje(?)";
+        $sql = "CALL sp_eliminar_viaje(?)";
         $stmt = $this->conexion->prepare($sql);
         return $stmt->execute([$id_viaje]);
     }

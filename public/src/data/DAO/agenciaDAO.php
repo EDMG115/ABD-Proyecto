@@ -12,7 +12,7 @@ class agenciaDAO{
     }
     public function altaAgencia($descripcion, $nombre, $fecha, $direccion, $imagen, $usuario, $clave, $cel, $correo){
     try{
-        $sql = "CALL altas_agencia(:descripcion, :nombre, :fecha, :direccion, :imagen, :usuario, :clave, :cel, :correo)";
+        $sql = "CALL sp_alta_agencia(:descripcion, :nombre, :fecha, :direccion, :imagen, :usuario, :clave, :cel, :correo)";
         
         $stmt = $this->conexion->prepare($sql);
 
@@ -34,7 +34,7 @@ class agenciaDAO{
 }
     public function actualizarAgencia($id, $descripcion, $nombre, $direccion, $imagen, $usuario, $clave, $cel, $correo){
     try{
-        $sql = "CALL actualiza_agencia(:id, :descripcion, :nombre, :direccion, :imagen, :usuario, :clave, :cel, :correo)";
+        $sql = "CALL sp_actualizar_agencia(:id, :descripcion, :nombre, :direccion, :imagen, :usuario, :clave, :cel, :correo)";
         
         $stmt = $this->conexion->prepare($sql);
 
@@ -56,7 +56,7 @@ class agenciaDAO{
 }
     public function eliminarAgencia($id){
     try{
-        $sql = "CALL bajas_agencia(:id)";
+        $sql = "CALL sp_baja_agencia(:id)";
         
         $stmt = $this->conexion->prepare($sql);
         $stmt->bindParam(":id", $id, PDO::PARAM_INT);
@@ -69,7 +69,7 @@ class agenciaDAO{
 }
     public function validarAgencia(string $user, string $password){
         try{
-            $sql = "CALL consultar_useragencia(:user)";//$sql = "SELECT * FROM agencias WHERE user = :user";
+            $sql = "CALL sp_consultar_agencia_por_usuario(:user)";//$sql = "SELECT * FROM agencias WHERE user = :user";
 
             $stmt = $this->conexion->prepare($sql);
             $stmt->bindParam(':user', $user); 
@@ -89,7 +89,7 @@ class agenciaDAO{
 
     public function getAgenciaPorID($idAgencia){
         try{
-            $sql = "CALL consultar_idagencia(:id)";//$sql = "SELECT * FROM agencias WHERE id_agencia = :id";
+            $sql = "CALL sp_consultar_agencia_por_id(:id)";//$sql = "SELECT * FROM agencias WHERE id_agencia = :id";
             $stmt = $this->conexion->prepare($sql);
             $stmt->bindParam(":id", $idAgencia, PDO::PARAM_INT);
             $stmt->execute();

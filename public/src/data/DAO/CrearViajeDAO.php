@@ -13,7 +13,7 @@ class CrearViajeDAO{
     public function crearViaje($id_cliente, $id_paquete, $estado, $fecha_viaje, $hora_viaje)
     {
         try {
-            $sql = "CALL crearViaje(:id_cliente, :id_paquete, :estado, :fecha_viaje, :hora_viaje)";
+            $sql = "CALL sp_crear_viaje(:id_cliente, :id_paquete, :estado, :fecha_viaje, :hora_viaje)";
             $stmt = $this->conexion->prepare($sql);
 
             $stmt->bindParam(':id_cliente', $id_cliente);

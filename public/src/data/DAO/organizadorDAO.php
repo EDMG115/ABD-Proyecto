@@ -12,7 +12,7 @@ class organizadorDAO{
 
     public function validarOrganizador(string $user, string $password){
         try{
-            $sql = "CALL validarOrganizador(:user)";
+            $sql = "CALL sp_validar_organizador(:user)";
 
             $stmt = $this->conexion->prepare($sql);
             $stmt->bindParam(':user', $user); 
@@ -31,7 +31,7 @@ class organizadorDAO{
 
     public function getOrganizadorPorID($idOrganizadora){
         try{
-            $sql = "CALL getOrganizadorPorID(:id)";
+            $sql = "CALL sp_get_organizadora_por_id(:id)";
             $stmt = $this->conexion->prepare($sql);
             $stmt->bindParam(":id", $idOrganizadora, PDO::PARAM_INT);
             $stmt->execute();

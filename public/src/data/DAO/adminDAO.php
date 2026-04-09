@@ -13,7 +13,7 @@ class adminDAO{
 
     public function validarAdmin(string $user, string $password){
         try {
-            $sql = "CALL getAdminPorUsuario(:user)";
+            $sql = "CALL sp_get_admin_por_usuario(:user)";
             $stmt = $this->conexion->prepare($sql);
             $stmt->bindParam(':user', $user);
             $stmt->execute();

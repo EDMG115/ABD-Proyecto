@@ -1,6 +1,14 @@
 <?php
+require_once "./../util/seguridad.php";
 require_once "./../dao/infoEventosDAO.php";
 header('Content-Type: application/json');
+
+if (!verificarPermisos("ver_reportes")) {
+    http_response_code(403);
+    echo json_encode(['correcto' => false, 'mensaje' => 'No autorizado']);
+    exit;
+}
+
 $lugarDAO = new infoEventosDAO();
 $RUTA_IMG_ESTANDAR = "./../../media/images/lugares/";
 $RUTA_IMG_ESTANDAR2 = "./../../media/images/events/";

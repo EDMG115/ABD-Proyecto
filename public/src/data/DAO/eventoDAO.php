@@ -14,7 +14,7 @@ class eventoDAO
     public function getEvento()
     {
         try {
-            $sql = "CALL getAllEventos()";
+            $sql = "CALL sp_get_all_eventos()";
 
             $stmt = $this->conexion->prepare($sql);
             $stmt->execute();

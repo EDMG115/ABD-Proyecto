@@ -13,7 +13,7 @@ class usuarioDAO{
 
     public function validarUsuario(string $user, string $password){
         try{
-            $sql = "CALL validarUsuario(:user)";
+            $sql = "CALL sp_validar_cliente_por_usuario(:user)";
             $stmt = $this->conexion->prepare($sql);
 
             $stmt->bindParam(':user', $user, PDO::PARAM_STR);

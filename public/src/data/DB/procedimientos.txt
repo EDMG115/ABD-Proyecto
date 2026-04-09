@@ -1,6 +1,6 @@
 
 DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `actualizarEstadoViaje`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_actualizar_estado_viaje`(
     IN p_id_viaje INT, 
     IN p_nuevo_estado VARCHAR(255)
 )
@@ -12,7 +12,7 @@ END ;;
 DELIMITER ;
 
 DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `actualizarEvento`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_actualizar_evento`(
     IN p_id_evento INT, IN p_nombre VARCHAR(255), IN p_descripcion TEXT,
     IN p_hora_evento TIME, IN p_precio_boleto DECIMAL(10,2), 
     IN p_id_lugar INT, IN p_id_tipo_actividad INT
@@ -31,14 +31,14 @@ DELIMITER ;
 
 DELIMITER ;;
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `actualizarFechaEvento`(IN p_id_evento INT, IN p_nueva_fecha DATE)
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_actualizar_fecha_evento`(IN p_id_evento INT, IN p_nueva_fecha DATE)
 BEGIN
     UPDATE eventos SET fecha_evento = p_nueva_fecha WHERE id_evento = p_id_evento;
 END ;;
 DELIMITER ;
 
 DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `actualizarImagen`(IN p_id_evento INT, IN p_imagen_url VARCHAR(255))
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_actualizar_imagen_evento`(IN p_id_evento INT, IN p_imagen_url VARCHAR(255))
 BEGIN
     UPDATE eventos SET imagen_url = p_imagen_url WHERE id_evento = p_id_evento;
 END ;;
@@ -46,7 +46,7 @@ DELIMITER ;
 
 
 DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `actualizarImagenLugar`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_actualizar_imagen_lugar`(
     IN p_id INT,
     IN p_imagen VARCHAR(255)
 )
@@ -58,7 +58,7 @@ END ;;
 DELIMITER ;
 
 DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `actualizarImagenPaquete`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_actualizar_imagen_paquete`(
     IN p_id INT,
     IN p_imagen VARCHAR(255)
 )
@@ -70,7 +70,7 @@ END ;;
 DELIMITER ;
 
 DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `actualizarLugar`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_actualizar_lugar`(
     IN p_id INT,
     IN p_nombre VARCHAR(150),
     IN p_descripcion TEXT,
@@ -91,7 +91,7 @@ END ;;
 DELIMITER ;
 
 DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `actualizarPaquete`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_actualizar_paquete`(
     IN p_id INT,
     IN p_nombre VARCHAR(150),
     IN p_descripcion TEXT,
@@ -109,7 +109,7 @@ END ;;
 DELIMITER ;
 
 DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `actualizarViaje`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_actualizar_viaje`(
     IN p_id_viaje INT,
     IN p_id_cliente INT,
     IN p_id_paquete INT,
@@ -129,7 +129,7 @@ END ;;
 DELIMITER ;
 
 DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `actualiza_agencia`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_actualizar_agencia`(
 	in id int, 
     in descripcion text,
 	in nombre varchar(255),
@@ -155,7 +155,7 @@ BEGIN
 DELIMITER ;
 
 DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `altas_agencia`( 
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_alta_agencia`( 
 	in descripcion text,
 	in nombre varchar(255),
 	in fecha date,
@@ -182,7 +182,7 @@ BEGIN
 DELIMITER ;
 
 DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `bajas_agencia`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_baja_agencia`(
 	in p_id int)
 BEGIN
 			IF EXISTS (SELECT 1 FROM agencias WHERE id_agencia = p_id) THEN
@@ -193,7 +193,7 @@ BEGIN
 DELIMITER ;
 
 DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `cancelarReservacion`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_cancelar_reservacion`(
     IN p_id_reservacion INT
 )
 BEGIN
@@ -205,7 +205,7 @@ END ;;
 DELIMITER ;
 
 DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `consultar_idagencia`( 
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_consultar_agencia_por_id`( 
 	in p_id int)
 BEGIN
 			IF EXISTS (SELECT 1 FROM agencias WHERE id_agencia = p_id) THEN
@@ -216,7 +216,7 @@ BEGIN
 DELIMITER ;
 
 DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `consultar_useragencia`( 
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_consultar_agencia_por_usuario`( 
 	in p_user varchar(255))
 BEGIN
 			IF EXISTS (SELECT 1 FROM agencias WHERE user = p_user) THEN
@@ -227,7 +227,7 @@ BEGIN
 DELIMITER ;
 
 DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `crearEvento`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_crear_evento`(
     IN p_nombre_evento VARCHAR(255), IN p_descripcion TEXT, IN p_fecha_evento DATE,
     IN p_hora_evento TIME, IN p_fecha_registro DATE, IN p_precio_boleto DECIMAL(10,2),
     IN p_imagen_url VARCHAR(255), IN p_id_lugar INT, IN p_id_tipo_actividad INT, IN p_id_organizadora INT
@@ -245,7 +245,7 @@ END ;;
 DELIMITER ;
 
 DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `crearLugar`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_crear_lugar`(
     IN p_nombre VARCHAR(150),
     IN p_descripcion TEXT,
     IN p_direccion VARCHAR(255),
@@ -266,7 +266,7 @@ END ;;
 DELIMITER ;
 
 DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `crearPaquete`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_crear_paquete`(
     IN p_nombre VARCHAR(150),
     IN p_descripcion TEXT,
     IN p_precio DECIMAL(10,2),
@@ -297,7 +297,7 @@ END ;;
 DELIMITER ;
 
 DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `crearReservacion`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_crear_reservacion`(
     IN p_id_evento INT,
     IN p_id_cliente INT,
     IN p_estado VARCHAR(50)
@@ -311,7 +311,7 @@ END ;;
 DELIMITER ;
 
 DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `crearViaje`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_crear_viaje`(
     IN p_id_cliente INT,
     IN p_id_paquete INT,
     IN p_estado VARCHAR(255),
@@ -328,14 +328,14 @@ END ;;
 DELIMITER ;
 
 DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `eliminarEvento`(IN p_id_evento INT)
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_eliminar_evento`(IN p_id_evento INT)
 BEGIN
     DELETE FROM eventos WHERE id_evento = p_id_evento;
 END ;;
 DELIMITER ;
 
 DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `eliminarLugar`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_eliminar_lugar`(
     IN p_id INT
 )
 BEGIN
@@ -345,7 +345,7 @@ END ;;
 DELIMITER ;
 
 DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `eliminarPaquete`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_eliminar_paquete`(
     IN p_id INT
 )
 BEGIN
@@ -355,14 +355,14 @@ END ;;
 DELIMITER ;
 
 DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `eliminarViaje`(IN p_id_viaje INT)
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_eliminar_viaje`(IN p_id_viaje INT)
 BEGIN
     DELETE FROM viajes WHERE id_viaje = p_id_viaje;
 END ;;
 DELIMITER ;
 
 DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `existeUsuario`(IN p_user VARCHAR(100))
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_existe_usuario`(IN p_user VARCHAR(100))
 BEGIN
     SELECT 
         (SELECT COUNT(*) FROM clientes WHERE user = p_user) +
@@ -373,7 +373,7 @@ END ;;
 DELIMITER ;
 
 DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `filtrarEventosPorFecha`(IN p_id_organizadora INT, IN p_inicio DATE, IN p_fin DATE)
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_filtrar_eventos_por_fecha`(IN p_id_organizadora INT, IN p_inicio DATE, IN p_fin DATE)
 BEGIN
     SELECT * FROM eventos
     WHERE id_organizadora = p_id_organizadora
@@ -382,7 +382,7 @@ END ;;
 DELIMITER ;
 
 DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `filtrarEventosPorLugar`(IN p_id_organizadora INT, IN p_lugar VARCHAR(255))
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_filtrar_eventos_por_lugar`(IN p_id_organizadora INT, IN p_lugar VARCHAR(255))
 BEGIN
     SELECT * FROM eventos e
     JOIN lugares l ON l.id_lugar = e.id_lugar
@@ -394,7 +394,7 @@ DELIMITER ;
 
 
 DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `filtrarPaquetesPorLugar`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_filtrar_paquetes_por_lugar`(
     IN p_id_agencia INT,
     IN p_lugar VARCHAR(150)
 )
@@ -408,7 +408,7 @@ END ;;
 DELIMITER ;
 
 DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `getAdminPorUsuario`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_get_admin_por_usuario`(
     IN p_user VARCHAR(100)
 )
 BEGIN
@@ -419,28 +419,28 @@ END ;;
 DELIMITER ;
 
 DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `getAllEventos`()
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_get_all_eventos`()
 BEGIN
     SELECT * FROM eventos;
 END ;;
 DELIMITER ;
 
 DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `getAllViajes`()
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_get_all_viajes`()
 BEGIN
     SELECT * FROM viajes;
 END ;;
 DELIMITER ;
 
 DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `getEventoPorID`(IN p_id_evento INT)
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_get_evento_por_id`(IN p_id_evento INT)
 BEGIN
     SELECT * FROM eventos WHERE id_evento = p_id_evento;
 END ;;
 DELIMITER ;
 
 DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `getEventosDisponibles`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_get_eventos_disponibles`(
     IN p_limite INT
 )
 BEGIN
@@ -483,7 +483,7 @@ END ;;
 DELIMITER ;
 
 DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `getEventosParaCalendario`(IN p_id_organizadora INT)
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_get_eventos_para_calendario`(IN p_id_organizadora INT)
 BEGIN
     SELECT E.id_evento, E.nombre_evento, E.descripcion, E.fecha_evento, 
            E.hora_evento, E.precio_boleto, E.imagen_url, L.nombre_lugar 
@@ -494,14 +494,14 @@ END ;;
 DELIMITER ;
 
 DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `getEventosPorOrganizadora`(IN p_id_organizadora INT)
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_get_eventos_por_organizadora`(IN p_id_organizadora INT)
 BEGIN
     SELECT * FROM eventos WHERE id_organizadora = p_id_organizadora;
 END ;;
 DELIMITER ;
 
 DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `getLugares`()
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_get_lugares`()
 BEGIN
     SELECT * FROM lugares
     ORDER BY zona;
@@ -509,7 +509,7 @@ END ;;
 DELIMITER ;
 
 DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `getLugaresMasPopulares`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_get_lugares_mas_populares`(
     IN p_limite INT
 )
 BEGIN
@@ -538,7 +538,7 @@ END ;;
 DELIMITER ;
 
 DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `getLugarPorId`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_get_lugar_por_id`(
     IN p_id INT
 )
 BEGIN
@@ -548,7 +548,7 @@ END ;;
 DELIMITER ;
 
 DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `getNumeroEventosEsteMes`(IN p_id_organizadora INT)
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_get_numero_eventos_este_mes`(IN p_id_organizadora INT)
 BEGIN
     SELECT COUNT(*) AS total
     FROM eventos
@@ -559,7 +559,7 @@ END ;;
 DELIMITER ;
 
 DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `getNumeroPaquetesPorAgencia`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_get_numero_paquetes_por_agencia`(
     IN p_id_agencia INT
 )
 BEGIN
@@ -570,14 +570,14 @@ END ;;
 DELIMITER ;
 
 DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `getOrganizadorPorID`(IN p_id_organizadora INT)
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_get_organizadora_por_id`(IN p_id_organizadora INT)
 BEGIN
     SELECT * FROM organizadoras WHERE id_organizadora = p_id_organizadora;
 END ;;
 DELIMITER ;
 
 DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `getPaquetePorId`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_get_paquete_por_id`(
     IN p_id INT
 )
 BEGIN
@@ -587,7 +587,7 @@ END ;;
 DELIMITER ;
 
 DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `getPaquetesOrdenadosPorPrecio`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_get_paquetes_ordenados_por_precio`(
     IN p_id_agencia INT,
     IN p_orden VARCHAR(4) -- 'ASC' o 'DESC'
 )
@@ -609,7 +609,7 @@ END ;;
 DELIMITER ;
 
 DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `getPaquetesPorAgencia`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_get_paquetes_por_agencia`(
     IN p_id_agencia INT
 )
 BEGIN
@@ -621,7 +621,7 @@ END ;;
 DELIMITER ;
 
 DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `getPaquetesPorLugar`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_get_paquetes_por_lugar`(
     IN p_id_lugar INT
 )
 BEGIN
@@ -630,36 +630,32 @@ BEGIN
 END ;;
 DELIMITER ;
 
+
 DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `getTipoactividad`()
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_get_tipos_actividad`()
 BEGIN
-    SELECT * FROM tipoactividad;
+    SELECT * FROM tipoactividad ORDER BY id_tipo_actividad ASC;
 END ;;
 DELIMITER ;
 
+
+
 DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `getTipoActividadPorID`(IN p_id_tipo_actividad INT)
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_get_tipo_actividad_por_id`(IN p_id_tipo_actividad INT)
 BEGIN
     SELECT * FROM tipoactividad WHERE id_tipo_actividad = p_id_tipo_actividad;
 END ;;
 DELIMITER ;
 
 DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `getTodosTiposActividad`()
-BEGIN
-    SELECT * FROM tipo_actividad ORDER BY nombre_tipo;
-END ;;
-DELIMITER ;
-
-DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `getViajePorID`(IN p_id_viaje INT)
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_get_viaje_por_id`(IN p_id_viaje INT)
 BEGIN
     SELECT * FROM viajes WHERE id_viaje = p_id_viaje;
 END ;;
 DELIMITER ;
 
 DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `getViajesPorCliente`(IN p_id_cliente INT)
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_get_viajes_por_cliente`(IN p_id_cliente INT)
 BEGIN
     SELECT v.id_viaje, v.estado, v.fecha_viaje, v.hora_viaje, p.nombre_paquete, p.precio 
     FROM viajes v
@@ -670,7 +666,7 @@ END ;;
 DELIMITER ;
 
 DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `obtenerHistorialDetallado`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_obtener_historial_reservaciones_cliente`(
     IN p_id_cliente INT
 )
 BEGIN
@@ -698,7 +694,7 @@ END ;;
 DELIMITER ;
 
 DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `ordenarEventosPorFecha`(IN p_id_organizadora INT, IN p_asc TINYINT(1))
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_ordenar_eventos_por_fecha`(IN p_id_organizadora INT, IN p_asc TINYINT(1))
 BEGIN
     IF p_asc = 1 THEN
         SELECT * FROM eventos WHERE id_organizadora = p_id_organizadora ORDER BY fecha_evento ASC;
@@ -709,7 +705,7 @@ END ;;
 DELIMITER ;
 
 DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `registroAgencia`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_registro_agencia`(
     IN p_user VARCHAR(100),
     IN p_password VARCHAR(255),
     IN p_descripcion TEXT,
@@ -735,7 +731,7 @@ END ;;
 DELIMITER ;
 
 DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `registroCliente`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_registro_cliente`(
     IN p_user VARCHAR(100),
     IN p_password VARCHAR(255),
     IN p_nombre VARCHAR(100),
@@ -752,7 +748,7 @@ END ;;
 DELIMITER ;
 
 DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `registroOrganizadora`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_registro_organizadora`(
     IN p_user VARCHAR(100),
     IN p_password VARCHAR(255),
     IN p_descripcion TEXT,
@@ -778,7 +774,7 @@ END ;;
 DELIMITER ;
 
 DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_getAgenciasMejorRemuneradas`()
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_get_agencias_mejor_remuneradas`()
 BEGIN
     SELECT 
         a.id_agencia, 
@@ -806,7 +802,7 @@ END ;;
 DELIMITER ;
 
 DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_getAgenciasPeorRemuneradas`()
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_get_agencias_peor_remuneradas`()
 BEGIN
     SELECT 
         a.id_agencia, 
@@ -834,7 +830,7 @@ END ;;
 DELIMITER ;
 
 DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_getAsistenciasCompletadas`()
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_get_asistencias_completadas`()
 BEGIN
     SELECT COUNT(id_reservacion) AS count 
     FROM reservaciones 
@@ -843,7 +839,7 @@ END ;;
 DELIMITER ;
 
 DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_getDetalleOrganizadora`(IN p_id_organizadora INT)
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_get_detalle_organizadora`(IN p_id_organizadora INT)
 BEGIN
     SELECT 
         o.id_organizadora, 
@@ -871,7 +867,7 @@ END ;;
 DELIMITER ;
 
 DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_getEventosMasPopulares`()
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_get_eventos_mas_populares`()
 BEGIN
     SELECT 
         e.id_evento, 
@@ -902,7 +898,7 @@ END ;;
 DELIMITER ;
 
 DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_getEventosMejorRemunerados`()
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_get_eventos_mejor_remunerados`()
 BEGIN
     SELECT 
         e.id_evento, 
@@ -938,7 +934,7 @@ END ;;
 DELIMITER ;
 
 DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_getEventosMenosPopulares`()
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_get_eventos_menos_populares`()
 BEGIN
     SELECT 
         e.id_evento, 
@@ -969,7 +965,7 @@ END ;;
 DELIMITER ;
 
 DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_getEventosPeorRemunerados`()
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_get_eventos_peor_remunerados`()
 BEGIN
     SELECT 
         e.id_evento, 
@@ -1005,7 +1001,7 @@ END ;;
 DELIMITER ;
 
 DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_getEventosPorLugar`(IN p_id_lugar INT)
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_get_eventos_por_lugar`(IN p_id_lugar INT)
 BEGIN
     SELECT 
         e.id_evento, 
@@ -1018,7 +1014,7 @@ END ;;
 DELIMITER ;
 
 DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_getLugares`()
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_get_lugares_resumen`()
 BEGIN
     SELECT 
         id_lugar, 
@@ -1029,7 +1025,7 @@ END ;;
 DELIMITER ;
 
 DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_getMasPopulares`()
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_get_lugares_top_mas_populares`()
 BEGIN
     SELECT 
         l.id_lugar, 
@@ -1056,7 +1052,7 @@ END ;;
 DELIMITER ;
 
 DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_getMenosPopulares`()
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_get_lugares_top_menos_populares`()
 BEGIN
     SELECT 
         l.id_lugar, 
@@ -1083,7 +1079,7 @@ END ;;
 DELIMITER ;
 
 DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_getOrganizadoraFiltrada`(IN p_id_organizadora INT)
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_get_organizadora_filtrada`(IN p_id_organizadora INT)
 BEGIN
     SELECT 
         o.id_organizadora, 
@@ -1109,7 +1105,7 @@ END ;;
 DELIMITER ;
 
 DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_getOrganizadoraPorEvento`(IN p_id_evento INT)
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_get_organizadora_por_evento`(IN p_id_evento INT)
 BEGIN
     SELECT 
         o.id_organizadora, 
@@ -1122,7 +1118,7 @@ END ;;
 DELIMITER ;
 
 DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_getOrganizadorasMejorRemuneradas`()
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_get_organizadoras_mejor_remuneradas`()
 BEGIN
     SELECT 
         o.id_organizadora, 
@@ -1149,7 +1145,7 @@ END ;;
 DELIMITER ;
 
 DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_getOrganizadorasPeorRemuneradas`()
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_get_organizadoras_peor_remuneradas`()
 BEGIN
     SELECT 
         o.id_organizadora, 
@@ -1176,7 +1172,7 @@ END ;;
 DELIMITER ;
 
 DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_getReservacionesCanceladas`()
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_get_reservaciones_canceladas`()
 BEGIN
     SELECT COUNT(id_reservacion) AS count 
     FROM reservaciones 
@@ -1185,7 +1181,7 @@ END ;;
 DELIMITER ;
 
 DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_getReservacionesPendientes`()
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_get_reservaciones_pendientes`()
 BEGIN
     SELECT COUNT(id_reservacion) AS count 
     FROM reservaciones 
@@ -1194,7 +1190,7 @@ END ;;
 DELIMITER ;
 
 DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_getReservacionesTotales`()
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_get_reservaciones_totales`()
 BEGIN
     SELECT COUNT(id_reservacion) AS count 
     FROM reservaciones;
@@ -1202,7 +1198,7 @@ END ;;
 DELIMITER ;
 
 DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_getViajesMasPopulares`()
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_get_viajes_mas_populares`()
 BEGIN
     SELECT 
         p.id_paquete, 
@@ -1231,7 +1227,7 @@ END ;;
 DELIMITER ;
 
 DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_getViajesMejorRemunerados`()
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_get_viajes_mejor_remunerados`()
 BEGIN
     SELECT 
         p.id_paquete, 
@@ -1261,7 +1257,7 @@ END ;;
 DELIMITER ;
 
 DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_getViajesMenosPopulares`()
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_get_viajes_menos_populares`()
 BEGIN
     SELECT 
         p.id_paquete, 
@@ -1290,7 +1286,7 @@ END ;;
 DELIMITER ;
 
 DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_getViajesPeorRemunerados`()
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_get_viajes_peor_remunerados`()
 BEGIN
     SELECT 
         p.id_paquete, 
@@ -1320,14 +1316,14 @@ END ;;
 DELIMITER ;
 
 DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `validarOrganizador`(IN p_user VARCHAR(255))
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_validar_organizador`(IN p_user VARCHAR(255))
 BEGIN
     SELECT * FROM organizadoras WHERE user = p_user;
 END ;;
 DELIMITER ;
 
 DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `validarUsuario`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_validar_cliente_por_usuario`(
     IN p_user VARCHAR(50)
 )
 BEGIN

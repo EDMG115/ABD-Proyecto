@@ -13,7 +13,7 @@ class CrearReservacionDAO{
     public function crearReservacion($id_evento, $id_cliente, $estado)
     {
         try {
-            $sql = "CALL crearReservacion(:id_evento, :id_cliente, :estado)";
+            $sql = "CALL sp_crear_reservacion(:id_evento, :id_cliente, :estado)";
             $stmt = $this->conexion->prepare($sql);
 
             $stmt->bindParam(':id_evento', $id_evento);

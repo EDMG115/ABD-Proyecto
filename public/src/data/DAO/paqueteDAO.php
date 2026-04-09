@@ -13,7 +13,7 @@ class paqueteDAO{
 
     public function getPaquetesPorAgencia($idAgencia){
         try{
-            $sql = "CALL getPaquetesPorAgencia(:id)";
+            $sql = "CALL sp_get_paquetes_por_agencia(:id)";
             $stmt = $this->conexion->prepare($sql);
 
             $stmt->bindParam(":id", $idAgencia, PDO::PARAM_INT);
@@ -30,7 +30,7 @@ class paqueteDAO{
 
     public function getPaquetePorID($idPaquete){
         try{
-            $sql = "CALL getPaquetePorID(:id)";
+            $sql = "CALL sp_get_paquete_por_id(:id)";
             $stmt = $this->conexion->prepare($sql);
             
             $stmt->bindParam(":id", $idPaquete, PDO::PARAM_INT);
@@ -47,7 +47,7 @@ class paqueteDAO{
 
     public function getPaquetesPorLugar($id_lugar){
         try{
-            $sql = "CALL getPaquetesPorLugar(:id_lugar)";
+            $sql = "CALL sp_get_paquetes_por_lugar(:id_lugar)";
             
             $stmt = $this->conexion->prepare($sql);
             $stmt -> bindParam(':id_lugar', $id_lugar, PDO::PARAM_INT);
@@ -65,7 +65,7 @@ class paqueteDAO{
 
     public function getNumeroPaquetesEsteMes($idAgencia){
         try{
-            $sql = "CALL getNumeroPaquetesPorAgencia(:id)";
+            $sql = "CALL sp_get_numero_paquetes_por_agencia(:id)";
             $stmt = $this->conexion->prepare($sql);
 
             $stmt->bindParam(":id", $idAgencia, PDO::PARAM_INT);
@@ -82,7 +82,7 @@ class paqueteDAO{
 
     public function filtrarPaquetesPorLugar($idAgencia, $lugar){
         try{
-            $sql = "CALL filtrarPaquetesPorLugar(:id, :lugar)";
+            $sql = "CALL sp_filtrar_paquetes_por_lugar(:id, :lugar)";
             $stmt = $this->conexion->prepare($sql);
 
             $stmt->bindParam(":id", $idAgencia, PDO::PARAM_INT);
@@ -101,7 +101,7 @@ class paqueteDAO{
 
     public function ordenarPaquetesPorPrecio($idAgencia, $asc = true){
         try{
-            $sql = "CALL getPaquetesOrdenadosPorPrecio(:id, :orden)";
+            $sql = "CALL sp_get_paquetes_ordenados_por_precio(:id, :orden)";
             $stmt = $this->conexion->prepare($sql);
 
             $orden = $asc ? 'ASC' : 'DESC';
@@ -122,7 +122,7 @@ class paqueteDAO{
 
     public function crearPaquete($nombre_paquete, $descripcion_paquete, $precio, $imagen_url, $id_lugar, $id_agencia) {
         try {
-            $sql = "CALL crearPaquete(:nombre, :descripcion, :precio, :imagen, :id_lugar, :id_agencia)";
+            $sql = "CALL sp_crear_paquete(:nombre, :descripcion, :precio, :imagen, :id_lugar, :id_agencia)";
             $stmt = $this->conexion->prepare($sql);
 
             $stmt->bindParam(":nombre", $nombre_paquete);
@@ -146,7 +146,7 @@ class paqueteDAO{
 
     public function actualizarPaquete($id_paquete, $nombre_paquete, $descripcion_paquete, $precio, $id_lugar) {
         try {
-            $sql = "CALL actualizarPaquete(:id, :nombre, :descripcion, :precio, :id_lugar)";
+            $sql = "CALL sp_actualizar_paquete(:id, :nombre, :descripcion, :precio, :id_lugar)";
             $stmt = $this->conexion->prepare($sql);
 
             $stmt->bindParam(':id', $id_paquete);
@@ -169,7 +169,7 @@ class paqueteDAO{
             throw new Exception("El nombre de la imagen no puede estar vacío.");
         }
 
-        $sql = "CALL actualizarImagenPaquete(:id, :imagen)";
+        $sql = "CALL sp_actualizar_imagen_paquete(:id, :imagen)";
         $stmt = $this->conexion->prepare($sql);
 
         $stmt->bindParam(':id', $id_paquete);
@@ -182,7 +182,7 @@ class paqueteDAO{
     }
 
     public function eliminarPaquete($id_paquete) {
-        $sql = "CALL eliminarPaquete(:id)";
+        $sql = "CALL sp_eliminar_paquete(:id)";
         $stmt = $this->conexion->prepare($sql);
 
         $stmt->bindParam(':id', $id_paquete);

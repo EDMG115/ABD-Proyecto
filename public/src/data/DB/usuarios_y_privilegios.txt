@@ -1,0 +1,221 @@
+
+-- Crear los usuarios con sus contraseñas
+CREATE USER 'arc_admin'@'%' IDENTIFIED BY 'k9#Mv2!pL8$zQ1w';
+CREATE USER 'arc_org_eventos'@'%' IDENTIFIED BY 'rE6&hF3%vP0+gK4';
+CREATE USER 'arc_org_viajes'@'%' IDENTIFIED BY 'T4@jN7*cX5^bY9m';
+CREATE USER 'arc_cliente'@'%' IDENTIFIED BY 'W2$yA8!sD9#nJ5tX7@';
+CREATE USER 'arc_invitado'@'%' IDENTIFIED BY 'nE6&iZ2%vH0+gN9';
+
+
+-- Privilegios para arc_invitado
+
+GRANT EXECUTE ON PROCEDURE sp_actualizar_fecha_evento TO 'arc_invitado'@'%';
+GRANT EXECUTE ON PROCEDURE sp_consultar_agencia_por_id TO 'arc_invitado'@'%';
+GRANT EXECUTE ON PROCEDURE sp_consultar_agencia_por_usuario TO 'arc_invitado'@'%';
+GRANT EXECUTE ON PROCEDURE sp_existe_usuario TO 'arc_invitado'@'%';
+GRANT EXECUTE ON PROCEDURE sp_filtrar_eventos_por_fecha TO 'arc_invitado'@'%';
+GRANT EXECUTE ON PROCEDURE sp_filtrar_paquetes_por_lugar TO 'arc_invitado'@'%';
+GRANT EXECUTE ON PROCEDURE sp_get_admin_por_usuario TO 'arc_invitado'@'%';
+GRANT EXECUTE ON PROCEDURE sp_get_all_eventos TO 'arc_invitado'@'%';
+GRANT EXECUTE ON PROCEDURE sp_get_evento_por_id TO 'arc_invitado'@'%';
+GRANT EXECUTE ON PROCEDURE sp_get_eventos_disponibles TO 'arc_invitado'@'%';
+GRANT EXECUTE ON PROCEDURE sp_get_eventos_para_calendario TO 'arc_invitado'@'%';
+GRANT EXECUTE ON PROCEDURE sp_get_eventos_por_organizadora TO 'arc_invitado'@'%';
+GRANT EXECUTE ON PROCEDURE sp_get_lugar_por_id TO 'arc_invitado'@'%';
+GRANT EXECUTE ON PROCEDURE sp_get_lugares TO 'arc_invitado'@'%';
+GRANT EXECUTE ON PROCEDURE sp_get_lugares_mas_populares TO 'arc_invitado'@'%';
+GRANT EXECUTE ON PROCEDURE sp_get_numero_eventos_este_mes TO 'arc_invitado'@'%';
+GRANT EXECUTE ON PROCEDURE sp_get_numero_paquetes_por_agencia TO 'arc_invitado'@'%';
+GRANT EXECUTE ON PROCEDURE sp_get_organizadora_por_id TO 'arc_invitado'@'%';
+GRANT EXECUTE ON PROCEDURE sp_get_paquete_por_id TO 'arc_invitado'@'%';
+GRANT EXECUTE ON PROCEDURE sp_get_paquetes_ordenados_por_precio TO 'arc_invitado'@'%';
+GRANT EXECUTE ON PROCEDURE sp_get_paquetes_por_agencia TO 'arc_invitado'@'%';
+GRANT EXECUTE ON PROCEDURE sp_get_tipo_actividad_por_id TO 'arc_invitado'@'%';
+GRANT EXECUTE ON PROCEDURE sp_get_tipos_actividad TO 'arc_invitado'@'%';
+GRANT EXECUTE ON PROCEDURE sp_ordenar_eventos_por_fecha TO 'arc_invitado'@'%';
+GRANT EXECUTE ON PROCEDURE sp_registro_agencia TO 'arc_invitado'@'%';
+GRANT EXECUTE ON PROCEDURE sp_registro_cliente TO 'arc_invitado'@'%';
+GRANT EXECUTE ON PROCEDURE sp_registro_organizadora TO 'arc_invitado'@'%';
+GRANT EXECUTE ON PROCEDURE sp_validar_cliente_por_usuario TO 'arc_invitado'@'%';
+GRANT EXECUTE ON PROCEDURE sp_validar_organizador TO 'arc_invitado'@'%';
+
+-- arc_admin
+
+GRANT EXECUTE ON PROCEDURE sp_actualizar_fecha_evento TO 'arc_admin'@'%';
+GRANT EXECUTE ON PROCEDURE sp_actualizar_imagen_lugar TO 'arc_admin'@'%';
+GRANT EXECUTE ON PROCEDURE sp_actualizar_lugar TO 'arc_admin'@'%';
+GRANT EXECUTE ON PROCEDURE sp_consultar_agencia_por_id TO 'arc_admin'@'%';
+GRANT EXECUTE ON PROCEDURE sp_consultar_agencia_por_usuario TO 'arc_admin'@'%';
+GRANT EXECUTE ON PROCEDURE sp_crear_lugar TO 'arc_admin'@'%';
+GRANT EXECUTE ON PROCEDURE sp_eliminar_lugar TO 'arc_admin'@'%';
+GRANT EXECUTE ON PROCEDURE sp_existe_usuario TO 'arc_admin'@'%';
+GRANT EXECUTE ON PROCEDURE sp_filtrar_eventos_por_fecha TO 'arc_admin'@'%';
+GRANT EXECUTE ON PROCEDURE sp_filtrar_paquetes_por_lugar TO 'arc_admin'@'%';
+GRANT EXECUTE ON PROCEDURE sp_get_admin_por_usuario TO 'arc_admin'@'%';
+GRANT EXECUTE ON PROCEDURE sp_get_agencias_mejor_remuneradas TO 'arc_admin'@'%';
+GRANT EXECUTE ON PROCEDURE sp_get_agencias_peor_remuneradas TO 'arc_admin'@'%';
+GRANT EXECUTE ON PROCEDURE sp_get_all_eventos TO 'arc_admin'@'%';
+GRANT EXECUTE ON PROCEDURE sp_get_asistencias_completadas TO 'arc_admin'@'%';
+GRANT EXECUTE ON PROCEDURE sp_get_detalle_organizadora TO 'arc_admin'@'%';
+GRANT EXECUTE ON PROCEDURE sp_get_evento_por_id TO 'arc_admin'@'%';
+GRANT EXECUTE ON PROCEDURE sp_get_eventos_disponibles TO 'arc_admin'@'%';
+GRANT EXECUTE ON PROCEDURE sp_get_eventos_mas_populares TO 'arc_admin'@'%';
+GRANT EXECUTE ON PROCEDURE sp_get_eventos_mejor_remunerados TO 'arc_admin'@'%';
+GRANT EXECUTE ON PROCEDURE sp_get_eventos_menos_populares TO 'arc_admin'@'%';
+GRANT EXECUTE ON PROCEDURE sp_get_eventos_para_calendario TO 'arc_admin'@'%';
+GRANT EXECUTE ON PROCEDURE sp_get_eventos_peor_remunerados TO 'arc_admin'@'%';
+GRANT EXECUTE ON PROCEDURE sp_get_eventos_por_lugar TO 'arc_admin'@'%';
+GRANT EXECUTE ON PROCEDURE sp_get_eventos_por_organizadora TO 'arc_admin'@'%';
+GRANT EXECUTE ON PROCEDURE sp_get_lugar_por_id TO 'arc_admin'@'%';
+GRANT EXECUTE ON PROCEDURE sp_get_lugares TO 'arc_admin'@'%';
+GRANT EXECUTE ON PROCEDURE sp_get_lugares_mas_populares TO 'arc_admin'@'%';
+GRANT EXECUTE ON PROCEDURE sp_get_lugares_resumen TO 'arc_admin'@'%';
+GRANT EXECUTE ON PROCEDURE sp_get_lugares_top_mas_populares TO 'arc_admin'@'%';
+GRANT EXECUTE ON PROCEDURE sp_get_lugares_top_menos_populares TO 'arc_admin'@'%';
+GRANT EXECUTE ON PROCEDURE sp_get_numero_eventos_este_mes TO 'arc_admin'@'%';
+GRANT EXECUTE ON PROCEDURE sp_get_numero_paquetes_por_agencia TO 'arc_admin'@'%';
+GRANT EXECUTE ON PROCEDURE sp_get_organizadora_filtrada TO 'arc_admin'@'%';
+GRANT EXECUTE ON PROCEDURE sp_get_organizadora_por_evento TO 'arc_admin'@'%';
+GRANT EXECUTE ON PROCEDURE sp_get_organizadora_por_id TO 'arc_admin'@'%';
+GRANT EXECUTE ON PROCEDURE sp_get_organizadoras_mejor_remuneradas TO 'arc_admin'@'%';
+GRANT EXECUTE ON PROCEDURE sp_get_organizadoras_peor_remuneradas TO 'arc_admin'@'%';
+GRANT EXECUTE ON PROCEDURE sp_get_paquete_por_id TO 'arc_admin'@'%';
+GRANT EXECUTE ON PROCEDURE sp_get_paquetes_ordenados_por_precio TO 'arc_admin'@'%';
+GRANT EXECUTE ON PROCEDURE sp_get_paquetes_por_agencia TO 'arc_admin'@'%';
+GRANT EXECUTE ON PROCEDURE sp_get_reservaciones_canceladas TO 'arc_admin'@'%';
+GRANT EXECUTE ON PROCEDURE sp_get_reservaciones_pendientes TO 'arc_admin'@'%';
+GRANT EXECUTE ON PROCEDURE sp_get_reservaciones_totales TO 'arc_admin'@'%';
+GRANT EXECUTE ON PROCEDURE sp_get_tipo_actividad_por_id TO 'arc_admin'@'%';
+GRANT EXECUTE ON PROCEDURE sp_get_tipos_actividad TO 'arc_admin'@'%';
+GRANT EXECUTE ON PROCEDURE sp_get_viajes_mas_populares TO 'arc_admin'@'%';
+GRANT EXECUTE ON PROCEDURE sp_get_viajes_mejor_remunerados TO 'arc_admin'@'%';
+GRANT EXECUTE ON PROCEDURE sp_get_viajes_menos_populares TO 'arc_admin'@'%';
+GRANT EXECUTE ON PROCEDURE sp_get_viajes_peor_remunerados TO 'arc_admin'@'%';
+GRANT EXECUTE ON PROCEDURE sp_ordenar_eventos_por_fecha TO 'arc_admin'@'%';
+GRANT EXECUTE ON PROCEDURE sp_registro_agencia TO 'arc_admin'@'%';
+GRANT EXECUTE ON PROCEDURE sp_registro_cliente TO 'arc_admin'@'%';
+GRANT EXECUTE ON PROCEDURE sp_registro_organizadora TO 'arc_admin'@'%';
+GRANT EXECUTE ON PROCEDURE sp_validar_cliente_por_usuario TO 'arc_admin'@'%';
+GRANT EXECUTE ON PROCEDURE sp_validar_organizador TO 'arc_admin'@'%';
+
+
+-- arc_org_eventos
+
+GRANT EXECUTE ON PROCEDURE sp_actualizar_evento TO 'arc_org_eventos'@'%';
+GRANT EXECUTE ON PROCEDURE sp_actualizar_fecha_evento TO 'arc_org_eventos'@'%';
+GRANT EXECUTE ON PROCEDURE sp_actualizar_imagen_evento TO 'arc_org_eventos'@'%';
+GRANT EXECUTE ON PROCEDURE sp_consultar_agencia_por_id TO 'arc_org_eventos'@'%';
+GRANT EXECUTE ON PROCEDURE sp_consultar_agencia_por_usuario TO 'arc_org_eventos'@'%';
+GRANT EXECUTE ON PROCEDURE sp_crear_evento TO 'arc_org_eventos'@'%';
+GRANT EXECUTE ON PROCEDURE sp_eliminar_evento TO 'arc_org_eventos'@'%';
+GRANT EXECUTE ON PROCEDURE sp_existe_usuario TO 'arc_org_eventos'@'%';
+GRANT EXECUTE ON PROCEDURE sp_filtrar_eventos_por_fecha TO 'arc_org_eventos'@'%';
+GRANT EXECUTE ON PROCEDURE sp_filtrar_eventos_por_lugar TO 'arc_org_eventos'@'%';
+GRANT EXECUTE ON PROCEDURE sp_filtrar_paquetes_por_lugar TO 'arc_org_eventos'@'%';
+GRANT EXECUTE ON PROCEDURE sp_get_admin_por_usuario TO 'arc_org_eventos'@'%';
+GRANT EXECUTE ON PROCEDURE sp_get_all_eventos TO 'arc_org_eventos'@'%';
+GRANT EXECUTE ON PROCEDURE sp_get_evento_por_id TO 'arc_org_eventos'@'%';
+GRANT EXECUTE ON PROCEDURE sp_get_eventos_disponibles TO 'arc_org_eventos'@'%';
+GRANT EXECUTE ON PROCEDURE sp_get_eventos_para_calendario TO 'arc_org_eventos'@'%';
+GRANT EXECUTE ON PROCEDURE sp_get_eventos_por_organizadora TO 'arc_org_eventos'@'%';
+GRANT EXECUTE ON PROCEDURE sp_get_lugar_por_id TO 'arc_org_eventos'@'%';
+GRANT EXECUTE ON PROCEDURE sp_get_lugares TO 'arc_org_eventos'@'%';
+GRANT EXECUTE ON PROCEDURE sp_get_lugares_mas_populares TO 'arc_org_eventos'@'%';
+GRANT EXECUTE ON PROCEDURE sp_get_numero_eventos_este_mes TO 'arc_org_eventos'@'%';
+GRANT EXECUTE ON PROCEDURE sp_get_numero_paquetes_por_agencia TO 'arc_org_eventos'@'%';
+GRANT EXECUTE ON PROCEDURE sp_get_organizadora_por_id TO 'arc_org_eventos'@'%';
+GRANT EXECUTE ON PROCEDURE sp_get_paquete_por_id TO 'arc_org_eventos'@'%';
+GRANT EXECUTE ON PROCEDURE sp_get_paquetes_ordenados_por_precio TO 'arc_org_eventos'@'%';
+GRANT EXECUTE ON PROCEDURE sp_get_paquetes_por_agencia TO 'arc_org_eventos'@'%';
+GRANT EXECUTE ON PROCEDURE sp_get_tipo_actividad_por_id TO 'arc_org_eventos'@'%';
+GRANT EXECUTE ON PROCEDURE sp_get_tipos_actividad TO 'arc_org_eventos'@'%';
+GRANT EXECUTE ON PROCEDURE sp_ordenar_eventos_por_fecha TO 'arc_org_eventos'@'%';
+GRANT EXECUTE ON PROCEDURE sp_registro_agencia TO 'arc_org_eventos'@'%';
+GRANT EXECUTE ON PROCEDURE sp_registro_cliente TO 'arc_org_eventos'@'%';
+GRANT EXECUTE ON PROCEDURE sp_registro_organizadora TO 'arc_org_eventos'@'%';
+GRANT EXECUTE ON PROCEDURE sp_validar_cliente_por_usuario TO 'arc_org_eventos'@'%';
+GRANT EXECUTE ON PROCEDURE sp_validar_organizador TO 'arc_org_eventos'@'%';
+
+-- arc_org_viajes
+
+GRANT EXECUTE ON PROCEDURE sp_actualizar_fecha_evento TO 'arc_org_viajes'@'%';
+GRANT EXECUTE ON PROCEDURE sp_actualizar_imagen_paquete TO 'arc_org_viajes'@'%';
+GRANT EXECUTE ON PROCEDURE sp_actualizar_paquete TO 'arc_org_viajes'@'%';
+GRANT EXECUTE ON PROCEDURE sp_consultar_agencia_por_id TO 'arc_org_viajes'@'%';
+GRANT EXECUTE ON PROCEDURE sp_consultar_agencia_por_usuario TO 'arc_org_viajes'@'%';
+GRANT EXECUTE ON PROCEDURE sp_crear_paquete TO 'arc_org_viajes'@'%';
+GRANT EXECUTE ON PROCEDURE sp_eliminar_paquete TO 'arc_org_viajes'@'%';
+GRANT EXECUTE ON PROCEDURE sp_existe_usuario TO 'arc_org_viajes'@'%';
+GRANT EXECUTE ON PROCEDURE sp_filtrar_eventos_por_fecha TO 'arc_org_viajes'@'%';
+GRANT EXECUTE ON PROCEDURE sp_filtrar_paquetes_por_lugar TO 'arc_org_viajes'@'%';
+GRANT EXECUTE ON PROCEDURE sp_get_admin_por_usuario TO 'arc_org_viajes'@'%';
+GRANT EXECUTE ON PROCEDURE sp_get_all_eventos TO 'arc_org_viajes'@'%';
+GRANT EXECUTE ON PROCEDURE sp_get_evento_por_id TO 'arc_org_viajes'@'%';
+GRANT EXECUTE ON PROCEDURE sp_get_eventos_disponibles TO 'arc_org_viajes'@'%';
+GRANT EXECUTE ON PROCEDURE sp_get_eventos_para_calendario TO 'arc_org_viajes'@'%';
+GRANT EXECUTE ON PROCEDURE sp_get_eventos_por_organizadora TO 'arc_org_viajes'@'%';
+GRANT EXECUTE ON PROCEDURE sp_get_lugar_por_id TO 'arc_org_viajes'@'%';
+GRANT EXECUTE ON PROCEDURE sp_get_lugares TO 'arc_org_viajes'@'%';
+GRANT EXECUTE ON PROCEDURE sp_get_lugares_mas_populares TO 'arc_org_viajes'@'%';
+GRANT EXECUTE ON PROCEDURE sp_get_numero_eventos_este_mes TO 'arc_org_viajes'@'%';
+GRANT EXECUTE ON PROCEDURE sp_get_numero_paquetes_por_agencia TO 'arc_org_viajes'@'%';
+GRANT EXECUTE ON PROCEDURE sp_get_organizadora_por_id TO 'arc_org_viajes'@'%';
+GRANT EXECUTE ON PROCEDURE sp_get_paquete_por_id TO 'arc_org_viajes'@'%';
+GRANT EXECUTE ON PROCEDURE sp_get_paquetes_ordenados_por_precio TO 'arc_org_viajes'@'%';
+GRANT EXECUTE ON PROCEDURE sp_get_paquetes_por_agencia TO 'arc_org_viajes'@'%';
+GRANT EXECUTE ON PROCEDURE sp_get_paquetes_por_lugar TO 'arc_org_viajes'@'%';
+GRANT EXECUTE ON PROCEDURE sp_get_tipo_actividad_por_id TO 'arc_org_viajes'@'%';
+GRANT EXECUTE ON PROCEDURE sp_get_tipos_actividad TO 'arc_org_viajes'@'%';
+GRANT EXECUTE ON PROCEDURE sp_ordenar_eventos_por_fecha TO 'arc_org_viajes'@'%';
+GRANT EXECUTE ON PROCEDURE sp_registro_agencia TO 'arc_org_viajes'@'%';
+GRANT EXECUTE ON PROCEDURE sp_registro_cliente TO 'arc_org_viajes'@'%';
+GRANT EXECUTE ON PROCEDURE sp_registro_organizadora TO 'arc_org_viajes'@'%';
+GRANT EXECUTE ON PROCEDURE sp_validar_cliente_por_usuario TO 'arc_org_viajes'@'%';
+GRANT EXECUTE ON PROCEDURE sp_validar_organizador TO 'arc_org_viajes'@'%';
+
+-- arc_cliente
+
+GRANT EXECUTE ON PROCEDURE sp_actualizar_estado_viaje TO 'arc_cliente'@'%';
+GRANT EXECUTE ON PROCEDURE sp_actualizar_fecha_evento TO 'arc_cliente'@'%';
+GRANT EXECUTE ON PROCEDURE sp_cancelar_reservacion TO 'arc_cliente'@'%';
+GRANT EXECUTE ON PROCEDURE sp_consultar_agencia_por_id TO 'arc_cliente'@'%';
+GRANT EXECUTE ON PROCEDURE sp_consultar_agencia_por_usuario TO 'arc_cliente'@'%';
+GRANT EXECUTE ON PROCEDURE sp_crear_reservacion TO 'arc_cliente'@'%';
+GRANT EXECUTE ON PROCEDURE sp_crear_viaje TO 'arc_cliente'@'%';
+GRANT EXECUTE ON PROCEDURE sp_existe_usuario TO 'arc_cliente'@'%';
+GRANT EXECUTE ON PROCEDURE sp_filtrar_eventos_por_fecha TO 'arc_cliente'@'%';
+GRANT EXECUTE ON PROCEDURE sp_filtrar_paquetes_por_lugar TO 'arc_cliente'@'%';
+GRANT EXECUTE ON PROCEDURE sp_get_admin_por_usuario TO 'arc_cliente'@'%';
+GRANT EXECUTE ON PROCEDURE sp_get_all_eventos TO 'arc_cliente'@'%';
+GRANT EXECUTE ON PROCEDURE sp_get_evento_por_id TO 'arc_cliente'@'%';
+GRANT EXECUTE ON PROCEDURE sp_get_eventos_disponibles TO 'arc_cliente'@'%';
+GRANT EXECUTE ON PROCEDURE sp_get_eventos_para_calendario TO 'arc_cliente'@'%';
+GRANT EXECUTE ON PROCEDURE sp_get_eventos_por_organizadora TO 'arc_cliente'@'%';
+GRANT EXECUTE ON PROCEDURE sp_get_lugar_por_id TO 'arc_cliente'@'%';
+GRANT EXECUTE ON PROCEDURE sp_get_lugares TO 'arc_cliente'@'%';
+GRANT EXECUTE ON PROCEDURE sp_get_lugares_mas_populares TO 'arc_cliente'@'%';
+GRANT EXECUTE ON PROCEDURE sp_get_numero_eventos_este_mes TO 'arc_cliente'@'%';
+GRANT EXECUTE ON PROCEDURE sp_get_numero_paquetes_por_agencia TO 'arc_cliente'@'%';
+GRANT EXECUTE ON PROCEDURE sp_get_organizadora_por_id TO 'arc_cliente'@'%';
+GRANT EXECUTE ON PROCEDURE sp_get_paquete_por_id TO 'arc_cliente'@'%';
+GRANT EXECUTE ON PROCEDURE sp_get_paquetes_ordenados_por_precio TO 'arc_cliente'@'%';
+GRANT EXECUTE ON PROCEDURE sp_get_paquetes_por_agencia TO 'arc_cliente'@'%';
+GRANT EXECUTE ON PROCEDURE sp_get_paquetes_por_lugar TO 'arc_cliente'@'%';
+GRANT EXECUTE ON PROCEDURE sp_get_tipo_actividad_por_id TO 'arc_cliente'@'%';
+GRANT EXECUTE ON PROCEDURE sp_get_tipos_actividad TO 'arc_cliente'@'%';
+GRANT EXECUTE ON PROCEDURE sp_get_viajes_por_cliente TO 'arc_cliente'@'%';
+GRANT EXECUTE ON PROCEDURE sp_obtener_historial_reservaciones_cliente TO 'arc_cliente'@'%';
+GRANT EXECUTE ON PROCEDURE sp_ordenar_eventos_por_fecha TO 'arc_cliente'@'%';
+GRANT EXECUTE ON PROCEDURE sp_registro_agencia TO 'arc_cliente'@'%';
+GRANT EXECUTE ON PROCEDURE sp_registro_cliente TO 'arc_cliente'@'%';
+GRANT EXECUTE ON PROCEDURE sp_registro_organizadora TO 'arc_cliente'@'%';
+GRANT EXECUTE ON PROCEDURE sp_validar_cliente_por_usuario TO 'arc_cliente'@'%';
+GRANT EXECUTE ON PROCEDURE sp_validar_organizador TO 'arc_cliente'@'%';
+
+-- --------------------------------------------------------
+-- Al tiro, hay procedimientos 7 en DAO sin GRANT porque no se usan:
+-- sp_alta_agencia, sp_actualizar_agencia, sp_baja_agencia
+-- sp_get_all_viajes, sp_get_viaje_por_id, sp_actualizar_viaje, sp_eliminar_viaje
+-- --------------------------------------------------------
+
+FLUSH PRIVILEGES;

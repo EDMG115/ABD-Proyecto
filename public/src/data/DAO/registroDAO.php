@@ -29,7 +29,7 @@ class registroDAO
     public function registroUsuario($nombre, $apellido, $correo, $telefono, $usuario, $contra)
     {
         try {
-            $stmt = $this->conexion->prepare("CALL registroCliente(:usuario, :contra, :nombre, :apellido, :correo, :telefono)");
+            $stmt = $this->conexion->prepare("CALL sp_registro_cliente(:usuario, :contra, :nombre, :apellido, :correo, :telefono)");
             
             $stmt->bindParam(':usuario', $usuario);
             $stmt->bindParam(':contra', $contra);
@@ -58,7 +58,7 @@ class registroDAO
             $imagen_default = "default.png";
 
             $stmt = $this->conexion->prepare(
-                "CALL registroOrganizadora(
+                "CALL sp_registro_organizadora(
                     :usuario, :contra, :descripcion, :nombre_agencia, 
                     :fecha, :direccion, :imagen, :telefono, :correo
                 )"
@@ -94,7 +94,7 @@ class registroDAO
             $imagen_default = "default.png";
 
             $stmt = $this->conexion->prepare(
-                "CALL registroAgencia(
+                "CALL sp_registro_agencia(
                     :usuario, :contra, :descripcion, :nombre_agencia, 
                     :fecha, :direccion, :imagen, :telefono, :correo
                 )"

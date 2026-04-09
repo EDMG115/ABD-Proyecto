@@ -14,7 +14,7 @@ class infoEventosDAO
     public function getMasPopulares()
     {
         try {
-            $sql = "CALL sp_getMasPopulares()";
+            $sql = "CALL sp_get_lugares_top_mas_populares()";
             $stmt = $this->conexion->prepare($sql);
             $stmt->execute();
 
@@ -27,7 +27,7 @@ class infoEventosDAO
     public function getMenosPopulares()
     {
         try {
-            $sql = "CALL sp_getMenosPopulares()";
+            $sql = "CALL sp_get_lugares_top_menos_populares()";
             $stmt = $this->conexion->prepare($sql);
             $stmt->execute();
 
@@ -39,7 +39,7 @@ class infoEventosDAO
     public function getEventosMasPopulares()
     {
         try {
-            $sql = "CALL sp_getEventosMasPopulares()";
+            $sql = "CALL sp_get_eventos_mas_populares()";
             $stmt = $this->conexion->prepare($sql);
             $stmt->execute();
 
@@ -51,7 +51,7 @@ class infoEventosDAO
     public function getEventosMenosPopulares()
     {
         try {
-            $sql = "CALL sp_getEventosMenosPopulares()";
+            $sql = "CALL sp_get_eventos_menos_populares()";
             $stmt = $this->conexion->prepare($sql);
             $stmt->execute();
 
@@ -64,7 +64,7 @@ class infoEventosDAO
     public function getAsistenciasCompletadas()
     {
         try {
-            $sql = "CALL sp_getAsistenciasCompletadas()";
+            $sql = "CALL sp_get_asistencias_completadas()";
             $stmt = $this->conexion->prepare($sql);
             $stmt->execute();
 
@@ -78,7 +78,7 @@ class infoEventosDAO
     public function getReservacionesPendientes()
     {
         try {
-            $sql = "CALL sp_getReservacionesPendientes()";
+            $sql = "CALL sp_get_reservaciones_pendientes()";
             $stmt = $this->conexion->prepare($sql);
             $stmt->execute();
 
@@ -92,7 +92,7 @@ class infoEventosDAO
     public function getReservacionesCanceladas()
     {
         try {
-            $sql = "CALL sp_getReservacionesCanceladas()";
+            $sql = "CALL sp_get_reservaciones_canceladas()";
             $stmt = $this->conexion->prepare($sql);
             $stmt->execute();
 
@@ -106,7 +106,7 @@ class infoEventosDAO
     public function getReservacionesTotales()
     {
         try {
-            $sql = "CALL sp_getReservacionesTotales()";
+            $sql = "CALL sp_get_reservaciones_totales()";
             $stmt = $this->conexion->prepare($sql);
             $stmt->execute();
 
@@ -119,7 +119,7 @@ class infoEventosDAO
     public function getViajesMasPopulares()
     {
         try {
-            $sql = "CALL sp_getViajesMasPopulares()";
+            $sql = "CALL sp_get_viajes_mas_populares()";
             $stmt = $this->conexion->prepare($sql);
             $stmt->execute();
 
@@ -132,7 +132,7 @@ class infoEventosDAO
     public function getViajesMenosPopulares()
     {
         try {
-            $sql = "CALL sp_getViajesMenosPopulares()";
+            $sql = "CALL sp_get_viajes_menos_populares()";
             $stmt = $this->conexion->prepare($sql);
             $stmt->execute();
 
@@ -144,7 +144,7 @@ class infoEventosDAO
     public function getViajesMejorRemunerados()
     {
         try {
-            $sql = "CALL sp_getViajesMejorRemunerados()";
+            $sql = "CALL sp_get_viajes_mejor_remunerados()";
             $stmt = $this->conexion->prepare($sql);
             $stmt->execute();
 
@@ -157,7 +157,7 @@ class infoEventosDAO
     public function getViajesPeorRemunerados()
     {
         try {
-            $sql = "CALL sp_getViajesPeorRemunerados()";
+            $sql = "CALL sp_get_viajes_peor_remunerados()";
             $stmt = $this->conexion->prepare($sql);
             $stmt->execute();
 
@@ -169,7 +169,7 @@ class infoEventosDAO
     public function getAgenciasMejorRemuneradas()
     {
         try {
-            $sql = "CALL sp_getAgenciasMejorRemuneradas()";
+            $sql = "CALL sp_get_agencias_mejor_remuneradas()";
             $stmt = $this->conexion->prepare($sql);
             $stmt->execute();
 
@@ -182,7 +182,7 @@ class infoEventosDAO
     public function getAgenciasPeorRemuneradas()
     {
         try {
-            $sql = "CALL sp_getAgenciasPeorRemuneradas()";
+            $sql = "CALL sp_get_agencias_peor_remuneradas()";
             $stmt = $this->conexion->prepare($sql);
             $stmt->execute();
 
@@ -194,7 +194,7 @@ class infoEventosDAO
     public function getOrganizadorasMejorRemuneradas()
     {
         try {
-            $sql = "CALL sp_getOrganizadorasMejorRemuneradas()";
+            $sql = "CALL sp_get_organizadoras_mejor_remuneradas()";
             $stmt = $this->conexion->prepare($sql);
             $stmt->execute();
 
@@ -206,7 +206,7 @@ class infoEventosDAO
     public function getOrganizadorasPeorRemuneradas()
     {
         try {
-            $sql = "CALL sp_getOrganizadorasPeorRemuneradas()";
+            $sql = "CALL sp_get_organizadoras_peor_remuneradas()";
             $stmt = $this->conexion->prepare($sql);
             $stmt->execute();
 
@@ -218,7 +218,7 @@ class infoEventosDAO
     public function getEventosMejorRemunerados()
     {
         try {
-            $sql = "CALL sp_getEventosMejorRemunerados()";
+            $sql = "CALL sp_get_eventos_mejor_remunerados()";
             $stmt = $this->conexion->prepare($sql);
             $stmt->execute();
 
@@ -231,7 +231,7 @@ class infoEventosDAO
     public function getEventosPeorRemunerados()
     {
         try {
-            $sql = "CALL sp_getEventosPeorRemunerados()";
+            $sql = "CALL sp_get_eventos_peor_remunerados()";
             $stmt = $this->conexion->prepare($sql);
             $stmt->execute();
 
@@ -244,7 +244,7 @@ class infoEventosDAO
     public function getLugares()
     {
         try {
-            $sql = "CALL sp_getLugares()";
+            $sql = "CALL sp_get_lugares_resumen()";
             $stmt = $this->conexion->prepare($sql);
             $stmt->execute();
 
@@ -257,7 +257,7 @@ class infoEventosDAO
     public function getEventosPorLugar($id_lugar)
     {
         try {
-            $sql = "CALL sp_getEventosPorLugar(:id_lugar)";
+            $sql = "CALL sp_get_eventos_por_lugar(:id_lugar)";
             $stmt = $this->conexion->prepare($sql);
             $stmt->bindParam(':id_lugar', $id_lugar, PDO::PARAM_INT);
             $stmt->execute();
@@ -271,7 +271,7 @@ class infoEventosDAO
     public function getOrganizadoraPorEvento($id_evento)
     {
         try {
-            $sql = "CALL sp_getOrganizadoraPorEvento(:id_evento)";
+            $sql = "CALL sp_get_organizadora_por_evento(:id_evento)";
             $stmt = $this->conexion->prepare($sql);
             $stmt->bindParam(':id_evento', $id_evento, PDO::PARAM_INT);
             $stmt->execute();
@@ -285,7 +285,7 @@ class infoEventosDAO
     public function getOrganizadoraFiltrada($id_organizadora)
     {
         try {
-            $sql = "CALL sp_getOrganizadoraFiltrada(:id_organizadora)";
+            $sql = "CALL sp_get_organizadora_filtrada(:id_organizadora)";
             $stmt = $this->conexion->prepare($sql);
             $stmt->bindParam(':id_organizadora', $id_organizadora, PDO::PARAM_INT);
             $stmt->execute();
@@ -299,7 +299,7 @@ class infoEventosDAO
     public function getDetalleOrganizadora($id_organizadora)
     {
         try {
-            $sql = "CALL sp_getDetalleOrganizadora(:id_organizadora)";
+            $sql = "CALL sp_get_detalle_organizadora(:id_organizadora)";
             $stmt = $this->conexion->prepare($sql);
             $stmt->bindParam(':id_organizadora', $id_organizadora, PDO::PARAM_INT);
             $stmt->execute();

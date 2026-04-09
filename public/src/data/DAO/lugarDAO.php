@@ -16,7 +16,7 @@ class lugarDAO
     public function getLugares()
     {
         try {
-            $sql = "CALL getLugares()";
+            $sql = "CALL sp_get_lugares()";
             $stmt = $this->conexion->prepare($sql);
             $stmt->execute();
 
@@ -32,7 +32,7 @@ class lugarDAO
     public function crearLugar($nombre, $descripcion, $direccion, $ciudad, $zona, $id_admin)
     {
         try {
-            $sql = "CALL crearLugar(:nombre, :descripcion, :direccion, :ciudad, :zona, :id_admin)";
+            $sql = "CALL sp_crear_lugar(:nombre, :descripcion, :direccion, :ciudad, :zona, :id_admin)";
             $stmt = $this->conexion->prepare($sql);
 
             $stmt->bindParam(':nombre', $nombre);
@@ -56,7 +56,7 @@ class lugarDAO
     public function updateImagen($id, $imagen_nombre)
     {
         try {
-            $sql = "CALL actualizarImagenLugar(:id, :imagen)";
+            $sql = "CALL sp_actualizar_imagen_lugar(:id, :imagen)";
             $stmt = $this->conexion->prepare($sql);
 
             $stmt->bindParam(':id', $id);
@@ -74,7 +74,7 @@ class lugarDAO
     public function eliminarLugarPorId($id)
     {
         try {
-            $sql = "CALL eliminarLugar(:id)";
+            $sql = "CALL sp_eliminar_lugar(:id)";
             $stmt = $this->conexion->prepare($sql);
 
             $stmt->bindParam(':id', $id);
@@ -91,7 +91,7 @@ class lugarDAO
     public function getLugarPorID($idLugar)
     {
         try {
-            $sql = "CALL getLugarPorId(:id)";
+            $sql = "CALL sp_get_lugar_por_id(:id)";
             $stmt = $this->conexion->prepare($sql);
 
             $stmt->bindParam(':id', $idLugar, PDO::PARAM_INT);
@@ -109,7 +109,7 @@ class lugarDAO
     public function updateLugar($id, $nombre, $descripcion, $direccion, $ciudad, $zona)
     {
         try {
-            $sql = "CALL actualizarLugar(:id, :nombre, :descripcion, :direccion, :ciudad, :zona)";
+            $sql = "CALL sp_actualizar_lugar(:id, :nombre, :descripcion, :direccion, :ciudad, :zona)";
             $stmt = $this->conexion->prepare($sql);
 
             $stmt->bindParam(':id', $id);

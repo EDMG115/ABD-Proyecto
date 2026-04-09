@@ -1,0 +1,386 @@
+================================================================================
+PROCEDIMIENTOS ALMACENADOS, USUARIOS MySQL Y PRIVILEGIOS 
+================================================================================
+
+La conexión PDO usa el usuario MySQL asociado a $_SESSION['tipo_usuario'] en
+public/src/data/conexion.php. Si no hay sesión válida, el rol es 'invitado'.
+
+================================================================================
+0. PERMISOS PHP (seguridad.php) POR ROL — acciones verificarPermisos()
+================================================================================
+  administrador → ver_reportes, crear_lugar, ver_lugar, editar_lugar, eliminar_lugar
+  organizadora  → crear_evento, editar_evento, ver_lugar, eliminar_evento, ver_eventos
+  agencia       → crear_paquete, ver_lugar, ver_paquete, editar_paquete, eliminar_paquete
+  usuario       → ver_eventos, ver_lugar, registrarse_evento, registrarse_paquete
+
+Nota: muchos Logic NO llaman a verificarPermisos() (lecturas públicas). Eso
+implica que invitado u otro rol pueden disparar esos SP si conocen la URL; el
+usuario MySQL usado sigue siendo el de la sesión actual (o invitado).
+
+================================================================================
+1. INVENTARIO: CADA PROCEDIMIENTO QUE APARECE EN DAO (orden alfabético)
+================================================================================
+Total referenciado en código PHP (DAO): 76 llamadas a nombres distintos
+(algunos SP se usan desde más de un DAO).
+
+  sp_actualizar_agencia
+  sp_actualizar_estado_viaje
+  sp_actualizar_evento
+  sp_actualizar_fecha_evento
+  sp_actualizar_imagen_evento
+  sp_actualizar_imagen_lugar
+  sp_actualizar_imagen_paquete
+  sp_actualizar_lugar
+  sp_actualizar_paquete
+  sp_actualizar_viaje
+  sp_alta_agencia
+  sp_baja_agencia
+  sp_cancelar_reservacion
+  sp_consultar_agencia_por_id
+  sp_consultar_agencia_por_usuario
+  sp_crear_evento
+  sp_crear_lugar
+  sp_crear_paquete
+  sp_crear_reservacion
+  sp_crear_viaje
+  sp_eliminar_evento
+  sp_eliminar_lugar
+  sp_eliminar_paquete
+  sp_eliminar_viaje
+  sp_existe_usuario
+  sp_filtrar_eventos_por_fecha
+  sp_filtrar_eventos_por_lugar
+  sp_filtrar_paquetes_por_lugar
+  sp_get_admin_por_usuario
+  sp_get_agencias_mejor_remuneradas
+  sp_get_agencias_peor_remuneradas
+  sp_get_all_eventos
+  sp_get_all_viajes
+  sp_get_asistencias_completadas
+  sp_get_detalle_organizadora
+  sp_get_evento_por_id
+  sp_get_eventos_disponibles
+  sp_get_eventos_mas_populares
+  sp_get_eventos_mejor_remunerados
+  sp_get_eventos_menos_populares
+  sp_get_eventos_para_calendario
+  sp_get_eventos_peor_remunerados
+  sp_get_eventos_por_lugar
+  sp_get_eventos_por_organizadora
+  sp_get_lugares
+  sp_get_lugares_mas_populares
+  sp_get_lugares_resumen
+  sp_get_lugares_top_mas_populares
+  sp_get_lugares_top_menos_populares
+  sp_get_lugar_por_id
+  sp_get_numero_eventos_este_mes
+  sp_get_numero_paquetes_por_agencia
+  sp_get_organizadora_filtrada
+  sp_get_organizadora_por_evento
+  sp_get_organizadora_por_id
+  sp_get_organizadoras_mejor_remuneradas
+  sp_get_organizadoras_peor_remuneradas
+  sp_get_paquete_por_id
+  sp_get_paquetes_ordenados_por_precio
+  sp_get_paquetes_por_agencia
+  sp_get_paquetes_por_lugar
+  sp_get_reservaciones_canceladas
+  sp_get_reservaciones_pendientes
+  sp_get_reservaciones_totales
+  sp_get_tipo_actividad_por_id
+  sp_get_tipos_actividad
+  sp_get_viaje_por_id
+  sp_get_viajes_mas_populares
+  sp_get_viajes_mejor_remunerados
+  sp_get_viajes_menos_populares
+  sp_get_viajes_peor_remunerados
+  sp_get_viajes_por_cliente
+  sp_obtener_historial_reservaciones_cliente
+  sp_ordenar_eventos_por_fecha
+  sp_registro_agencia
+  sp_registro_cliente
+  sp_registro_organizadora
+  sp_validar_cliente_por_usuario
+  sp_validar_organizador
+
+
+================================================================================
+2. PROCEDIMIENTOS EN DAO SIN USAR (Deben ser 7)
+================================================================================
+  sp_alta_agencia, sp_actualizar_agencia, sp_baja_agencia
+    → métodos altaAgencia / actualizarAgencia / eliminarAgencia en agenciaDAO;
+      ningún archivo en Logic/ las invoca (solo validarAgencia y getAgenciaPorID).
+
+  sp_filtrar_eventos_por_lugar
+    → eventosDAO::filtrarEventosPorLugar; solo referencia en organizerController
+      dentro de un bloque /* comentado */.
+
+  sp_get_all_viajes, sp_get_viaje_por_id, sp_crear_viaje, sp_actualizar_viaje,
+  sp_eliminar_viaje
+    → métodos en viajesDAO; Logic solo usa getViajesPorCliente y cancelarViaje
+      (este último usa sp_actualizar_estado_viaje). CrearViajeLogic usa
+      CrearViajeDAO → sp_crear_viaje (mismo SP, otra clase).
+
+================================================================================
+3. TABLA Logic → DAO → PROCEDIMIENTO(S)
+================================================================================
+adminLogic.php
+  adminDAO::validarAdmin → sp_get_admin_por_usuario
+
+usuarioLogic.php
+  usuarioDAO::validarUsuario → sp_validar_cliente_por_usuario
+
+organizadorLogic.php
+  organizadorDAO::validarOrganizador → sp_validar_organizador
+
+agenciaLogic.php
+  agenciaDAO::validarAgencia → sp_consultar_agencia_por_usuario
+
+registroLogic.php
+  registroDAO::existeRegistro → sp_existe_usuario
+  registroDAO::registroUsuario → sp_registro_cliente
+  registroDAO::registroOrganizadora → sp_registro_organizadora
+  registroDAO::registroAgencia → sp_registro_agencia
+
+IndexCarruselLogic.php
+  CarruselDAO::getLugaresMasPopulares → sp_get_lugares_mas_populares
+  CarruselDAO::getEventosDisponibles → sp_get_eventos_disponibles
+
+CarruselLogic.php
+  CarruselDAO::getLugaresMasPopulares → sp_get_lugares_mas_populares
+
+eventoLogic.php
+  eventoDAO::getEvento → sp_get_all_eventos
+
+infoEventosLogic.php
+  infoEventosDAO: cada método público → el SP homónimo (23 métodos; incluye
+  getReservacionesTotales y estadísticas query5–query8).
+
+organizerController.php (GET)
+  organizadorDAO::getOrganizadorPorID → sp_get_organizadora_por_id
+  eventosDAO::getEventosPorOrganizadora → sp_get_eventos_por_organizadora
+  eventosDAO::getNumeroEventosEsteMes → sp_get_numero_eventos_este_mes
+  eventosDAO::getEventoPorID → sp_get_evento_por_id
+  eventosDAO::filtrarEventosPorFecha → sp_filtrar_eventos_por_fecha
+  eventosDAO::ordenarEventosPorFecha → sp_ordenar_eventos_por_fecha
+
+calendarController.php
+  eventosDAO::getEventosParaCalendario → sp_get_eventos_para_calendario
+  eventosDAO::getEventoPorID → sp_get_evento_por_id
+  eventosDAO::actualizarFechaEvento → sp_actualizar_fecha_evento
+
+eventController.php
+  GET: eventosDAO (getEventoPorID, getTipoActividadPorID), lugarDAO (getLugares,
+       getLugarPorID), organizadorDAO (getOrganizadorPorID), actividadDAO
+       (getActividades → sp_get_tipos_actividad)
+  POST acción eliminar: eventosDAO::eliminarEvento → sp_eliminar_evento
+  POST acción actualizar: actualizarEvento, actualizarImagen, getEventoPorID
+       → sp_actualizar_evento, sp_actualizar_imagen_evento, sp_get_evento_por_id
+  POST acción crear: crearEvento, actualizarImagen → sp_crear_evento,
+       sp_actualizar_imagen_evento
+
+agencyController.php (GET)
+  agenciaDAO::getAgenciaPorID → sp_consultar_agencia_por_id
+  paqueteDAO: getPaquetesPorAgencia, getPaquetePorID, getNumeroPaquetesEsteMes,
+    filtrarPaquetesPorLugar, ordenarPaquetesPorPrecio
+    → sp_get_paquetes_por_agencia, sp_get_paquete_por_id,
+       sp_get_numero_paquetes_por_agencia, sp_filtrar_paquetes_por_lugar,
+       sp_get_paquetes_ordenados_por_precio
+  Nota: el método getNumeroPaquetesEsteMes usa sp_get_numero_paquetes_por_agencia
+  (conteo total por agencia; el nombre del método sugiere “este mes” pero el SP
+  no filtra por mes).
+
+packageAgencyController.php
+  GET: paqueteDAO, lugarDAO, agenciaDAO (lecturas como arriba)
+  POST: paquete crear/actualizar/eliminar + imágenes → sp_crear_paquete,
+        sp_actualizar_paquete, sp_actualizar_imagen_paquete, sp_eliminar_paquete,
+        sp_get_paquete_por_id
+
+PaquetesLogic.php (GET, ver_lugar)
+  paqueteDAO::getPaquetesPorLugar → sp_get_paquetes_por_lugar
+
+lugarLogic.php
+  GET ver_lugar: lugarDAO::getLugares → sp_get_lugares
+  POST crear/editar: crearLugar, updateLugar, updateImagen, getLugarPorID
+        → sp_crear_lugar, sp_actualizar_lugar, sp_actualizar_imagen_lugar,
+           sp_get_lugar_por_id
+  DELETE: eliminarLugarPorId → sp_eliminar_lugar, sp_get_lugar_por_id
+
+ReservacionLogic.php
+  ReservacionesDAO::cancelarReservacion → sp_cancelar_reservacion
+  ReservacionesDAO::obtenerHistorialDetallado → sp_obtener_historial_reservaciones_cliente
+
+CrearReservacionLogic.php
+  CrearReservacionDAO::crearReservacion → sp_crear_reservacion
+
+CrearViajeLogic.php
+  CrearViajeDAO::crearViaje → sp_crear_viaje
+
+HistorialLogic.php
+  viajesDAO::getViajesPorCliente → sp_get_viajes_por_cliente
+  viajesDAO::cancelarViaje → sp_actualizar_estado_viaje
+
+================================================================================
+4. LISTADO DE PROCEDIMIENTOS
+================================================================================
+
+
+--------------------------------------------------------------------------------
+4.1 arc_invitado (rol invitado — sin sesión o primera petición de login/registro)
+--------------------------------------------------------------------------------
+Unión de: login (4 SP) + registro (hasta 4 SP por flujo) + todas las rutas Logic
+sin verificarPermisos citadas en la sección 3 (lecturas y calendar POST).
+
+Lista alfabética — 51 procedimientos distintos (sp_filtrar_eventos_por_lugar está
+definido en eventosDAO pero solo aparece en código comentado de organizerController;
+no hay petición HTTP activa que lo invoque).
+
+  sp_actualizar_fecha_evento
+  sp_consultar_agencia_por_id
+  sp_consultar_agencia_por_usuario
+  sp_existe_usuario
+  sp_filtrar_eventos_por_fecha
+  sp_filtrar_paquetes_por_lugar
+  sp_get_admin_por_usuario
+  sp_get_agencias_mejor_remuneradas
+  sp_get_agencias_peor_remuneradas
+  sp_get_all_eventos
+  sp_get_asistencias_completadas
+  sp_get_detalle_organizadora
+  sp_get_evento_por_id
+  sp_get_eventos_disponibles
+  sp_get_eventos_mas_populares
+  sp_get_eventos_mejor_remunerados
+  sp_get_eventos_menos_populares
+  sp_get_eventos_para_calendario
+  sp_get_eventos_peor_remunerados
+  sp_get_eventos_por_lugar
+  sp_get_eventos_por_organizadora
+  sp_get_lugares
+  sp_get_lugares_mas_populares
+  sp_get_lugares_resumen
+  sp_get_lugares_top_mas_populares
+  sp_get_lugares_top_menos_populares
+  sp_get_lugar_por_id
+  sp_get_numero_eventos_este_mes
+  sp_get_numero_paquetes_por_agencia
+  sp_get_organizadora_filtrada
+  sp_get_organizadora_por_evento
+  sp_get_organizadora_por_id
+  sp_get_organizadoras_mejor_remuneradas
+  sp_get_organizadoras_peor_remuneradas
+  sp_get_paquete_por_id
+  sp_get_paquetes_ordenados_por_precio
+  sp_get_paquetes_por_agencia
+  sp_get_reservaciones_canceladas
+  sp_get_reservaciones_pendientes
+  sp_get_reservaciones_totales
+  sp_get_tipo_actividad_por_id
+  sp_get_tipos_actividad
+  sp_get_viajes_mas_populares
+  sp_get_viajes_mejor_remunerados
+  sp_get_viajes_menos_populares
+  sp_get_viajes_peor_remunerados
+  sp_ordenar_eventos_por_fecha
+  sp_registro_agencia
+  sp_registro_cliente
+  sp_registro_organizadora
+  sp_validar_cliente_por_usuario
+  sp_validar_organizador
+
+--------------------------------------------------------------------------------
+4.2 arc_admin (administrador)
+--------------------------------------------------------------------------------
+Incluye todo lo que el invitado puede ejecutar por URLs sin protección, MÁS el
+CRUD de lugares vía lugarLogic (verificarPermisos ver_lugar / crear_lugar /
+editar_lugar / eliminar_lugar):
+
+  sp_crear_lugar
+  sp_actualizar_imagen_lugar
+  sp_actualizar_lugar
+  sp_eliminar_lugar
+
+y las lecturas de lugar ya listadas (sp_get_lugares, sp_get_lugar_por_id).
+
+NO puede ejecutar vía PHP (verificarPermisos lo impide): POST de eventController
+(crear/editar/eliminar evento), POST de packageAgency (paquetes), crear lugar
+como organizadora no aplica. tampoco tiene permisos de paquete en seguridad.php.
+
+--------------------------------------------------------------------------------
+4.3 arc_org_eventos (organizadora)
+--------------------------------------------------------------------------------
+Incluye lecturas públicas como en 4.1 si la organizadora visita esas rutas.
+
+Específico permitido por verificarPermisos en eventController POST y lecturas
+asociadas:
+
+  sp_actualizar_evento
+  sp_actualizar_imagen_evento
+  sp_actualizar_fecha_evento
+  sp_crear_evento
+  sp_eliminar_evento
+  sp_filtrar_eventos_por_fecha
+  sp_filtrar_eventos_por_lugar
+  sp_get_evento_por_id
+  sp_get_eventos_para_calendario
+  sp_get_eventos_por_organizadora
+  sp_get_numero_eventos_este_mes
+  sp_get_tipo_actividad_por_id
+  sp_get_tipos_actividad
+  sp_ordenar_eventos_por_fecha
+  sp_get_lugares
+  sp_get_lugar_por_id
+  sp_get_organizadora_por_id
+  sp_get_tipos_actividad (vía actividadDAO / eventController accion tipos)
+
+NO tiene crear_lugar / editar_lugar / eliminar_lugar en seguridad.php: lugarLogic
+POST y DELETE redirigen al índice (no deberían ejecutar SP de mutación de lugar).
+
+--------------------------------------------------------------------------------
+4.4 arc_org_viajes (agencia)
+--------------------------------------------------------------------------------
+Incluye lecturas públicas si la agencia las visita.
+
+Específico de paquetes y agencia (packageAgencyController POST con permisos,
+agencyController, PaquetesLogic GET con ver_lugar):
+
+  sp_consultar_agencia_por_id
+  sp_crear_paquete
+  sp_actualizar_paquete
+  sp_actualizar_imagen_paquete
+  sp_eliminar_paquete
+  sp_filtrar_paquetes_por_lugar
+  sp_get_numero_paquetes_por_agencia
+  sp_get_paquete_por_id
+  sp_get_paquetes_ordenados_por_precio
+  sp_get_paquetes_por_agencia
+  sp_get_paquetes_por_lugar
+  sp_get_lugares
+  sp_get_lugar_por_id
+
+Los métodos sp_alta_agencia / sp_actualizar_agencia / sp_baja_agencia no tienen
+Logic; no se ejecutan desde la app actual.
+
+--------------------------------------------------------------------------------
+4.5 arc_cliente (usuario / cliente)
+--------------------------------------------------------------------------------
+Incluye las mismas lecturas públicas que en 4.1 si el cliente navega esas URLs
+(con sesión usuario la conexión es arc_cliente).
+
+Flujos propios de cliente (reservas y viajes):
+
+  sp_cancelar_reservacion
+  sp_crear_reservacion
+  sp_crear_viaje
+  sp_get_viajes_por_cliente
+  sp_obtener_historial_reservaciones_cliente
+  sp_actualizar_estado_viaje
+
+PaquetesLogic exige ver_lugar (sesión requerida): sp_get_paquetes_por_lugar
+(invítado no pasa verificarPermisos aquí).
+
+packageAgencyController GET (catálogo): sp_get_paquete_por_id, sp_get_lugares,
+sp_get_lugar_por_id, sp_consultar_agencia_por_id (también accesibles sin login
+por la misma ruta; entonces el listado 4.1 ya los cubre para invitado).
+
+
