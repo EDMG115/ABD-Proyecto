@@ -1,0 +1,432 @@
+CREATE TABLE `abdarcproyecto1`.`bitclientes` (
+  `id_bitclientes` INT NOT NULL AUTO_INCREMENT,
+  `usuario` VARCHAR(255) NULL DEFAULT NULL,
+  `fecha_hora` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+  `accion` VARCHAR(255) NULL DEFAULT NULL,
+  `id_afectado` INT NULL DEFAULT NULL,
+  `old_user` VARCHAR(255) NULL DEFAULT NULL,
+  `new_user` VARCHAR(255) NULL DEFAULT NULL,
+  `old_password` VARCHAR(255) NULL DEFAULT NULL,
+  `new_password` VARCHAR(255) NULL DEFAULT NULL,
+  `old_nombre` VARCHAR(255) NULL DEFAULT NULL,
+  `new_nombre` VARCHAR(255) NULL DEFAULT NULL,
+  `old_ap1` VARCHAR(255) NULL DEFAULT NULL,
+  `new_ap1` VARCHAR(255) NULL DEFAULT NULL,
+  `old_correo` VARCHAR(255) NULL DEFAULT NULL,
+  `new_correo` VARCHAR(255) NULL DEFAULT NULL,
+  `old_telefono` VARCHAR(10) NULL DEFAULT NULL,
+  `new_telefono` VARCHAR(10) NULL DEFAULT NULL,
+  PRIMARY KEY (`id_bitclientes`));
+
+delimiter $$
+-- drop trigger if exists trgClientesInsert $$
+create trigger trgClientesInsert
+before insert on clientes
+for each row
+begin
+INSERT INTO bitclientes (
+        usuario,
+        fecha_hora,
+        accion,
+        id_afectado,
+        old_user,
+        new_user,
+        old_password,
+        new_password,
+        old_nombre,
+        new_nombre,
+        old_ap1,
+        new_ap1,
+        old_correo,
+        new_correo,
+        old_telefono,
+        new_telefono
+    )
+values(
+        user(),
+        now(),
+        'INSERT / Creacion de cliente',
+        new.id_cliente,
+        NULL, new.user,
+        NULL, new.password,
+        NULL, new.nombre,
+        NULL, new.ap1,
+        NULL, new.correo,
+        NULL, new.telefono
+);
+end $$
+
+delimiter $$
+-- drop trigger if exists trgClientesUpdate $$
+create trigger trgClientesUpdate
+before update on clientes
+for each row
+begin
+INSERT INTO bitclientes (
+        usuario,
+        fecha_hora,
+        accion,
+        id_afectado,
+        old_user,
+        new_user,
+        old_password,
+        new_password,
+        old_nombre,
+        new_nombre,
+        old_ap1,
+        new_ap1,
+        old_correo,
+        new_correo,
+        old_telefono,
+        new_telefono
+    )
+values(
+        user(),
+        now(),
+        'UPDATE / Modificacion de cliente',
+        new.id_cliente,
+        old.user, new.user,
+        old.password, new.password,
+        old.nombre, new.nombre,
+        old.ap1, new.ap1,
+        old.correo, new.correo,
+        old.telefono, new.telefono
+);
+end $$
+
+delimiter $$
+-- drop trigger if exists trgClientesDelete $$
+create trigger trgClientesDelete
+before delete on clientes
+for each row
+begin
+INSERT INTO bitclientes (
+        usuario,
+        fecha_hora,
+        accion,
+        id_afectado,
+        old_user,
+        new_user,
+        old_password,
+        new_password,
+        old_nombre,
+        new_nombre,
+        old_ap1,
+        new_ap1,
+        old_correo,
+        new_correo,
+        old_telefono,
+        new_telefono
+    )
+values(
+        user(),
+        now(),
+        'DELETE / Eliminacion de cliente',
+        old.id_cliente,
+        old.user, NULL,
+        old.password, NULL,
+        old.nombre, NULL,
+        old.ap1, NULL,
+        old.correo, NULL,
+        old.telefono, NULL
+);
+end $$
+
+INSERT INTO `abdarcproyecto1`.`clientes` (`id_cliente`, `user`, `password`, `nombre`, `ap1`, `correo`, `telefono`) VALUES ('11', 'cliente11', 'cli013', 'Mayen', 'Palma', 'm.p@correo.com', '6140000012');
+
+UPDATE `abdarcproyecto1`.`clientes` SET `nombre` = 'Jeremoth' WHERE (`id_cliente` = '11');
+
+delete from clientes where id_cliente = 11;
+
+CREATE TABLE `abdarcproyecto1`.`bitorganizadoras` (
+  `id_bitorganizadoras` INT NOT NULL AUTO_INCREMENT,
+  `usuario` VARCHAR(255) NULL DEFAULT NULL,
+  `fecha_hora` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+  `accion` VARCHAR(255) NULL DEFAULT NULL,
+  `id_afectado` INT NULL DEFAULT NULL,
+  `old_user` VARCHAR(255) NULL DEFAULT NULL,
+  `new_user` VARCHAR(255) NULL DEFAULT NULL,
+  `old_password` VARCHAR(255) NULL DEFAULT NULL,
+  `new_password` VARCHAR(255) NULL DEFAULT NULL,
+  `old_descripcion_agencia` VARCHAR(255) NULL DEFAULT NULL,
+  `new_descripcion_agencia` VARCHAR(255) NULL DEFAULT NULL,
+  `old_nombre_agencia` VARCHAR(255) NULL DEFAULT NULL,
+  `new_nombre_agencia` VARCHAR(255) NULL DEFAULT NULL,
+  `old_fecha_registro` DATE NULL DEFAULT NULL,
+  `new_fecha_registro` DATE NULL DEFAULT NULL,
+  `old_direccion` VARCHAR(255) NULL DEFAULT NULL,
+  `new_direccion` VARCHAR(255) NULL DEFAULT NULL,
+  `old_imagen_url` VARCHAR(255) NULL DEFAULT NULL,
+  `new_imagen_url` VARCHAR(255) NULL DEFAULT NULL,
+  `old_telefono` VARCHAR(255) NULL DEFAULT NULL,
+  `new_telefono` VARCHAR(255) NULL DEFAULT NULL,
+  `old_correo` VARCHAR(255) NULL DEFAULT NULL,
+  `new_correo` VARCHAR(255) NULL DEFAULT NULL,
+  PRIMARY KEY (`id_bitorganizadoras`));
+
+-- trigger 1
+delimiter $$
+drop trigger if exists trgOrganizadorasInsert $$
+create trigger trgOrganizadorasInsert
+before insert on organizadoras
+for each row
+begin
+INSERT INTO bitorganizadoras (
+        usuario,
+        fecha_hora,
+        accion,
+        id_afectado,
+        old_user,
+        new_user,
+        old_password,
+        new_password,
+        old_descripcion_agencia,
+        new_descripcion_agencia,
+        old_nombre_agencia,
+        new_nombre_agencia,
+        old_fecha_registro,
+        new_fecha_registro,
+        old_direccion,
+        new_direccion,
+        old_imagen_url,
+        new_imagen_url,
+        old_telefono,
+        new_telefono,
+        old_correo,
+        new_correo
+    )
+values(
+        user(),
+        now(),
+        'INSERT / Creacion de organizadora',
+        new.id_organizadora,
+        NULL, new.user,
+        NULL, new.password,
+        NULL, new.descripcion_agencia,
+        NULL, new.nombre_agencia,
+        NULL, new.fecha_registro,
+        NULL, new.direccion,
+        NULL, new.imagen_url,
+        NULL, new.telefono,
+        NULL, new.correo
+);
+end $$
+
+
+-- trigger 2
+delimiter $$
+drop trigger if exists trgOrganizadorasUpdate $$
+create trigger trgOrganizadorasUpdate
+before update on organizadoras
+for each row
+begin
+INSERT INTO bitorganizadoras (
+        usuario,
+        fecha_hora,
+        accion,
+        id_afectado,
+        old_user,
+        new_user,
+        old_password,
+        new_password,
+        old_descripcion_agencia,
+        new_descripcion_agencia,
+        old_nombre_agencia,
+        new_nombre_agencia,
+        old_fecha_registro,
+        new_fecha_registro,
+        old_direccion,
+        new_direccion,
+        old_imagen_url,
+        new_imagen_url,
+        old_telefono,
+        new_telefono,
+        old_correo,
+        new_correo
+    )
+values(
+        user(),
+        now(),
+        'UPDATE / Modificacion de organizadora',
+        new.id_organizadora,
+        old.user, new.user,
+        old.password, new.password,
+        old.descripcion_agencia, new.descripcion_agencia,
+        old.nombre_agencia, new.nombre_agencia,
+        old.fecha_registro, new.fecha_registro,
+        old.direccion, new.direccion,
+        old.imagen_url, new.imagen_url,
+        old.telefono, new.telefono,
+        old.correo, new.correo
+);
+end $$
+
+
+-- trigger 3
+delimiter $$
+drop trigger if exists trgOrganizadorasDelete $$
+create trigger trgOrganizadorasDelete
+before delete on organizadoras
+for each row
+begin
+INSERT INTO bitorganizadoras (
+        usuario,
+        fecha_hora,
+        accion,
+        id_afectado,
+        old_user,
+        new_user,
+        old_password,
+        new_password,
+        old_descripcion_agencia,
+        new_descripcion_agencia,
+        old_nombre_agencia,
+        new_nombre_agencia,
+        old_fecha_registro,
+        new_fecha_registro,
+        old_direccion,
+        new_direccion,
+        old_imagen_url,
+        new_imagen_url,
+        old_telefono,
+        new_telefono,
+        old_correo,
+        new_correo
+    )
+values(
+        user(),
+        now(),
+        'DELETE / Eliminacion de organizadora',
+        old.id_organizadora,
+        old.user, NULL,
+        old.password, NULL,
+        old.descripcion_agencia, NULL,
+        old.nombre_agencia, NULL,
+        old.fecha_registro, NULL,
+        old.direccion, NULL,
+        old.imagen_url, NULL,
+        old.telefono, NULL,
+        old.correo, NULL
+);
+end $$
+
+INSERT INTO `abdarcproyecto1`.`organizadoras` (`id_organizadora`, `user`, `password`, `descripcion_agencia`, `nombre_agencia`, `fecha_registro`, `direccion`, `imagen_url`, `telefono`, `correo`) VALUES ('4', 'a', 'b', 'c', 'd', '2024-09-22', 'e', 'org4.png', '6141234567', 'a@email.com');
+
+UPDATE `abdarcproyecto1`.`organizadoras` SET `direccion` = 'agua' WHERE (`id_organizadora` = '4');
+
+delete from organizadoras where id_organizadora = 4;
+
+
+CREATE TABLE `abdarcproyecto1`.`bitreservaciones` (
+  `id_bitreservaciones` INT NOT NULL AUTO_INCREMENT,
+  `usuario` VARCHAR(45) NULL DEFAULT NULL,
+  `fecha_hora` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+  `accion` VARCHAR(45) NULL DEFAULT NULL,
+  `id_afectado` VARCHAR(45) NULL DEFAULT NULL,
+  `old_id_evento` INT NULL DEFAULT NULL,
+  `new_id_evento` INT NULL DEFAULT NULL,
+  `old_id_cliente` INT NULL DEFAULT NULL,
+  `new_id_cliente` INT NULL DEFAULT NULL,
+  `old_estado` VARCHAR(255) NULL DEFAULT NULL,
+  `new_estado` VARCHAR(255) NULL DEFAULT NULL,
+  PRIMARY KEY (`id_bitreservaciones`));
+
+-- trigger 1
+delimiter $$
+drop trigger if exists trgReservacionesInsert $$
+create trigger trgReservacionesInsert
+before insert on reservaciones
+for each row
+begin
+INSERT INTO bitreservaciones (
+        usuario,
+        fecha_hora,
+        accion,
+        id_afectado,
+        old_id_evento,
+        new_id_evento,
+        old_id_cliente,
+        new_id_cliente,
+        old_estado,
+        new_estado
+    )
+values(
+        user(),
+        now(),
+        'INSERT / Creacion de reservacion',
+        new.id_reservacion,
+        NULL, new.id_evento,
+        NULL, new.id_cliente,
+        NULL, new.estado
+);
+end $$
+
+
+-- trigger 2
+delimiter $$
+drop trigger if exists trgReservacionesUpdate $$
+create trigger trgReservacionesUpdate
+before update on reservaciones
+for each row
+begin
+INSERT INTO bitreservaciones (
+        usuario,
+        fecha_hora,
+        accion,
+        id_afectado,
+        old_id_evento,
+        new_id_evento,
+        old_id_cliente,
+        new_id_cliente,
+        old_estado,
+        new_estado
+    )
+values(
+        user(),
+        now(),
+        'UPDATE / Modificacion de reservacion',
+        new.id_reservacion,
+        old.id_evento, new.id_evento,
+        old.id_cliente, new.id_cliente,
+        old.estado, new.estado
+);
+end $$
+
+
+-- trigger 3
+delimiter $$
+drop trigger if exists trgReservacionesDelete $$
+create trigger trgReservacionesDelete
+before delete on reservaciones
+for each row
+begin
+INSERT INTO bitreservaciones (
+        usuario,
+        fecha_hora,
+        accion,
+        id_afectado,
+        old_id_evento,
+        new_id_evento,
+        old_id_cliente,
+        new_id_cliente,
+        old_estado,
+        new_estado
+    )
+values(
+        user(),
+        now(),
+        'DELETE / Eliminacion de reservacion',
+        old.id_reservacion,
+        old.id_evento, NULL,
+        old.id_cliente, NULL,
+        old.estado, NULL
+);
+end $$
+
+INSERT INTO `abdarcproyecto1`.`reservaciones` (`id_reservacion`, `id_evento`, `id_cliente`, `estado`) VALUES ('131', '18', '9', 'pendiente');
+
+UPDATE `abdarcproyecto1`.`reservaciones` SET `estado` = 'cancelado' WHERE (`id_reservacion` = '131');
+
+delete from reservaciones where id_reservacion = 131;
+
+
