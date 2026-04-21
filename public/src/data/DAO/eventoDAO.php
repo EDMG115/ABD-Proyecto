@@ -11,6 +11,7 @@ class eventoDAO
         $this->conexion = $conn->getConexion();
     }
 
+    // LECTURA (SELECT) - NO REQUIERE CANDADO (FLOCK)
     public function getEvento()
     {
         try {
@@ -25,3 +26,4 @@ class eventoDAO
         }
     }
 }
+?>

@@ -11,6 +11,7 @@ class CarruselDAO
         $this->conexion = $conn->getConexion();
     }
 
+    // LECTURA (SELECT) - NO REQUIERE CANDADO (FLOCK)
     public function getLugaresMasPopulares($limite = 30)
     {
         try {
@@ -29,6 +30,7 @@ class CarruselDAO
         }
     }
 
+    // LECTURA (SELECT) - NO REQUIERE CANDADO (FLOCK)
     public function getEventosDisponibles($limite = 20)
     {
         try {
@@ -47,4 +49,4 @@ class CarruselDAO
         }
     }
 }
-
+?>
