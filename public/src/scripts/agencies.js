@@ -136,6 +136,7 @@ window.addEventListener("load", async function () {
             enlaces: [
                 { url: "#", texto: "Pagina Principal", icono: `${base}media/images/icons/icon_home.png` },
                 { url: "./add_packages.html", texto: "Crear paquete", icono: `${base}media/images/icons/icon_travel.png` },
+                { url: "../backup/backup.html", texto: "Respaldos", icono: `${base}media/images/icons/icon_backup.jpg` },
                 {
                     tipo: "boton",
                     id: "btn_is_r",

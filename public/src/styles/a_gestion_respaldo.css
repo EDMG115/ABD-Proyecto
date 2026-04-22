@@ -1,137 +1,183 @@
-/* ---- Estilos globales ---- */
-
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-  font-family: "Segoe UI", Arial, sans-serif;
+:root {
+    --primary-color: #023E8A;
+    --primary-hover: #1d4ed8;
+    --bg-color: #f3f4f6;
+    --card-bg: #ffffff;
+    --text-color: #1f2937;
+    --text-muted: #4b5563;
+    --border-color: #e5e7eb;
 }
 
 body {
-  background-color: #f4f5fb;
-  background-image: url("./../media/images/layout/background-img.jpeg");
-  color: #333;
-  /*
-  display: grid;
-  grid-template-rows: auto 1fr auto;
-  min-height: 100vh;
-  */
-  object-fit: fill;
-  background-attachment: fixed;
+    font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    margin: 0;
 }
 
-/* ---- Cabecera y pie ---- */
-header,
-footer {
-  background-color: #023E8A;
-  color: white;
-  text-align: center;
-  padding: 1rem 0;
+.container {
+    max-width: 800px;
 }
 
-/* ---- Main ---- */
-main {
-  padding: 30px;
-  height: 100%;
+.page-title {
+    text-align: center;
+    font-size: 2rem;
+    color: var(--text-color);
+    margin-bottom: 30px;
+    font-weight: 700;
 }
 
-/* ---- Caja generica (Para el cuerpo de las pestañas) ---- */
+.card {
+    background-color: var(--card-bg);
+    border-radius: 10px;
+    padding: 25px;
+    margin-bottom: 25px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    border: 1px solid var(--border-color);
+}
+
+.card h2 {
+    margin-top: 0;
+    font-size: 1.25rem;
+    color: var(--primary-color);
+    border-bottom: 2px solid var(--border-color);
+    padding-bottom: 10px;
+    margin-bottom: 15px;
+}
+
+.card p {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    margin-bottom: 20px;
+}
+
+.form-group {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    margin-bottom: 15px;
+    flex-wrap: wrap;
+}
+
+.form-group label {
+    font-weight: 500;
+    font-size: 0.9rem;
+}
+
+input[type="date"],
+select {
+    padding: 10px;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    font-size: 0.9rem;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+input[type="date"]:focus,
+select:focus {
+    border-color: var(--primary-color);
+}
+
+button {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+button:hover {
+    background-color: var(--primary-hover);
+}
+
+/* Estilos de la tabla */
+.table-container {
+    overflow-x: auto;
+}
+
+.hist-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+.hist-table th,
+.hist-table td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.hist-table th {
+    background-color: #f9fafb;
+    font-weight: 600;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+.hist-table tr:hover {
+    background-color: #f9fafb;
+}
+
+.action-link {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.action-link:hover {
+    text-decoration: underline;
+}
+
 .box {
-  background-color: rgba(255, 255, 255, 0.90);
-  border-radius: 10px;
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.5);
-  padding: 20px;
+    padding: 40px;
+    margin: 20px;
 }
 
-/* ---- Botones generales ---- */
-.button,
-button,
-input[type="submit"] {
-  background-color: #023E8A;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  padding: 10px 15px;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
+/* TABLA BASE */
+.hist-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    min-width: 640px;
+    font-size: 0.95rem;
+    color: #222;
 }
 
-.button:hover,
-button:hover,
-input[type="submit"]:hover {
-  background-color: #1f3461;
+/* Header */
+.hist-table thead th {
+    text-align: left;
+    padding: 12px 14px;
+    background: #023E8A;
+    color: #fff;
+    font-weight: 700;
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    border-bottom: 2px solid rgba(0, 0, 0, 0.06);
 }
 
-/* ---- Tipografía general ---- */
-
-label {
-  font-weight: 600;
-  color: #023E8A;
-  margin-bottom: 4px;
-  display: block;
+/* Celdas */
+.hist-table td {
+    padding: 12px 14px;
+    vertical-align: middle;
+    border-bottom: 1px solid rgba(2, 62, 138, 0.08);
+    background: transparent;
 }
 
-/* ---- Inputs y textarea ---- */
-input[type="text"],
-input[type="number"],
-textarea {
-  width: 100%;
-  padding: 10px 12px;
-  border: 2px solid #cbd1e3;
-  border-radius: 8px;
-  font-size: 1rem;
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+/* Filas */
+.hist-table tbody tr:nth-child(odd) td {
+    background: rgba(2, 62, 138, 0.02);
 }
 
-.inputs {
-  width: 100%;
-  padding: 10px 12px;
-  border: 2px solid #cbd1e3;
-  border-radius: 8px;
-  font-size: 1rem;
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
-}
-
-input:focus,
-textarea:focus {
-  border-color: #023E8A;
-  box-shadow: 0 0 6px rgba(41, 67, 128, 0.3);
-  outline: none;
-}
-
-textarea {
-  resize: none;
-  min-height: 120px;
-}
-
-/* ---- Tarjetas personalizadas ---- */
-.cards {
-  background-color: #caccd4;
-  border-left: 5px solid #023E8A;
-  border-radius: 8px;
-  padding: 12px;
-  display: grid;
-  grid-template-columns: 1fr 2fr 1fr;
-  align-items: center;
-  gap: 10px;
-  transition:
-    background-color 0.3s ease,
-    box-shadow 0.3s ease,
-    transform 0.25s ease,
-    border-left-color 0.3s ease;
-}
-
-.cards span {
-  font-size: 0.95rem;
-  color: #333;
-}
-
-.cards:hover {
-  background-color: #dbe3f7;
-  border-left-color: #1f3461;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  transform: translateY(-2px);
+.hist-table tbody tr:hover td {
+    background: rgba(2, 62, 138, 0.05);
+    transition: background 0.2s ease;
 }
 
 /* =========================================
@@ -349,11 +395,40 @@ textarea {
 }
 
 
-/* ---- Responsividad global ---- */
-@media (max-width: 768px) {
-  main {
-    padding: 20px;
-  }
+#containerImgMapa {
+    position: relative;
+    width: 100%;
+    height: 450px;
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 30px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
 }
 
+#imgMapa {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+}
 
+#containerImgMapa:hover #imgMapa {
+    transform: scale(1.05); /* Pequeño zoom al pasar el mouse */
+}
+
+/* Un overlay oscuro sobre la imagen para que la descripción se lea bien */
+#desc_overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+    padding: 30px 20px 20px;
+    color: white;
+}
+
+#desc {
+    font-size: 1.1rem;
+    line-height: 1.5;
+    margin: 0;
+}

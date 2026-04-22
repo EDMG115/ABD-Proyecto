@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ARC - Gestor de respaldos</title>
+    
+    <link rel="stylesheet" href="./../../styles/header_style.css">
+    <link rel="stylesheet" href="./../../styles/footer_style.css">
+    <link rel="stylesheet" href="./../../styles/style_generico.css">
+    <link rel="stylesheet" href="./../../styles/a_gestion_respaldo.css">
+    <script src="./../../scripts/gestion_respaldo.js" type="module"></script>
+
+</head>
+
+<body>
+    <main class="box">
+        <h1 class="page-title">Panel de Administración</h1>
+
+        <div id="containerImgMapa">
+            <img src="./../../media/images/layout/a_gestion_db.jpg" id="imgMapa" alt="Vista del lugar">
+            <div id="desc_overlay">
+                <p id="desc">Respalda tus datos.</p>
+            </div>
+        </div>
+
+        <section class="card">
+            <h2>Respaldo completo de la base de datos</h2>
+            <p>Genera una copia de seguridad de toda la información del sistema en su estado actual.</p>
+            <form action="backup_full.php" method="POST">
+                <button type="submit">Generar respaldo completo</button>
+            </form>
+        </section>
+
+        <section class="card">
+            <h2>Respaldo por rango de fechas</h2>
+            <p>Selecciona un rango de fechas para exportar únicamente datos generados en ese periodo.</p>
+            <form action="backup_by_date.php" method="POST">
+                <div class="form-group">
+                    <div>
+                        <label for="fecha_inicio">Fecha inicio:</label><br>
+                        <input type="date" id="fecha_inicio" name="fecha_inicio" required>
+                    </div>
+                    <div>
+                        <label for="fecha_fin">Fecha fin:</label><br>
+                        <input type="date" id="fecha_fin" name="fecha_fin" required>
+                    </div>
+                </div>
+                <button type="submit">Generar respaldo por fechas</button>
+            </form>
+        </section>
+
+        <section class="card">
+            <h2>Restaurar base de datos</h2>
+            <p>Selecciona un archivo de respaldo almacenado en el servidor para restaurar el sistema.</p>
+            <form action="restore.php" method="POST">
+                <div class="form-group">
+                    <label for="backup_file">Archivo a restaurar:</label>
+                    <select id="backup_file" name="backup_file" required>
+                        <option value="" disabled selected>-- Selecciona un respaldo --</option>
+                        <option value="backup_2026_04_21.sql">backup_2026_04_21.sql (Completo)</option>
+                        <option value="backup_2026_04_20_parcial.sql">backup_2026_04_20_parcial.sql (Fechas)</option>
+                    </select>
+                </div>
+                <button type="submit" style="background-color: #dc2626;">Restaurar ahora</button>
+            </form>
+        </section>
+
+        <section class="card">
+            <h2>Historial de respaldos</h2>
+            <p>Aquí puedes consultar y descargar los respaldos generados anteriormente.</p>
+            <div class="table-container">
+                <table class="hist-table">
+                    <thead>
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Tipo</th>
+                            <th>Archivo</th>
+                            <th>Acción</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>2026-04-21</td>
+                            <td><span style="background: #dbeafe; color: #1e40af; padding: 4px 8px; border-radius: 12px; font-size: 0.8rem; font-weight: 600;">Completo</span></td>
+                            <td>backup_2026_04_21.sql</td>
+                            <td>
+                                <a href="backups/backup_2026_04_21.sql" class="action-link" download>Descargar</a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+</body>
+
+</html>

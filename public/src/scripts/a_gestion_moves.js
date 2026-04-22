@@ -25,7 +25,8 @@ window.addEventListener("load", async function () {
             headerScriptPath: `${base}scripts/header_script_a_gestion_moves.js`,
             enlaces: [
                 { url: "./a_gestion_view.html", texto: "Gestion de lugares", icono: `${base}media/images/icons/iconAnav1.png` },
-                { url: "./a_info_events.html", texto: "Estadisticas", icono: `${base}media/images/icons/iconAnav3.png` }
+                { url: "./a_info_events.html", texto: "Estadisticas", icono: `${base}media/images/icons/iconAnav3.png` },
+                { url: "./a_gestion_respaldo.html", texto: "Respaldos", icono: `${base}media/images/icons/icon_backup.jpg` }
             ],
             onHeaderReady: ({ s_header }) => {
                 if (s_header) s_header.style.backgroundPosition = "50% 50%";

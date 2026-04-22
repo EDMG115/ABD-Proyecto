@@ -175,6 +175,7 @@ window.addEventListener("load", async function () {
             enlaces: [
                 { url: "#", texto: "Pagina Principal", icono: `${base}media/images/icons/icon_home.png` },
                 { url: "./add_events.html", texto: "Crear evento", icono: `${base}media/images/icons/icon_event.png` },
+                { url: "../backup/backup.html", texto: "Respaldos", icono: `${base}media/images/icons/icon_backup.jpg` },
                 {
                     tipo: "boton",
                     id: "btn_is_r",
