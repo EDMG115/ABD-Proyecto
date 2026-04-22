@@ -13,6 +13,7 @@ class actividadDAO
         $this->conexion = $conn->getConexion();
     }
 
+    // LECTURA (SELECT) - NO REQUIERE CANDADO (FLOCK)
     public function getActividades()
     {
         try {
@@ -28,3 +29,4 @@ class actividadDAO
         }
     }
 }
+?>

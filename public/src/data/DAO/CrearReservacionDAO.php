@@ -1,5 +1,6 @@
 <?php
 require_once "./../conexion.php";
+
 class CrearReservacionDAO{
 
     private $id;
@@ -12,23 +13,37 @@ class CrearReservacionDAO{
 
     public function crearReservacion($id_evento, $id_cliente, $estado)
     {
-        try {
-            $sql = "CALL sp_crear_reservacion(:id_evento, :id_cliente, :estado)";
-            $stmt = $this->conexion->prepare($sql);
+        // 1. Crear un archivo de bloqueo único para este evento en específico
+        $lockPath = sys_get_temp_dir() . "/lock_evento_" . $id_evento . ".txt";
+        $lockFile = fopen($lockPath, "w+");
 
-            $stmt->bindParam(':id_evento', $id_evento);
-            $stmt->bindParam(':id_cliente', $id_cliente);
-            $stmt->bindParam(':estado', $estado);
+        // 2. Intentar bloquear el archivo (espera si alguien más lo está usando)
+        if (flock($lockFile, LOCK_EX)) {
+            try {
+                $sql = "CALL sp_crear_reservacion(:id_evento, :id_cliente, :estado)";
+                $stmt = $this->conexion->prepare($sql);
 
-            $stmt->execute();
+                $stmt->bindParam(':id_evento', $id_evento);
+                $stmt->bindParam(':id_cliente', $id_cliente);
+                $stmt->bindParam(':estado', $estado);
 
-            $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
-            $stmt->closeCursor();
+                $stmt->execute();
 
-            return $resultado['id_reservacion'];
+                $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
+                $stmt->closeCursor();
 
-        } catch (PDOException $e) {
-            throw new Exception("Error en la creación de la reservación: " . $e->getMessage());
+                return $resultado['id_reservacion'];
+
+            } catch (PDOException $e) {
+                throw new Exception("Error en la creación de la reservación: " . $e->getMessage());
+            } finally {
+                // 3. Siempre liberar el candado, falle o sea exitoso
+                flock($lockFile, LOCK_UN);
+                fclose($lockFile);
+            }
+        } else {
+            throw new Exception("El sistema está procesando otra reserva para este evento. Intenta nuevamente en unos segundos.");
         }
     }
 }
+?>

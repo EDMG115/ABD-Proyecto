@@ -11,6 +11,7 @@ class adminDAO{
         $this->conexion = $conn->getConexion();
     }
 
+    // LECTURA (SELECT) - NO REQUIERE CANDADO (FLOCK)
     public function validarAdmin(string $user, string $password){
         try {
             $sql = "CALL sp_get_admin_por_usuario(:user)";
