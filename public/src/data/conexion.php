@@ -29,7 +29,7 @@ class Conexion
         // El usuario por defecto para visitantes que no han iniciado sesión
         // y para hacer la consulta de validación de Login.
         'invitado' => [
-            'username' => 'arc_invitado', 
+            'username' => 'arc_invitado',
             'password' => 'nE6&iZ2%vH0+gN9'
         ]
     ];
@@ -58,7 +58,7 @@ class Conexion
         try {
             $this->conexion = new PDO($url, $username, $password);
             $this->conexion->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-            
+
             error_log("Conexión exitosa a DB usando el rol: " . $rolActual . " (User: $username)");
 
             return $this->conexion;
@@ -81,4 +81,3 @@ class Conexion
         return $this->conexion;
     }
 }
-?>
