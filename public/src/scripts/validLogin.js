@@ -9,7 +9,7 @@ export function buscarUsuarios(usuario, contra) {
         user: usuario,
         password: contra
     };
-    return fetch("../data/logic/usuarioLogic.php", { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(credenciales) }).then(response => response.json()).then(data => {
+    return fetch("../data/Logic/usuarioLogic.php", { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(credenciales) }).then(response => response.json()).then(data => {
         let validacion = false;
         if (data.correcto) {
             console.log("validado");
@@ -26,7 +26,7 @@ export function buscarAdmins(usuario, contra) {
         user: usuario,
         password: contra
     };
-    return fetch("../data/logic/adminLogic.php", { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(credenciales) }).then(response => response.json()).then(data => {
+    return fetch("../data/Logic/adminLogic.php", { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(credenciales) }).then(response => response.json()).then(data => {
         let validacion = false;
         if (data.correcto) {
             console.log("validado")
@@ -53,7 +53,7 @@ export function buscarOrganizadores(usuario, contra) {
         user: usuario,
         password: contra
     };
-    return fetch("../data/logic/organizadorLogic.php", { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(credenciales) }).then(response => response.json()).then(data => {
+    return fetch("../data/Logic/organizadorLogic.php", { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(credenciales) }).then(response => response.json()).then(data => {
         let validacion = false;
         if (data.correcto) {
             console.log("validado");
@@ -70,7 +70,7 @@ export function buscarAgencias(usuario, contra) {
         user: usuario,
         password: contra
     };
-    return fetch("../data/logic/agenciaLogic.php", { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(credenciales) }).then(response => response.json()).then(data => {
+    return fetch("../data/Logic/agenciaLogic.php", { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(credenciales) }).then(response => response.json()).then(data => {
         let validacion = false;
         if (data.correcto) {
             console.log("validado");

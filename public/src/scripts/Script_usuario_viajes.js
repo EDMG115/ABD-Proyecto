@@ -97,7 +97,7 @@ window.addEventListener("load", async function () {
     // CARGA DE DATOS Y EVENTOS
     // =====================================================
 
-    fetch("./../../data/logic/lugarLogic.php")
+    fetch("./../../data/Logic/lugarLogic.php")
         .then((response) => response.json())
         .then((respuesta) => {
             if (!respuesta.correcto || !respuesta.lugares) {
@@ -115,7 +115,7 @@ window.addEventListener("load", async function () {
                 li.addEventListener("click", function () {
                     const id_lugar = lugar.id_lugar;
 
-                    fetch(`./../../data/logic/PaquetesLogic.php?id_lugar=${id_lugar}`)
+                    fetch(`./../../data/Logic/PaquetesLogic.php?id_lugar=${id_lugar}`)
                         .then((response) => response.json())
                         .then((respuestaPaquetes) => {
                             const paquetes = respuestaPaquetes.paquetes;
@@ -165,7 +165,7 @@ window.addEventListener("load", async function () {
                                             formData.append("fecha_viaje", fecha);
                                             formData.append("hora_viaje", hora);
 
-                                            fetch(`./../../data/logic/CrearViajeLogic.php`, {
+                                            fetch(`./../../data/Logic/CrearViajeLogic.php`, {
                                                 method: "POST",
                                                 body: formData
                                             })

@@ -1,5 +1,5 @@
 <?php 
-require_once "./../dao/viajesDAO.php";
+require_once "./../DAO/viajesDAO.php";
 
 
 header('Content-Type: application/json');

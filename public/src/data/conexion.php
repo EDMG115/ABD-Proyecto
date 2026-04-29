@@ -63,8 +63,8 @@ class Conexion
 
             return $this->conexion;
         } catch (PDOException $e) {
-            error_log("Error en la conexión de la base de datos: " . $e->getMessage());
-            return null;
+            throw new Exception("Error en la conexión de la base de datos: " . $e->getMessage());
+
         }
     }
 

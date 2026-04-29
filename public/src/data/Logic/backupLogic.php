@@ -1,7 +1,7 @@
 <?php id="logic1"
 
 require_once "./../dao/backupDAO.php";
-require_once "./../util/seguridad.php";
+require_once "./../Util/seguridad.php";
 
 if (session_status() === PHP_SESSION_NONE) {
     session_start();

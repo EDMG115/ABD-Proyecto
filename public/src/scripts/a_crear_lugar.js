@@ -72,7 +72,7 @@ window.addEventListener("load", async function () {
         e.preventDefault();
         const formData = new FormData(form_crear_lugar);
         formData.append("id_admin", idAdmin);
-        fetch("./../../data/logic/lugarLogic.php", {
+        fetch("./../../data/Logic/lugarLogic.php", {
             method: "POST",
             body: formData
         })

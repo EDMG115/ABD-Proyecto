@@ -1,6 +1,8 @@
 <?php
-    require_once "./../dao/adminDAO.php";
-    require_once "./../util/seguridad.php";
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
+    require_once __DIR__ ."/../DAO/adminDAO.php";
+    require_once __DIR__ ."/../Util/seguridad.php";
     header('Content-Type: application/json');
     $adminDAO = new adminDAO();
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
