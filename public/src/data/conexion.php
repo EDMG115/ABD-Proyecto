@@ -80,4 +80,23 @@ class Conexion
         }
         return $this->conexion;
     }
+
+   public function getCredencialesActuales()
+{
+    if (session_status() === PHP_SESSION_NONE) {
+        session_start();
+    }
+
+    if (!isset($_SESSION['tipo_usuario'])) {
+        throw new Exception("No hay usuario en sesión");
+    }
+
+    $rol = $_SESSION['tipo_usuario'];
+
+    if (!isset($this->credenciales[$rol])) {
+        throw new Exception("Rol inválido");
+    }
+
+    return $this->credenciales[$rol];
+}
 }

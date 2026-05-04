@@ -132,8 +132,8 @@ window.addEventListener("load", async function () {
         conectarEventos();
 
     } catch (e) {
-        console.error(e);
-        showAlert("Error", "No se pudo iniciar.");
+        window.location.href = "./../../../index.html";
+
     }
 });
 
