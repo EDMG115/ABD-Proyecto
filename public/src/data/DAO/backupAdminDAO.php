@@ -17,21 +17,7 @@ try {
     $db = "abdarcproyecto1";
     $host = "localhost";
 
-    $comando = "mysqldump --no-tablespaces -h $host -u $user -p$pass $db > $ruta";
-
-    $cred = $conexion->getCredencialesActuales();
-
-    $user = $cred['username'];
-    $pass = escapeshellarg($cred['password']);
-
-    $fecha = date("Ymd_His");
-    $ruta = __DIR__ . "/../DB/backups/respaldo_$fecha.sql";
-
-    $db = "abdarcproyecto1";
-    $host = "localhost";
-
-    $comando = "mysqldump --no-tablespaces -h $host -u $user -p$pass $db > $ruta";
-
+    $comando = "/usr/bin/mysqldump --single-transaction --skip-lock-tables --skip-routines --triggers --events  -u $user -p$pass $db > $ruta";
     exec($comando, $output, $resultado);
 
     if ($resultado === 0) {
