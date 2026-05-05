@@ -7,18 +7,26 @@ require_once "./../conexion.php";
 try {
 
     $cred = $conexion->getCredencialesActuales();
-
     $user = $cred['username'];
-    $pass = escapeshellarg($cred['password']);
-
+    //$pass = escapeshellarg($cred['password']);
+    $pas=$cred['password'];
     $fecha = date("Ymd_His");
-    $ruta = __DIR__ . "/../DB/backups/respaldo_$fecha.sql";
-
     $db = "abdarcproyecto1";
     $host = "localhost";
 
-    $comando = "/usr/bin/mysqldump --single-transaction --skip-lock-tables --skip-routines --triggers --events  -u $user -p$pass $db > $ruta";
-    exec($comando, $output, $resultado);
+    $mysqldump = encontrarMysqldump();
+ if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+        $ruta = __DIR__ . "\\..\\DB\\backups\\respaldo_$fecha.sql";
+
+        $comando =  "\"$mysqldump\" --single-transaction --skip-lock-tables --triggers --events --result-file=\"$ruta\" -u $user -p\"$pass\"  $db ";
+        exec($comando, $output, $resultado);
+    }else {
+        $ruta = __DIR__ . "/../DB/backups/respaldo_$fecha.sql";
+        $comando = "$mysqldump --single-transaction --skip-lock-tables --triggers --events  -u $user -p$pass $db > $ruta";
+        exec($comando, $output, $resultado);
+    }
+
+
 
     if ($resultado === 0) {
         echo "✅ Respaldo generado correctamente";
@@ -29,5 +37,40 @@ try {
 
 } catch (Exception $e) {
     echo "⛔ " . $e->getMessage();
+}
+
+function encontrarMysqldump(): ?string
+{
+    $posibles = [];
+
+    // Windows (XAMPP / WAMP / MySQL típicos)
+    if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+        $posibles = [
+            "C:\\xampp\\mysql\\bin\\mysqldump.exe",
+            "C:\\xampp\\mysql\\bin\\mysqldump",
+            "C:\\wamp64\\bin\\mysql\\mysql8.0\\bin\\mysqldump.exe",
+            "C:\\Program Files\\MySQL\\MySQL Server 8.0\\bin\\mysqldump.exe",
+            "C:\\Program Files (x86)\\MySQL\\MySQL Server 8.0\\bin\\mysqldump.exe",
+        ];
+    } 
+    //Linux / servidor
+    else {
+        $output = trim(shell_exec("which mysqldump"));
+        if (!empty($output)) {
+            $posibles[] = $output;
+        }
+
+        $posibles[] = "/usr/bin/mysqldump";
+        $posibles[] = "/usr/local/bin/mysqldump";
+    }
+
+    // 🔍 Verificar existencia
+    foreach ($posibles as $path) {
+        if ($path && file_exists($path)) {
+            return $path;
+        }
+    }
+
+    return null;
 }
 ?>
