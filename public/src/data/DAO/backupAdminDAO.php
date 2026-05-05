@@ -20,6 +20,7 @@ try {
 
         $comando =  "\"$mysqldump\" --single-transaction --skip-lock-tables --triggers --events --result-file=\"$ruta\" -u $user -p\"$pass\"  $db ";
         exec($comando, $output, $resultado);
+        
     }else {
         $ruta = __DIR__ . "/../DB/backups/respaldo_$fecha.sql";
         $pass = escapeshellarg($pass);
@@ -65,7 +66,7 @@ function encontrarMysqldump(): ?string
         $posibles[] = "/usr/local/bin/mysqldump";
     }
 
-    // 🔍 Verificar existencia
+
     foreach ($posibles as $path) {
         if ($path && file_exists($path)) {
             return $path;
