@@ -9,7 +9,7 @@ try {
     $cred = $conexion->getCredencialesActuales();
     $user = $cred['username'];
     //$pass = escapeshellarg($cred['password']);
-    $pas=$cred['password'];
+    $pass=$cred['password'];
     $fecha = date("Ymd_His");
     $db = "abdarcproyecto1";
     $host = "localhost";
@@ -22,6 +22,7 @@ try {
         exec($comando, $output, $resultado);
     }else {
         $ruta = __DIR__ . "/../DB/backups/respaldo_$fecha.sql";
+        $pass = escapeshellarg($pass);
         $comando = "$mysqldump --single-transaction --skip-lock-tables --triggers --events  -u $user -p$pass $db > $ruta";
         exec($comando, $output, $resultado);
     }
