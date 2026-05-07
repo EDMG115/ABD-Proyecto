@@ -64,7 +64,6 @@ class Conexion
             return $this->conexion;
         } catch (PDOException $e) {
             throw new Exception("Error en la conexión de la base de datos: " . $e->getMessage());
-
         }
     }
 
@@ -81,22 +80,22 @@ class Conexion
         return $this->conexion;
     }
 
-   public function getCredencialesActuales()
-{
-    if (session_status() === PHP_SESSION_NONE) {
-        session_start();
+    public function getCredencialesActuales()
+    {
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+
+        if (!isset($_SESSION['tipo_usuario'])) {
+            throw new Exception("No hay usuario en sesión");
+        }
+
+        $rol = $_SESSION['tipo_usuario'];
+
+        if (!isset($this->credenciales[$rol])) {
+            throw new Exception("Rol inválido");
+        }
+
+        return $this->credenciales[$rol];
     }
-
-    if (!isset($_SESSION['tipo_usuario'])) {
-        throw new Exception("No hay usuario en sesión");
-    }
-
-    $rol = $_SESSION['tipo_usuario'];
-
-    if (!isset($this->credenciales[$rol])) {
-        throw new Exception("Rol inválido");
-    }
-
-    return $this->credenciales[$rol];
-}
 }
