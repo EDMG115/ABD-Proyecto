@@ -1,9 +1,9 @@
 <?php
 header("Content-Type: application/json");
 
-require_once "./../dao/agenciaDAO.php";
-require_once "./../dao/lugarDAO.php";
-require_once "./../dao/paqueteDAO.php";
+require_once "./../DAO/agenciaDAO.php";
+require_once "./../DAO/lugarDAO.php";
+require_once "./../DAO/paqueteDAO.php";
 
 // INSTANCIAS DE CADA DAO
 $agenciaDAO = new agenciaDAO();

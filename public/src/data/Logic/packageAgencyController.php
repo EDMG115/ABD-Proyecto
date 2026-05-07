@@ -1,10 +1,10 @@
 <?php
 header("Content-Type: application/json");
 
-require_once "./../util/seguridad.php";
-require_once "./../dao/paqueteDAO.php";
-require_once "./../dao/agenciaDAO.php";
-require_once "./../dao/lugarDAO.php";
+require_once "./../Util/seguridad.php";
+require_once "./../DAO/paqueteDAO.php";
+require_once "./../DAO/agenciaDAO.php";
+require_once "./../DAO/lugarDAO.php";
 
 // INSTANCIAS DE CADA DAO
 $paqueteDAO = new paqueteDAO(); 

@@ -74,7 +74,7 @@ window.addEventListener("load", async function () {
     const desc = document.getElementById("desc");
     const ol = document.createElement("ol");
 
-    fetch("./../../data/logic/eventoLogic.php")
+    fetch("./../../data/Logic/eventoLogic.php")
         .then((response) => response.json())
         .then((data) => {
             if (!data.correcto || !data.eventos) {
@@ -125,7 +125,7 @@ window.addEventListener("load", async function () {
                                 formData.append("id_cliente", usuario.id_cliente);
                                 formData.append("estado", "pendiente");
 
-                                fetch(`./../../data/logic/CrearReservacionLogic.php`, {
+                                fetch(`./../../data/Logic/CrearReservacionLogic.php`, {
                                     method: "POST",
                                     body: formData
                                 })

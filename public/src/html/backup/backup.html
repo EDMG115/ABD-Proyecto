@@ -21,22 +21,22 @@
         <div id="containerImgMapa">
             <img src="./../../media/images/layout/a_gestion_db.jpg" id="imgMapa" alt="Vista del lugar">
             <div id="desc_overlay">
-                <p id="desc">Respalda tus datos.</p>
+                <p id="desc">Respalda tus datos. (Solamente el administrador puede realizarlo)</p>
             </div>
         </div>
 
         <section class="card">
             <h2>Respaldo completo de la base de datos</h2>
             <p>Genera una copia de seguridad de toda la información del sistema en su estado actual.</p>
-            <form action="backup_full.php" method="POST">
+            <form action="./../../data/DAO/backupAdminDAO.php" method="POST">
                 <button type="submit">Generar respaldo completo</button>
             </form>
         </section>
-
+<!--
         <section class="card">
             <h2>Respaldo por rango de fechas</h2>
             <p>Selecciona un rango de fechas para exportar únicamente datos generados en ese periodo.</p>
-            <form action="backup_by_date.php" method="POST">
+            <form action="./../../data/DAO/backupAdminDAO.php.php" method="POST">
                 <div class="form-group">
                     <div>
                         <label for="fecha_inicio">Fecha inicio:</label><br>
@@ -92,7 +92,7 @@
                     </tbody>
                 </table>
             </div>
-        </section>
+        </section>-->
     </main>
 </body>
 

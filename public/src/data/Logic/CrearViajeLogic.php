@@ -1,5 +1,5 @@
 <?php
-    require_once "./../dao/CrearViajeDAO.php";
+    require_once "./../DAO/CrearViajeDAO.php";
 
     header('Content-Type: application/json');
     $viajeDAO = new CrearViajeDAO();

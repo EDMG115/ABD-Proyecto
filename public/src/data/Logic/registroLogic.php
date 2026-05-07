@@ -1,5 +1,5 @@
 <?php
-require_once "./../dao/registroDAO.php";
+require_once "./../DAO/registroDAO.php";
 header('Content-Type: application/json');
 $registroDAO = new registroDAO();
 if ($_SERVER["REQUEST_METHOD"] == "POST") {

@@ -1,6 +1,6 @@
 <?php
-    require_once "./../dao/usuarioDAO.php";
-    require_once "./../util/seguridad.php";
+    require_once "./../DAO/usuarioDAO.php";
+    require_once "./../Util/seguridad.php";
     header('Content-Type: application/json');
     $usuarioDAO = new usuarioDAO();
     if ($_SERVER["REQUEST_METHOD"] == "POST") {

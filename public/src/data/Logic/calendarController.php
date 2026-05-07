@@ -2,7 +2,7 @@
 header("Content-Type: application/json");
 
 
-require_once "./../dao/eventosDAO.php";
+require_once "./../DAO/eventosDAO.php";
 
 // INSTANCIAS DE CADA DAO
 $eventosDAO = new eventosDAO(); 

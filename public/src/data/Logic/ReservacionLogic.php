@@ -1,5 +1,5 @@
 <?php
-require_once "./../dao/ReservacionesDAO.php"; 
+require_once "./../DAO/ReservacionesDAO.php"; 
 header('Content-Type: application/json');
 
 $reservacionesDAO = new ReservacionesDAO();

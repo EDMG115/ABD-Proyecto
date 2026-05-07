@@ -1,3 +1,8 @@
+DROP USER IF EXISTS 'arc_admin'@'%';
+DROP USER IF EXISTS 'arc_org_eventos'@'%';
+DROP USER IF EXISTS 'arc_org_viajes'@'%';
+DROP USER IF EXISTS 'arc_cliente'@'%';
+DROP USER IF EXISTS 'arc_invitado'@'%';
 
 -- Crear los usuarios con sus contraseñas
 CREATE USER 'arc_admin'@'%' IDENTIFIED BY 'k9#Mv2!pL8$zQ1w';
@@ -40,7 +45,9 @@ GRANT EXECUTE ON PROCEDURE sp_validar_cliente_por_usuario TO 'arc_invitado'@'%';
 GRANT EXECUTE ON PROCEDURE sp_validar_organizador TO 'arc_invitado'@'%';
 
 -- arc_admin
-
+-- Esto es totalmente necesario para realizar respaldos
+GRANT ALL PRIVILEGES ON abdarcproyecto1.* TO 'arc_admin'@'%';
+GRANT PROCESS ON *.* TO 'arc_admin'@'%'; 
 GRANT EXECUTE ON PROCEDURE sp_actualizar_fecha_evento TO 'arc_admin'@'%';
 GRANT EXECUTE ON PROCEDURE sp_actualizar_imagen_lugar TO 'arc_admin'@'%';
 GRANT EXECUTE ON PROCEDURE sp_actualizar_lugar TO 'arc_admin'@'%';

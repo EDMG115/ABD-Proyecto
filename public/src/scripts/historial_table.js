@@ -137,7 +137,7 @@ function initHistorialTable(data) {
                     
                     if (!currentViajeItem) return;
                     
-                    fetch("../../data/logic/HistorialLogic.php", {
+                    fetch("../../data/Logic/HistorialLogic.php", {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
                         body: JSON.stringify({

@@ -1,6 +1,6 @@
 <?php
-require_once "./../util/seguridad.php";
-require_once "./../dao/infoEventosDAO.php";
+require_once "./../Util/seguridad.php";
+require_once "./../DAO/infoEventosDAO.php";
 header('Content-Type: application/json');
 
 if (!verificarPermisos("ver_reportes")) {
