@@ -4,7 +4,7 @@ class Conexion
     private $conexion;
     private $driver = "mysql";
     private $host = "localhost";
-    private $database = "abdarcproyecto3";
+    private $database = "abdarcproyecto1";
     private $port = "3306";
     private $charset = "utf8mb4";
 
