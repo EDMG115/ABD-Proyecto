@@ -5,7 +5,7 @@ class Conexion
     private $conexion;
     private $driver = "mysql";
     private $host = "localhost";
-    private $database = "abdarcproyecto3";
+    private $database = "abdarcproyecto1";
     private $port = "3306";
     private $charset = "utf8mb4";
 
@@ -65,7 +65,6 @@ class Conexion
             return $this->conexion;
         } catch (PDOException $e) {
             throw new Exception("Error en la conexión de la base de datos: " . $e->getMessage());
-
         }
     }
 
@@ -82,22 +81,22 @@ class Conexion
         return $this->conexion;
     }
 
-   public function getCredencialesActuales()
-{
-    if (session_status() === PHP_SESSION_NONE) {
-        session_start();
+    public function getCredencialesActuales()
+    {
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+
+        if (!isset($_SESSION['tipo_usuario'])) {
+            throw new Exception("No hay usuario en sesión");
+        }
+
+        $rol = $_SESSION['tipo_usuario'];
+
+        if (!isset($this->credenciales[$rol])) {
+            throw new Exception("Rol inválido");
+        }
+
+        return $this->credenciales[$rol];
     }
-
-    if (!isset($_SESSION['tipo_usuario'])) {
-        throw new Exception("No hay usuario en sesión");
-    }
-
-    $rol = $_SESSION['tipo_usuario'];
-
-    if (!isset($this->credenciales[$rol])) {
-        throw new Exception("Rol inválido");
-    }
-
-    return $this->credenciales[$rol];
-}
 }
