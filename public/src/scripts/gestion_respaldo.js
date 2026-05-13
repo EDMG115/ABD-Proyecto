@@ -464,11 +464,5 @@ document.addEventListener("DOMContentLoaded", () => {
 
     });
 
-    // ==================================
-    // Restaurar Respaldo
-    // ==================================
-    
-
-
 });
 
