@@ -1,5 +1,5 @@
 <?php
-require_once "./../dao/eventoDAO.php";
+require_once "./../DAO/eventoDAO.php";
 header('Content-Type: application/json');
 $eventoDAO = new eventoDAO();
 $RUTA_IMG_ESTANDAR = "./../../media/images/lugares/";

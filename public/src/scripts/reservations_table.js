@@ -152,7 +152,7 @@ function initReservacionesTable(data) {
                     
                     if (!currentReservacionItem) return;
                     
-                    fetch("../../data/logic/ReservacionLogic.php", {
+                    fetch("../../data/Logic/ReservacionLogic.php", {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
                         body: JSON.stringify({

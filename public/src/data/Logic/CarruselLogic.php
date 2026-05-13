@@ -1,5 +1,5 @@
 <?php
-require_once "./../dao/CarruselDAO.php";
+require_once "./../DAO/CarruselDAO.php";
 header('Content-Type: application/json');
 
 $carruselDAO = new CarruselDAO();

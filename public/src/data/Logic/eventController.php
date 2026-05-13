@@ -1,11 +1,11 @@
 <?php
 header("Content-Type: application/json");
 
-require_once "./../util/seguridad.php";
-require_once "./../dao/eventosDAO.php";
-require_once "./../dao/organizadorDAO.php";
-require_once "./../dao/lugarDAO.php";
-require_once "./../dao/actividadDAO.php";
+require_once "./../Util/seguridad.php";
+require_once "./../DAO/eventosDAO.php";
+require_once "./../DAO/organizadorDAO.php";
+require_once "./../DAO/lugarDAO.php";
+require_once "./../DAO/actividadDAO.php";
 
 // INSTANCIAS DE CADA DAO
 $eventosDAO = new eventosDAO(); 

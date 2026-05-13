@@ -1,9 +1,9 @@
 <?php
 header("Content-Type: application/json");
 
-require_once "./../dao/organizadorDAO.php";
-require_once "./../dao/lugarDAO.php";
-require_once "./../dao/eventosDAO.php";
+require_once "./../DAO/organizadorDAO.php";
+require_once "./../DAO/lugarDAO.php";
+require_once "./../DAO/eventosDAO.php";
 
 // INSTANCIAS DE CADA DAO
 $organizadoraDAO = new organizadorDAO();

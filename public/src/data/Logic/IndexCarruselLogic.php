@@ -1,6 +1,8 @@
 <?php
-require_once "./../dao/CarruselDAO.php";
-require_once "./../dao/paqueteDAO.php";
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
+require_once __DIR__ . "/../DAO/CarruselDAO.php";
+require_once __DIR__ . "/../DAO/paqueteDAO.php";
 header('Content-Type: application/json');
 
 $indexCarruselDAO = new CarruselDAO();
@@ -8,7 +10,7 @@ $paqueteDAO = new paqueteDAO();
 
 // Rutas de imágenes (relativas al index en public/)
 $RUTA_IMG_LUGARES = "./src/media/images/lugares/";
-$RUTA_IMG_EVENTOS = "./src/media/images/eventos/";
+$RUTA_IMG_EVENTOS = "./src/media/images/events/";
 $RUTA_IMG_PAQUETES = "./src/media/images/paquetes/";
 
 if ($_SERVER["REQUEST_METHOD"] == "GET") {

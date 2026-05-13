@@ -1,6 +1,6 @@
 <?php
-    require_once "./../dao/agenciaDAO.php";
-    require_once "./../util/seguridad.php";
+    require_once "./../DAO/agenciaDAO.php";
+    require_once "./../Util/seguridad.php";
     header('Content-Type: application/json');
     $agenciaDAO = new agenciaDAO();
     if ($_SERVER["REQUEST_METHOD"] == "POST") {

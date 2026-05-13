@@ -1,6 +1,6 @@
 <?php
-require_once "./../util/seguridad.php";
-require_once "./../dao/lugarDAO.php";
+require_once "./../Util/seguridad.php";
+require_once "./../DAO/lugarDAO.php";
 header('Content-Type: application/json');
 $lugarDAO = new lugarDAO();
 $RUTA_IMG_ESTANDAR = "./../../media/images/lugares/";

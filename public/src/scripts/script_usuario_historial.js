@@ -40,7 +40,7 @@ window.addEventListener("load", async function () {
 
     // Codigo ---------
 
-    fetch("../../data/logic/HistorialLogic.php", {
+    fetch("../../data/Logic/HistorialLogic.php", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id_cliente: usuario.id_cliente })
@@ -69,7 +69,7 @@ window.addEventListener("load", async function () {
             console.error("Error cargando historial:", err);
         });
 
-    fetch("../../data/logic/ReservacionLogic.php", {
+    fetch("../../data/Logic/ReservacionLogic.php", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id_cliente: usuario.id_cliente })

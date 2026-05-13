@@ -1,6 +1,6 @@
 <?php
-    require_once "./../dao/paqueteDAO.php";
-    require_once "./../util/seguridad.php";
+    require_once "./../DAO/paqueteDAO.php";
+    require_once "./../Util/seguridad.php";
 
 
     header('Content-Type: application/json');

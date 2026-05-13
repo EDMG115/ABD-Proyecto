@@ -39,7 +39,7 @@ window.addEventListener("load", async function () {
         });
     }
 
-    fetch("./../../data/logic/lugarLogic.php")
+    fetch("./../../data/Logic/lugarLogic.php")
         .then((response) => response.json())
         .then((data) => {
             if (data.correcto && data.lugares) {

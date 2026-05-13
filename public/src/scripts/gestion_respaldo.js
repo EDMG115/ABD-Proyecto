@@ -1,3 +1,5 @@
+console.log("JS cargado");
+
 import { renderizarLayout } from "../components/layoutManager.js";
 
 
@@ -129,102 +131,13 @@ window.addEventListener("load", async function () {
         });
 
         aplicarPermisos(config);
-        conectarEventos();
+
 
     } catch (e) {
-        console.error(e);
-        showAlert("Error", "No se pudo iniciar.");
+        window.location.href = "./../../../index.html";
+
     }
 });
-
-// ============================================
-// CONECTAR EVENTOS A FORMULARIOS
-// ============================================
-function conectarEventos() {
-
-    const formFull = document.querySelector("form[action='backup_full.php']");
-    if (formFull) {
-        formFull.addEventListener("submit", async (e) => {
-            e.preventDefault();
-
-            const res = await fetch("../../data/Logic/backupLogic.php", {
-                method: "POST",
-                headers: { "Content-Type": "application/x-www-form-urlencoded" },
-                body: "accion=backup_full"
-            });
-
-            const data = await res.json();
-
-            if (data.archivo) {
-                descargarArchivo(data.archivo);
-            }
-
-            showAlert("Backup", data.msg);
-        });
-    }
-
-    const formFecha = document.querySelector("form[action='backup_by_date.php']");
-    if (formFecha) {
-        formFecha.addEventListener("submit", async (e) => {
-            e.preventDefault();
-
-            const formData = new FormData(formFecha);
-            const user = obtenerDatosUsuario();
-
-            // Se pasan los id para poder trabajar
-            const body = new URLSearchParams({
-                accion: "backup_fecha",
-                fecha_inicio: formData.get("fecha_inicio"),
-                fecha_fin: formData.get("fecha_fin"),
-                id_agencia: user.id_agencia,
-                id_organizadora: user.id_organizadora
-            });
-
-            const res = await fetch("../../data/Logic/backupLogic.php", {
-                method: "POST",
-                body
-            });
-
-            const data = await res.json();
-
-            if (data.archivo) {
-                descargarArchivo(data.archivo);
-            }
-
-            showAlert("Resultado", data.msg);
-        });
-    }
-
-    const formRestore = document.querySelector("form[action='restore.php']");
-    if (formRestore) {
-        formRestore.addEventListener("submit", async (e) => {
-            e.preventDefault();
-
-            const archivo = document.getElementById("backup_file").value;
-
-            if (!archivo) {
-                showAlert("Error", "Selecciona un archivo");
-                return;
-            }
-
-            const body = new URLSearchParams({
-                accion: "restore",
-                archivo: archivo
-            });
-
-            const res = await fetch("../../data/Logic/backupLogic.php", {
-                method: "POST",
-                body
-            });
-
-            const data = await res.json();
-
-            showAlert("Restauración", data.msg);
-        });
-    }
-
-    cargarHistorial();
-}
 
 
 function descargarArchivo(nombreArchivo) {
@@ -240,36 +153,80 @@ function descargarArchivo(nombreArchivo) {
 // HISTORIAL
 // ============================================
 async function cargarHistorial() {
+
     try {
-        const res = await fetch("../../data/Logic/backupLogic.php", {
-            method: "POST",
-            headers: { "Content-Type": "application/x-www-form-urlencoded" },
-            body: "accion=historial"
-        });
+
+        const res = await fetch("../../data/DAO/backupAdminDAO.php", {
+    method: "POST",
+    headers: {
+        "Content-Type":
+        "application/x-www-form-urlencoded"
+    },
+    body: "accion=historial"
+})
 
         const data = await res.json();
 
-        const tbody = document.querySelector(".hist-table tbody");
+        const tbody =
+        document.querySelector(".hist-table tbody");
+
         tbody.innerHTML = "";
 
         data.forEach(item => {
+
             const tr = document.createElement("tr");
 
             tr.innerHTML = `
                 <td>${item.fecha}</td>
-                <td>${item.tipo}</td>
-                <td>${item.archivo}</td>
+
                 <td>
-                    <a href="backups/${item.archivo}" download>Descargar</a>
+                    <span class="tag-backup">
+                        ${item.tipo}
+                    </span>
+                </td>
+
+                <td>${item.archivo}</td>
+
+                <td class="acciones">
+
+                    <a
+                        href="../../data/DB/backups/${item.archivo}"
+                        class="btn-descargar"
+                        download
+                    >
+                        Descargar
+                    </a>
+
+                    <button
+                        class="btn-restaurar"
+                    >
+                        Restaurar
+                    </button>
+
                 </td>
             `;
 
             tbody.appendChild(tr);
+
+            // EVENTO
+            const btnRestaurar =
+            tr.querySelector(".btn-restaurar");
+
+            btnRestaurar.addEventListener(
+                "click",
+                () => {
+                    restaurarBackup(item.archivo);
+                }
+            );
+
         });
 
     } catch (e) {
+
         console.error(e);
+
     }
+
 }
 
 // ============================================
@@ -326,3 +283,186 @@ function showAlert(title, message) {
 
     modal.querySelector("#okBtn").onclick = () => modal.remove();
 }
+//================================
+// RESTAURACION
+// ===============================
+async function restaurarBackup(archivo) {
+
+    const confirmacion =
+    await Swal.fire({
+
+        title: '¿Restaurar respaldo?',
+
+        text:
+        `Se restaurará: ${archivo}`,
+
+        icon: 'warning',
+
+        showCancelButton: true,
+
+        confirmButtonText:
+        'Sí, restaurar',
+
+        cancelButtonText:
+        'Cancelar'
+    });
+
+    if (!confirmacion.isConfirmed)
+        return;
+
+    Swal.fire({
+
+        title: 'Restaurando...',
+
+        allowOutsideClick: false,
+
+        didOpen: () => {
+            Swal.showLoading();
+        }
+    });
+
+    try {
+
+        const respuesta =
+        await fetch(
+
+            './../../data/DAO/backupRestoreDAO.php',
+
+            {
+
+                method: 'POST',
+
+                headers: {
+
+                    'Content-Type':
+                    'application/x-www-form-urlencoded'
+                },
+
+                body:
+                `backup_file=${encodeURIComponent(archivo)}`
+            }
+        );
+
+        const texto =
+        await respuesta.text();
+
+        if (texto.includes("✅")) {
+
+            Swal.fire({
+
+                icon: 'success',
+
+                title:
+                'Restauración exitosa',
+
+                text: texto,
+                 confirmButtonColor: '#023E8A',
+                cancelButtonColor: '#dc2626'
+            });
+
+        } else {
+
+            Swal.fire({
+
+                icon: 'error',
+
+                title: 'Error',
+
+                text: texto
+            });
+
+        }
+
+    } catch (error) {
+
+        Swal.fire({
+
+            icon: 'error',
+
+            title:
+            'Error de conexión',
+
+            text: error
+        });
+
+    }
+}
+   // ============================
+   // POPUP de confirmacion
+   // ===============================
+document.addEventListener("DOMContentLoaded", () => {
+    
+    cargarHistorial();
+
+    // =============================
+    // Generar Respaldo
+    // =============================
+    const form = document.getElementById("backup");
+
+    form.addEventListener("submit", async (e) => {
+
+        e.preventDefault();
+
+     
+        Swal.fire({
+            title: 'Generando respaldo...',
+            text: 'Por favor espera',
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
+
+        try {
+
+            const respuesta = await fetch("./../../data/DAO/backupAdminDAO.php", {
+                method: "POST"
+            });
+
+            const texto = await respuesta.text();
+
+            // ✅ ÉXITO
+            if (texto.includes("✅")) {
+
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Respaldo generado',
+                    text: texto,
+                    confirmButtonText: 'Aceptar',
+
+                confirmButtonColor: '#023E8A',
+                cancelButtonColor: '#dc2626'
+                });
+                cargarHistorial();
+            } 
+            
+            // ❌ ERROR
+            else {
+
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error al generar respaldo',
+                    text: texto,
+                    confirmButtonText: 'Cerrar'
+                });
+
+            }
+
+        } catch (error) {
+
+            Swal.fire({
+                icon: 'error',
+                title: 'Error de conexión',
+                text: error,
+                confirmButtonText: 'Cerrar'
+
+
+
+            });
+
+        }
+
+    });
+
+});
+
