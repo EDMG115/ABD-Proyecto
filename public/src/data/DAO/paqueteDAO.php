@@ -1,283 +1,271 @@
 <?php
-require_once __DIR__ ."/../conexion.php";
+require_once __DIR__ . "/../conexion.php";
 
-class paqueteDAO{
+class paqueteDAO
+{
 
     private $id;
     private $conexion;
 
-    public function __construct(){
+    public function __construct()
+    {
         $conn = new conexion();
         $this->conexion = $conn->getConexion();
     }
 
-    public function getPaquetesPorAgencia($idAgencia){
-        $lockFile = fopen(sys_get_temp_dir() . "/lock_paquetes.txt", "w+");
-        if (flock($lockFile, LOCK_SH)) {
-            try{
-                $sql = "CALL sp_get_paquetes_por_agencia(:id)";
-                $stmt = $this->conexion->prepare($sql);
+    // ==========================================
+    // LECTURA (SELECT) - SIN TRANSACCIONES
+    // ==========================================
 
-                $stmt->bindParam(":id", $idAgencia, PDO::PARAM_INT);
-                $stmt->execute();
+    public function getPaquetesPorAgencia($idAgencia)
+    {
+        try {
 
-                $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
-                $stmt->closeCursor();
+            $sql = "CALL sp_get_paquetes_por_agencia(:id)";
+            $stmt = $this->conexion->prepare($sql);
 
-                return $result;
-            } catch(PDOException $e){
-                throw new Exception("Error al obtener paquetes: " . $e->getMessage());
-            } finally {
-                flock($lockFile, LOCK_UN);
-                fclose($lockFile);
-            }
-        } else {
-            throw new Exception("El sistema está ocupado. Intenta de nuevo.");
+            $stmt->bindParam(":id", $idAgencia, PDO::PARAM_INT);
+            $stmt->execute();
+
+            $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $stmt->closeCursor();
+
+            return $result;
+        } catch (PDOException $e) {
+
+            throw new Exception("Error al obtener paquetes: " . $e->getMessage());
         }
     }
 
-    public function getPaquetePorID($idPaquete){
-        $lockFile = fopen(sys_get_temp_dir() . "/lock_paquetes.txt", "w+");
-        if (flock($lockFile, LOCK_SH)) {
-            try{
-                $sql = "CALL sp_get_paquete_por_id(:id)";
-                $stmt = $this->conexion->prepare($sql);
-                
-                $stmt->bindParam(":id", $idPaquete, PDO::PARAM_INT);
-                $stmt->execute();
+    public function getPaquetePorID($idPaquete)
+    {
+        try {
 
-                $result = $stmt->fetch(PDO::FETCH_ASSOC);
-                $stmt->closeCursor();
+            $sql = "CALL sp_get_paquete_por_id(:id)";
+            $stmt = $this->conexion->prepare($sql);
 
-                return $result;
-            } catch(PDOException $e){
-                throw new Exception("Error al obtener paquete: " . $e->getMessage());
-            } finally {
-                flock($lockFile, LOCK_UN);
-                fclose($lockFile);
-            }
-        } else {
-            throw new Exception("El sistema está ocupado. Intenta de nuevo.");
+            $stmt->bindParam(":id", $idPaquete, PDO::PARAM_INT);
+            $stmt->execute();
+
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            $stmt->closeCursor();
+
+            return $result;
+        } catch (PDOException $e) {
+
+            throw new Exception("Error al obtener paquete: " . $e->getMessage());
         }
     }
 
-    public function getPaquetesPorLugar($id_lugar){
-        $lockFile = fopen(sys_get_temp_dir() . "/lock_paquetes.txt", "w+");
-        if (flock($lockFile, LOCK_SH)) {
-            try{
-                $sql = "CALL sp_get_paquetes_por_lugar(:id_lugar)";
-                
-                $stmt = $this->conexion->prepare($sql);
-                $stmt -> bindParam(':id_lugar', $id_lugar, PDO::PARAM_INT);
-                $stmt->execute();
+    public function getPaquetesPorLugar($id_lugar)
+    {
+        try {
 
-                $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
-                $stmt->closeCursor();
+            $sql = "CALL sp_get_paquetes_por_lugar(:id_lugar)";
 
-                return $result;
-            } catch (PDOException $e){
-                throw new Exception("Error al realizar la consulta en la base de datos: " . $e->getMessage());
-            } finally {
-                flock($lockFile, LOCK_UN);
-                fclose($lockFile);
-            }
-        } else {
-            throw new Exception("El sistema está ocupado. Intenta de nuevo.");
+            $stmt = $this->conexion->prepare($sql);
+            $stmt->bindParam(':id_lugar', $id_lugar, PDO::PARAM_INT);
+            $stmt->execute();
+
+            $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $stmt->closeCursor();
+
+            return $result;
+        } catch (PDOException $e) {
+
+            throw new Exception("Error al realizar la consulta en la base de datos: " . $e->getMessage());
         }
     }
 
-    public function getNumeroPaquetesEsteMes($idAgencia){
-        $lockFile = fopen(sys_get_temp_dir() . "/lock_paquetes.txt", "w+");
-        if (flock($lockFile, LOCK_SH)) {
-            try{
-                $sql = "CALL sp_get_numero_paquetes_por_agencia(:id)";
-                $stmt = $this->conexion->prepare($sql);
+    public function getNumeroPaquetesEsteMes($idAgencia)
+    {
+        try {
 
-                $stmt->bindParam(":id", $idAgencia, PDO::PARAM_INT);
-                $stmt->execute();
+            $sql = "CALL sp_get_numero_paquetes_por_agencia(:id)";
+            $stmt = $this->conexion->prepare($sql);
 
-                $res = $stmt->fetch(PDO::FETCH_ASSOC);
-                $stmt->closeCursor();
+            $stmt->bindParam(":id", $idAgencia, PDO::PARAM_INT);
+            $stmt->execute();
 
-                return $res['total'];
-            } catch(PDOException $e) {
-                throw new Exception("Error al contar paquetes: " . $e->getMessage());
-            } finally {
-                flock($lockFile, LOCK_UN);
-                fclose($lockFile);
-            }
-        } else {
-            throw new Exception("El sistema está ocupado. Intenta de nuevo.");
+            $res = $stmt->fetch(PDO::FETCH_ASSOC);
+            $stmt->closeCursor();
+
+            return $res['total'];
+        } catch (PDOException $e) {
+
+            throw new Exception("Error al contar paquetes: " . $e->getMessage());
         }
     }
 
-    public function filtrarPaquetesPorLugar($idAgencia, $lugar){
-        $lockFile = fopen(sys_get_temp_dir() . "/lock_paquetes.txt", "w+");
-        if (flock($lockFile, LOCK_SH)) {
-            try{
-                $sql = "CALL sp_filtrar_paquetes_por_lugar(:id, :lugar)";
-                $stmt = $this->conexion->prepare($sql);
+    public function filtrarPaquetesPorLugar($idAgencia, $lugar)
+    {
+        try {
 
-                $stmt->bindParam(":id", $idAgencia, PDO::PARAM_INT);
-                $stmt->bindValue(":lugar", $lugar);
+            $sql = "CALL sp_filtrar_paquetes_por_lugar(:id, :lugar)";
+            $stmt = $this->conexion->prepare($sql);
 
-                $stmt->execute();
+            $stmt->bindParam(":id", $idAgencia, PDO::PARAM_INT);
+            $stmt->bindValue(":lugar", $lugar);
 
-                $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
-                $stmt->closeCursor();
+            $stmt->execute();
 
-                return $result;
-            } catch(PDOException $e){
-                throw new Exception("Error al filtrar por lugar: " . $e->getMessage());
-            } finally {
-                flock($lockFile, LOCK_UN);
-                fclose($lockFile);
-            }
-        } else {
-            throw new Exception("El sistema está ocupado. Intenta de nuevo.");
+            $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $stmt->closeCursor();
+
+            return $result;
+        } catch (PDOException $e) {
+
+            throw new Exception("Error al filtrar por lugar: " . $e->getMessage());
         }
     }
 
-    public function ordenarPaquetesPorPrecio($idAgencia, $asc = true){
-        $lockFile = fopen(sys_get_temp_dir() . "/lock_paquetes.txt", "w+");
-        if (flock($lockFile, LOCK_SH)) {
-            try{
-                $sql = "CALL sp_get_paquetes_ordenados_por_precio(:id, :orden)";
-                $stmt = $this->conexion->prepare($sql);
+    public function ordenarPaquetesPorPrecio($idAgencia, $asc = true)
+    {
+        try {
 
-                $orden = $asc ? 'ASC' : 'DESC';
+            $sql = "CALL sp_get_paquetes_ordenados_por_precio(:id, :orden)";
+            $stmt = $this->conexion->prepare($sql);
 
-                $stmt->bindParam(":id", $idAgencia, PDO::PARAM_INT);
-                $stmt->bindParam(":orden", $orden);
+            $orden = $asc ? 'ASC' : 'DESC';
 
-                $stmt->execute();
+            $stmt->bindParam(":id", $idAgencia, PDO::PARAM_INT);
+            $stmt->bindParam(":orden", $orden);
 
-                $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
-                $stmt->closeCursor();
+            $stmt->execute();
 
-                return $result;
-            } catch(PDOException $e){
-                throw new Exception("Error al ordenar paquetes: " . $e->getMessage());
-            } finally {
-                flock($lockFile, LOCK_UN);
-                fclose($lockFile);
-            }
-        } else {
-            throw new Exception("El sistema está ocupado. Intenta de nuevo.");
+            $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $stmt->closeCursor();
+
+            return $result;
+        } catch (PDOException $e) {
+
+            throw new Exception("Error al ordenar paquetes: " . $e->getMessage());
         }
     }
 
-    public function crearPaquete($nombre_paquete, $descripcion_paquete, $precio, $imagen_url, $id_lugar, $id_agencia) {
-        $lockFile = fopen(sys_get_temp_dir() . "/lock_paquetes.txt", "w+");
-        if (flock($lockFile, LOCK_EX)) {
-            try {
-                $sql = "CALL sp_crear_paquete(:nombre, :descripcion, :precio, :imagen, :id_lugar, :id_agencia)";
-                $stmt = $this->conexion->prepare($sql);
+    // ==========================================
+    // ESCRITURA (INSERT/UPDATE/DELETE)
+    // CON TRANSACCIONES
+    // ==========================================
 
-                $stmt->bindParam(":nombre", $nombre_paquete);
-                $stmt->bindParam(":descripcion", $descripcion_paquete);
-                $stmt->bindParam(":precio", $precio);
-                $stmt->bindParam(":imagen", $imagen_url);
-                $stmt->bindParam(":id_lugar", $id_lugar);
-                $stmt->bindParam(":id_agencia", $id_agencia);
+    public function crearPaquete($nombre_paquete, $descripcion_paquete, $precio, $imagen_url, $id_lugar, $id_agencia)
+    {
 
-                $stmt->execute();
+        try {
 
-                $res = $stmt->fetch(PDO::FETCH_ASSOC);
-                $stmt->closeCursor();
+            $this->conexion->beginTransaction();
 
-                return $res['id_paquete'];
-            } catch (PDOException $e) {
-                error_log("Error en PaqueteDAO::crearPaquete: " . $e->getMessage());
-                return false;
-            } finally {
-                flock($lockFile, LOCK_UN);
-                fclose($lockFile);
-            }
-        } else {
+            $sql = "CALL sp_crear_paquete(:nombre, :descripcion, :precio, :imagen, :id_lugar, :id_agencia)";
+            $stmt = $this->conexion->prepare($sql);
+
+            $stmt->bindParam(":nombre", $nombre_paquete);
+            $stmt->bindParam(":descripcion", $descripcion_paquete);
+            $stmt->bindParam(":precio", $precio);
+            $stmt->bindParam(":imagen", $imagen_url);
+            $stmt->bindParam(":id_lugar", $id_lugar);
+            $stmt->bindParam(":id_agencia", $id_agencia);
+
+            $stmt->execute();
+
+            $res = $stmt->fetch(PDO::FETCH_ASSOC);
+            $stmt->closeCursor();
+
+            $this->conexion->commit();
+
+            return $res['id_paquete'];
+        } catch (PDOException $e) {
+
+            $this->conexion->rollBack();
+
+            error_log("Error en PaqueteDAO::crearPaquete: " . $e->getMessage());
             return false;
         }
     }
 
-    public function actualizarPaquete($id_paquete, $nombre_paquete, $descripcion_paquete, $precio, $id_lugar) {
-        $lockFile = fopen(sys_get_temp_dir() . "/lock_paquete_" . $id_paquete . ".txt", "w+");
-        if (flock($lockFile, LOCK_EX)) {
-            try {
-                $sql = "CALL sp_actualizar_paquete(:id, :nombre, :descripcion, :precio, :id_lugar)";
-                $stmt = $this->conexion->prepare($sql);
+    public function actualizarPaquete($id_paquete, $nombre_paquete, $descripcion_paquete, $precio, $id_lugar)
+    {
 
-                $stmt->bindParam(':id', $id_paquete);
-                $stmt->bindParam(':nombre', $nombre_paquete);
-                $stmt->bindParam(':descripcion', $descripcion_paquete);
-                $stmt->bindParam(':precio', $precio);
-                $stmt->bindParam(':id_lugar', $id_lugar);
+        try {
 
-                $result = $stmt->execute();
-                $stmt->closeCursor();
+            $this->conexion->beginTransaction();
 
-                return $result;
-            } catch (PDOException $e) {
-                throw new Exception("Error al actualizar paquete: " . $e->getMessage());
-            } finally {
-                flock($lockFile, LOCK_UN);
-                fclose($lockFile);
-            }
-        } else {
-            throw new Exception("El paquete está siendo editado por alguien más.");
+            $sql = "CALL sp_actualizar_paquete(:id, :nombre, :descripcion, :precio, :id_lugar)";
+            $stmt = $this->conexion->prepare($sql);
+
+            $stmt->bindParam(':id', $id_paquete);
+            $stmt->bindParam(':nombre', $nombre_paquete);
+            $stmt->bindParam(':descripcion', $descripcion_paquete);
+            $stmt->bindParam(':precio', $precio);
+            $stmt->bindParam(':id_lugar', $id_lugar);
+
+            $result = $stmt->execute();
+            $stmt->closeCursor();
+
+            $this->conexion->commit();
+
+            return $result;
+        } catch (PDOException $e) {
+
+            $this->conexion->rollBack();
+
+            throw new Exception("Error al actualizar paquete: " . $e->getMessage());
         }
     }
 
-    public function actualizarImagen($id_paquete, $nuevoNombreImagen) {
+    public function actualizarImagen($id_paquete, $nuevoNombreImagen)
+    {
+
         if (empty($nuevoNombreImagen)) {
             throw new Exception("El nombre de la imagen no puede estar vacío.");
         }
 
-        $lockFile = fopen(sys_get_temp_dir() . "/lock_paquete_" . $id_paquete . ".txt", "w+");
-        if (flock($lockFile, LOCK_EX)) {
-            try {
-                $sql = "CALL sp_actualizar_imagen_paquete(:id, :imagen)";
-                $stmt = $this->conexion->prepare($sql);
+        try {
 
-                $stmt->bindParam(':id', $id_paquete);
-                $stmt->bindParam(':imagen', $nuevoNombreImagen);
+            $this->conexion->beginTransaction();
 
-                $result = $stmt->execute();
-                $stmt->closeCursor();
+            $sql = "CALL sp_actualizar_imagen_paquete(:id, :imagen)";
+            $stmt = $this->conexion->prepare($sql);
 
-                return $result;
-            } catch (PDOException $e) {
-                throw new Exception("Error al actualizar la imagen: " . $e->getMessage());
-            } finally {
-                flock($lockFile, LOCK_UN);
-                fclose($lockFile);
-            }
-        } else {
-            throw new Exception("El paquete está siendo editado por alguien más.");
+            $stmt->bindParam(':id', $id_paquete);
+            $stmt->bindParam(':imagen', $nuevoNombreImagen);
+
+            $result = $stmt->execute();
+            $stmt->closeCursor();
+
+            $this->conexion->commit();
+
+            return $result;
+        } catch (PDOException $e) {
+
+            $this->conexion->rollBack();
+
+            throw new Exception("Error al actualizar la imagen: " . $e->getMessage());
         }
     }
 
-    public function eliminarPaquete($id_paquete) {
-        $lockFile = fopen(sys_get_temp_dir() . "/lock_paquete_" . $id_paquete . ".txt", "w+");
-        if (flock($lockFile, LOCK_EX)) {
-            try {
-                $sql = "CALL sp_eliminar_paquete(:id)";
-                $stmt = $this->conexion->prepare($sql);
+    public function eliminarPaquete($id_paquete)
+    {
 
-                $stmt->bindParam(':id', $id_paquete);
+        try {
 
-                $result = $stmt->execute();
-                $stmt->closeCursor();
+            $this->conexion->beginTransaction();
 
-                return $result;
-            } catch (PDOException $e) {
-                return false;
-            } finally {
-                flock($lockFile, LOCK_UN);
-                fclose($lockFile);
-            }
-        } else {
+            $sql = "CALL sp_eliminar_paquete(:id)";
+            $stmt = $this->conexion->prepare($sql);
+
+            $stmt->bindParam(':id', $id_paquete);
+
+            $result = $stmt->execute();
+            $stmt->closeCursor();
+
+            $this->conexion->commit();
+
+            return $result;
+        } catch (PDOException $e) {
+
+            $this->conexion->rollBack();
+
             return false;
         }
     }
 }
-?>
