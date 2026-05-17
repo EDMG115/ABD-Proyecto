@@ -7,7 +7,6 @@ class ReservacionesDAO
 
     public function __construct()
     {
-        // Se asume que 'Conexion' y 'getConexion()' están correctamente definidos.
         $conn = new Conexion();
         $this->conexion = $conn->getConexion();
     }
@@ -17,18 +16,13 @@ class ReservacionesDAO
     // ==========================================
 
     /**
-     * Obtiene el historial detallado de reservaciones de eventos para un cliente.
-     * Realiza INNER JOIN con 'eventos', 'lugares', 'tipoactividad' y 'organizadoras'
-     * para obtener todos los detalles solicitados.
-     * Se corrigió 't.tipo' a 't.nombre_tipo_actividad'.
+     * Obtiene el historial detallado de reservaciones de un cliente.
      */
     public function obtenerHistorialDetallado($id_cliente)
     {
         try {
-
-            $sql = "CALL sp_obtener_historial_reservaciones_cliente(:id_cliente)";
+            $sql  = "CALL sp_obtener_historial_reservaciones_cliente(:id_cliente)";
             $stmt = $this->conexion->prepare($sql);
-
             $stmt->bindParam(':id_cliente', $id_cliente, PDO::PARAM_INT);
             $stmt->execute();
 
@@ -37,43 +31,66 @@ class ReservacionesDAO
 
             return $result;
         } catch (PDOException $e) {
-
-            // Se lanza una excepción para que ReservacionLogic.php la maneje.
             throw new Exception("Error al consultar historial de reservaciones: " . $e->getMessage());
         }
     }
-    
+
     // ==========================================
-    // ESCRITURA (UPDATE)
-    // CON TRANSACCIONES
+    // ESCRITURA (UPDATE) - CON CONTROL DE BLOQUEO
     // ==========================================
 
     /**
-     * Actualiza el estado de una reservación a 'cancelado'.
+     * Cancela una reservacion del cliente validando que el evento
+     * NO este bloqueado por un administrador en este momento.
+     *
+     * Delega a sp_intentar_cancelar_reservacion que internamente:
+     *   1. Verifica que la reservacion pertenezca al cliente (FOR UPDATE)
+     *   2. Verifica bloqueo del admin sobre el evento (FOR SHARE)
+     *   3. Cancela si todo esta libre
+     *
+     * @throws Exception con mensaje legible si hay bloqueo de admin u otro error.
      */
-    public function cancelarReservacion($id_reservacion)
+    public function cancelarReservacion($id_reservacion, $id_cliente)
     {
         try {
-
-            $this->conexion->beginTransaction();
-
-            $sql = "CALL sp_cancelar_reservacion(:id_reservacion)";
-            $stmt = $this->conexion->prepare($sql);
-
+            $stmt = $this->conexion->prepare(
+                "CALL sp_intentar_cancelar_reservacion(:id_reservacion, :id_cliente, @resultado)"
+            );
             $stmt->bindParam(':id_reservacion', $id_reservacion, PDO::PARAM_INT);
-
-            $result = $stmt->execute();
+            $stmt->bindParam(':id_cliente',     $id_cliente,     PDO::PARAM_INT);
+            $stmt->execute();
             $stmt->closeCursor();
 
-            $this->conexion->commit();
+            $res = $this->conexion->query("SELECT @resultado AS resultado")
+                                  ->fetch(PDO::FETCH_ASSOC);
+            $resultado = $res['resultado'] ?? '';
 
-            return $result; // true si se actualizó, false si no
+            if ($resultado === 'OK') {
+                return true;
+            }
+
+            if (str_starts_with($resultado, 'EVENTO_EN_EDICION')) {
+                $partes = explode('|', $resultado);
+                $admin  = $partes[1] ?? 'un administrador';
+                $hora   = $partes[2] ?? 'unos minutos';
+                throw new Exception(
+                    "No puedes cancelar esta reservación ahora. " .
+                    "$admin está modificando el evento (hasta las $hora). " .
+                    "Intenta de nuevo más tarde."
+                );
+            }
+
+            $mensajes = [
+                'YA_CANCELADA'             => 'Esta reservación ya estaba cancelada.',
+                'COMPLETADA_NO_CANCELABLE' => 'No puedes cancelar una reservación completada.',
+                'RESERVACION_NO_ENCONTRADA'=> 'La reservación no fue encontrada.',
+                'ERROR_INTERNO'            => 'Ocurrió un error interno. Intenta de nuevo.',
+            ];
+
+            throw new Exception($mensajes[$resultado] ?? "No se pudo cancelar la reservación.");
 
         } catch (PDOException $e) {
-
-            $this->conexion->rollBack();
-
-            throw new Exception("Error al cancelar reservación: " . $e->getMessage());
+            throw new Exception("Error en la base de datos: " . $e->getMessage());
         }
     }
 }

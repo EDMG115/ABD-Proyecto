@@ -2,17 +2,20 @@
 require_once "./../Util/seguridad.php";
 require_once "./../DAO/lugarDAO.php";
 header('Content-Type: application/json');
+
 $lugarDAO = new lugarDAO();
-$RUTA_IMG_ESTANDAR = "./../../media/images/lugares/";
+$RUTA_IMG_ESTANDAR    = "./../../media/images/lugares/";
 $RUTA_FISICA_GUARDADO = __DIR__ . "/../../media/images/lugares/";
 
+// ============================================================
+// GET — Listar lugares (lectura libre, sin bloqueo)
+// ============================================================
 if ($_SERVER["REQUEST_METHOD"] == "GET") {
-    // Validar permisos para ver lugares (administradores pueden ver)
 
     if (!verificarPermisos("ver_lugar")) {
         redirigirAlIndex();
     }
-    
+
     try {
         $lugares = $lugarDAO->getLugares();
         if ($lugares != null) {
@@ -25,177 +28,166 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
         }
         echo json_encode($respuesta);
     } catch (Exception $e) {
-        $respuesta = ['correcto' => false, 'mensaje' => 'Error - ' . $e->getMessage()];
-        echo json_encode($respuesta);
+        echo json_encode(['correcto' => false, 'mensaje' => 'Error - ' . $e->getMessage()]);
     }
+
+// ============================================================
+// POST — Crear o actualizar lugar
+// ============================================================
 } else if ($_SERVER["REQUEST_METHOD"] == "POST") {
+
     $respuesta = ['correcto' => false];
-    if (!empty($_POST) || !empty($_FILES)) {
 
-        $id_lugar_update = sanitizarEntero($_POST["id_lugar_update"] ?? null);
-        $imagen = $_FILES["imagen"] ?? null;
+    if (empty($_POST) && empty($_FILES)) {
+        echo json_encode($respuesta);
+        exit;
+    }
 
-        // Validar permisos según la acción
+    $id_lugar_update = sanitizarEntero($_POST["id_lugar_update"] ?? null);
+    $id_admin        = sanitizarEntero($_POST["id_admin"]        ?? null);
+    $imagen          = $_FILES["imagen"] ?? null;
+
+    // Permisos
+    if ($id_lugar_update) {
+        if (!verificarPermisos("editar_lugar")) redirigirAlIndex();
+    } else {
+        if (!verificarPermisos("crear_lugar"))  redirigirAlIndex();
+    }
+
+    $nombre      = sanitizarTexto($_POST["nombre"]      ?? '');
+    $descripcion = sanitizarTexto($_POST["descripcion"] ?? '');
+    $direccion   = sanitizarTexto($_POST["direccion"]   ?? '');
+    $ciudad      = sanitizarTexto($_POST["ciudad"]      ?? '');
+    $zona        = sanitizarTexto($_POST["zona"]        ?? '');
+
+    if (empty($nombre) || empty($descripcion) || empty($direccion) || empty($ciudad) || empty($zona) || empty($id_admin)) {
+        echo json_encode(['correcto' => false, 'mensaje' => 'Datos incompletos.']);
+        exit;
+    }
+
+    $id_lugar = 0;
+
+    try {
+        // ---- ACTUALIZACIÓN ----
         if ($id_lugar_update) {
-            // Es una actualización
-            if (!verificarPermisos("editar_lugar")) {
-                redirigirAlIndex();
-            }
-        } else {
-            // Es una creación
-            if (!verificarPermisos("crear_lugar")) {
-                redirigirAlIndex();
-            }
-        }
+            $id_actual = $id_lugar_update;
 
-        $nombre = sanitizarTexto($_POST["nombre"]);
-        $descripcion = sanitizarTexto($_POST["descripcion"]);
-        $direccion = sanitizarTexto($_POST["direccion"]);
-        $ciudad = sanitizarTexto($_POST["ciudad"]);
-        $zona = sanitizarTexto($_POST["zona"]);
-        $id_admin = sanitizarEntero($_POST["id_admin"]);
-        $imagen = $_FILES["imagen"] ?? null;
+            // El SP verifica el bloqueo internamente; si no existe lanza excepción
+            $lugarDAO->updateLugar($id_admin, $id_actual, $nombre, $descripcion, $direccion, $ciudad, $zona);
 
-        if (empty($nombre) || empty($descripcion) || empty($direccion) || empty($ciudad) || empty($zona) || empty($id_admin)) {
-            $error = "Datos incompletos.";
-            $respuesta = array("correcto" => false, "mensaje" => $error);
-            echo json_encode($respuesta);
+            if ($imagen && $imagen["error"] === UPLOAD_ERR_OK) {
+                $tipoArchivo = $imagen["type"];
+                if ($tipoArchivo !== 'image/jpeg' && $tipoArchivo !== 'image/jpg') {
+                    echo json_encode(['correcto' => false, 'mensaje' => 'Solo se permiten archivos JPG y JPEG.']);
+                    exit;
+                }
+
+                $lugar_antiguo          = $lugarDAO->getLugarPorID($id_actual);
+                $nombre_imagen_anterior = $lugar_antiguo['imagen_url'] ?? '';
+                $nombre_img_db          = 'limg' . $id_actual . '.jpg';
+                $ruta_fisica            = $RUTA_FISICA_GUARDADO . $nombre_img_db;
+
+                if (move_uploaded_file($imagen["tmp_name"], $ruta_fisica)) {
+                    $lugarDAO->updateImagen($id_actual, $nombre_img_db);
+
+                    if (!empty($nombre_imagen_anterior) && $nombre_imagen_anterior !== $nombre_img_db) {
+                        $ruta_anterior = $RUTA_FISICA_GUARDADO . $nombre_imagen_anterior;
+                        if (file_exists($ruta_anterior)) @unlink($ruta_anterior);
+                    }
+                } else {
+                    echo json_encode(['correcto' => false, 'mensaje' => 'No se pudo guardar la nueva imagen.']);
+                    exit;
+                }
+            }
+
+            echo json_encode(['correcto' => true, 'mensaje' => 'Lugar modificado exitosamente.']);
             exit;
         }
 
-
-
-        $id_lugar = 0;
-
-        try {
-            if ($id_lugar_update) {
-                $id_actual = $id_lugar_update;
-                $lugarDAO->updateLugar($id_actual, $nombre, $descripcion, $direccion, $ciudad, $zona);
-
-                if ($imagen && $imagen["error"] === UPLOAD_ERR_OK) {
-                    $tipoArchivo = $imagen["type"];
-                    if ($tipoArchivo !== 'image/jpeg' && $tipoArchivo !== 'image/jpg') {
-                        $respuesta['mensaje'] = "Error: Solo se permiten archivos JPG y JPEG.";
-                        echo json_encode($respuesta);
-                        exit;
-                    }
-
-                    $lugar_antiguo = $lugarDAO->getLugarPorID($id_actual);
-                    $nombre_imagen_anterior = $lugar_antiguo['imagen_url'] ?? '';
-
-                    $extension = "jpg";
-                    $nombre_img_db = 'limg' . $id_actual . '.' . $extension;
-                    $ruta_almacenamiento_fisica = $RUTA_FISICA_GUARDADO . $nombre_img_db;
-
-                    if (move_uploaded_file($imagen["tmp_name"], $ruta_almacenamiento_fisica)) {
-                        $lugarDAO->updateImagen($id_actual, $nombre_img_db);
-
-                        if (!empty($nombre_imagen_anterior) && $nombre_imagen_anterior !== $nombre_img_db) {
-                            $ruta_fisica_anterior = $RUTA_FISICA_GUARDADO . $nombre_imagen_anterior;
-                            if (file_exists($ruta_fisica_anterior)) {
-                                @unlink($ruta_fisica_anterior);
-                            }
-                        }
-                    } else {
-                        $respuesta = array("correcto" => false, "mensaje" => "Error: No se pudo guardar físicamente la nueva imagen.");
-                        echo json_encode($respuesta);
-                        exit;
-                    }
-                }
-                $respuesta = array("correcto" => true, "mensaje" => "Lugar modificado exitosamente.");
-                echo json_encode($respuesta);
-                exit;
-            } else {
-                if (!$imagen || $imagen["error"] !== UPLOAD_ERR_OK) {
-                    $respuesta['mensaje'] = "Error: Imagen requerida para crear el lugar.";
-                    echo json_encode($respuesta);
-                    exit;
-                }
-
-                // 2. VALIDACIÓN DE TIPO DE IMAGEN (Para la creación)
-                $tipoArchivo = $imagen["type"];
-                if ($tipoArchivo !== 'image/jpeg' && $tipoArchivo !== 'image/jpg') {
-                    $respuesta['mensaje'] = "Error: Solo se permiten archivos JPG y JPEG.";
-                    echo json_encode($respuesta);
-                    exit;
-                }
-                $id_lugar = $lugarDAO->crearLugar($nombre, $descripcion, $direccion, $ciudad, $zona, $id_admin);
-                if ($id_lugar > 0) {
-                    $extension = "jpg";
-                    $nombre_img_db = 'limg' . $id_lugar . '.' . $extension;
-                    $ruta_almacenamiento_fisica = $RUTA_FISICA_GUARDADO . $nombre_img_db;
-
-                    if (move_uploaded_file($imagen["tmp_name"], $ruta_almacenamiento_fisica)) {
-                        if ($lugarDAO->updateImagen($id_lugar, $nombre_img_db)) {
-                            $respuesta = array("correcto" => true, "mensaje" => "Lugar creado exitosamente.");
-                            echo json_encode($respuesta);
-                        } else {
-                            if (file_exists($ruta_almacenamiento_fisica)) {
-                                @unlink($ruta_almacenamiento_fisica);
-                            }
-                            $lugarDAO->eliminarLugarPorId($id_lugar);
-                            $respuesta = array("correcto" => false, "mensaje" => "Error: No se pudo actualizar la imagen en la base de datos");
-                            echo json_encode($respuesta);
-                        }
-                    } else {
-                        $lugarDAO->eliminarLugarPorId($id_lugar);
-                        $respuesta = array("correcto" => false, "mensaje" => "Error: No se pudo guardar fisicamente la imagen");
-                        echo json_encode($respuesta);
-                    }
-                } else {
-                    $respuesta['mensaje'] = "Error: No se pudo obtener el ID para actualizar la ruta de imagen";
-                    echo json_encode($respuesta);
-                }
-            }
-        } catch (Exception $e) {
-            if ($id_lugar > 0) {
-                $lugarDAO->eliminarLugarPorId($id_lugar);
-            }
-            $respuesta['mensaje'] = $e->getMessage();
-            echo json_encode($respuesta);
+        // ---- CREACIÓN ----
+        if (!$imagen || $imagen["error"] !== UPLOAD_ERR_OK) {
+            echo json_encode(['correcto' => false, 'mensaje' => 'Imagen requerida para crear el lugar.']);
+            exit;
         }
+
+        $tipoArchivo = $imagen["type"];
+        if ($tipoArchivo !== 'image/jpeg' && $tipoArchivo !== 'image/jpg') {
+            echo json_encode(['correcto' => false, 'mensaje' => 'Solo se permiten archivos JPG y JPEG.']);
+            exit;
+        }
+
+        // Crear lugar (no necesita bloqueo para creación)
+        $id_lugar = $lugarDAO->crearLugar($nombre, $descripcion, $direccion, $ciudad, $zona, $id_admin);
+
+        if ($id_lugar > 0) {
+            $nombre_img_db = 'limg' . $id_lugar . '.jpg';
+            $ruta_fisica   = $RUTA_FISICA_GUARDADO . $nombre_img_db;
+
+            if (move_uploaded_file($imagen["tmp_name"], $ruta_fisica)) {
+                if ($lugarDAO->updateImagen($id_lugar, $nombre_img_db)) {
+                    echo json_encode(['correcto' => true, 'mensaje' => 'Lugar creado exitosamente.']);
+                } else {
+                    @unlink($ruta_fisica);
+                    $lugarDAO->eliminarLugarSinBloqueo($id_lugar);
+                    echo json_encode(['correcto' => false, 'mensaje' => 'No se pudo actualizar la imagen en la base de datos.']);
+                }
+            } else {
+                $lugarDAO->eliminarLugarSinBloqueo($id_lugar);
+                echo json_encode(['correcto' => false, 'mensaje' => 'No se pudo guardar fisicamente la imagen.']);
+            }
+        } else {
+            echo json_encode(['correcto' => false, 'mensaje' => 'No se pudo crear el lugar.']);
+        }
+
+    } catch (Exception $e) {
+        // Si la excepcion viene del SP de bloqueo, el mensaje es claro para el usuario
+        if ($id_lugar > 0) {
+            $lugarDAO->eliminarLugarSinBloqueo($id_lugar);
+        }
+        echo json_encode(['correcto' => false, 'mensaje' => $e->getMessage()]);
     }
+
+// ============================================================
+// DELETE — Eliminar lugar (requiere bloqueo previo)
+// ============================================================
 } else if ($_SERVER["REQUEST_METHOD"] == "DELETE") {
-    // Validar permisos para eliminar
+
     if (!verificarPermisos("eliminar_lugar")) {
         redirigirAlIndex();
     }
-    
+
     try {
-        // Leer el body de la solicitud DELETE
         $json_data = file_get_contents("php://input");
-        $data = json_decode($json_data, true);
+        $data      = json_decode($json_data, true);
 
         $id_lugar = sanitizarEntero($data['id_lugar'] ?? null);
+        $id_admin = sanitizarEntero($data['id_admin'] ?? null);
 
-        if ($id_lugar === null || !is_numeric($id_lugar)) {
-            $respuesta = ['correcto' => false, 'mensaje' => 'ID de lugar no válido.'];
-            echo json_encode($respuesta);
+        if (!$id_lugar || !$id_admin) {
+            echo json_encode(['correcto' => false, 'mensaje' => 'Faltan id_lugar o id_admin.']);
             exit;
         }
 
         $lugar = $lugarDAO->getLugarPorID($id_lugar);
 
-        if ($lugar) {
-            $nombre_imagen = $lugar['imagen_url'];
-            if ($lugarDAO->eliminarLugarPorId($id_lugar)) {
-                if (!empty($nombre_imagen)) {
-                    $ruta_fisica_imagen = $RUTA_FISICA_GUARDADO . $nombre_imagen;
-
-                    if (file_exists($ruta_fisica_imagen)) {
-                        @unlink($ruta_fisica_imagen);
-                    }
-                }
-                $respuesta = ['correcto' => true, 'mensaje' => 'Lugar eliminado exitosamente.'];
-            } else {
-                $respuesta = ['correcto' => false, 'mensaje' => 'Error al eliminar el lugar de la base de datos.'];
-            }
-        } else {
-            $respuesta = ['correcto' => true, 'mensaje' => 'El lugar no existe o ya fue eliminado.'];
+        if (!$lugar) {
+            echo json_encode(['correcto' => true, 'mensaje' => 'El lugar no existe o ya fue eliminado.']);
+            exit;
         }
-        echo json_encode($respuesta);
+
+        $nombre_imagen = $lugar['imagen_url'];
+
+        // El SP verifica el bloqueo y lo libera automaticamente al eliminar
+        $lugarDAO->eliminarLugarPorId($id_admin, $id_lugar);
+
+        if (!empty($nombre_imagen)) {
+            $ruta_fisica = $RUTA_FISICA_GUARDADO . $nombre_imagen;
+            if (file_exists($ruta_fisica)) @unlink($ruta_fisica);
+        }
+
+        echo json_encode(['correcto' => true, 'mensaje' => 'Lugar eliminado exitosamente.']);
+
     } catch (Exception $e) {
-        $respuesta = ['correcto' => false, 'mensaje' => 'Error al eliminar: ' . $e->getMessage()];
-        echo json_encode($respuesta);
+        echo json_encode(['correcto' => false, 'mensaje' => $e->getMessage()]);
     }
 }

@@ -1,4 +1,3 @@
-// events.js - Versión Completa y Mejorada
 import { renderizarLayout } from "../components/layoutManager.js";
 import { CalendarManager } from "../components/calendarManager.js";
 
@@ -12,37 +11,102 @@ if (!idEvento) {
 }
 
 // Referencias DOM
-const img = document.getElementById("event-img");
-const fileInput = document.getElementById("file_event_img");
-const nameInput = document.getElementById("event-name");
-const descInput = document.getElementById("event-desc");
-const timeInput = document.getElementById("event-time");
-const priceInput = document.getElementById("event-price");
+const img          = document.getElementById("event-img");
+const fileInput    = document.getElementById("file_event_img");
+const nameInput    = document.getElementById("event-name");
+const descInput    = document.getElementById("event-desc");
+const timeInput    = document.getElementById("event-time");
+const priceInput   = document.getElementById("event-price");
 
-// Tarjetas interactivas
-const placeEl = document.getElementById("event-place");
-const typeEl = document.getElementById("event-type");
-const organizerEl = document.getElementById("event-organizer");
+const placeEl      = document.getElementById("event-place");
+const typeEl       = document.getElementById("event-type");
+const organizerEl  = document.getElementById("event-organizer");
 const organizerImg = document.getElementById("event-organizer-img");
 const miniCalendar = document.getElementById("event-calendar");
 
-// Botones
-const btnEdit = document.getElementById("btn-edit");
-const btnSave = document.getElementById("btn-save");
+const btnEdit   = document.getElementById("btn-edit");
+const btnSave   = document.getElementById("btn-save");
 const btnDelete = document.getElementById("btn-delete");
 
 // Estado Global
-let evento = null;
-let lugar = null;
-let organizador = null;
-let tipoActividad = null;
+let evento           = null;
+let lugar            = null;
+let organizador      = null;
+let tipoActividad    = null;
 let nuevaImagenArchivo = null;
-let editMode = false;
-let currentProfile = JSON.parse(sessionStorage.getItem("organizador_logeado"));
+let editMode         = false;
+let bloqueoActivo    = false;   // true mientras este admin tiene el bloqueo
+let currentProfile   = JSON.parse(sessionStorage.getItem("organizador_logeado"));
 
+// id_admin del perfil logueado (organizadoras usan id_organizadora como admin en este contexto)
+const idAdmin = currentProfile?.id_admin ?? currentProfile?.id_organizadora ?? null;
 
 // =====================================================
-// 3. UTILIDADES DE MODALES (Alerta, Confirm, Selección)
+// 2. UTILIDADES DE BLOQUEO
+// =====================================================
+
+async function bloqueoRequest(accion, extra = {}) {
+    const params = new URLSearchParams({
+        accion,
+        entidad:  "evento",
+        id:       idEvento,
+        id_admin: idAdmin,
+        ...extra
+    });
+    const res = await fetch(`../../data/Logic/bloqueoLogic.php?${params.toString()}`);
+    return res.json();
+}
+
+async function adquirirBloqueo() {
+    const json = await bloqueoRequest("adquirir", { minutos: 30 });
+    if (json.correcto) {
+        bloqueoActivo = true;
+        mostrarBadgeBloqueoActivo();
+        return true;
+    }
+    showAlert("Registro en uso 🔒", json.mensaje);
+    return false;
+}
+
+async function liberarBloqueo() {
+    if (!bloqueoActivo) return;
+    try {
+        await bloqueoRequest("liberar");
+    } catch (_) { /* silencioso */ }
+    bloqueoActivo = false;
+    quitarBadgeBloqueoActivo();
+}
+
+function mostrarBadgeBloqueoActivo() {
+    if (document.getElementById("badge_bloqueo_activo")) return;
+    const badge = document.createElement("div");
+    badge.id = "badge_bloqueo_activo";
+    badge.style.cssText = `
+        background:#ecfdf5; border:1.5px solid #34d399; border-radius:8px;
+        padding:8px 16px; margin-bottom:12px;
+        display:flex; align-items:center; gap:8px;
+        font-size:.88rem; color:#065f46;
+    `;
+    badge.innerHTML = `<span>🟢</span><span>Tienes el control de edición. Guarda o cancela para liberarlo.</span>`;
+    btnSave.closest("div")?.prepend(badge) ?? btnSave.parentElement.prepend(badge);
+}
+
+function quitarBadgeBloqueoActivo() {
+    document.getElementById("badge_bloqueo_activo")?.remove();
+}
+
+// Liberar bloqueo cuando el usuario cierra/sale de la pagina
+window.addEventListener("beforeunload", () => {
+    if (!bloqueoActivo || !idAdmin) return;
+    const params = new URLSearchParams({
+        accion: "liberar", entidad: "evento",
+        id: idEvento, id_admin: idAdmin
+    });
+    navigator.sendBeacon(`../../data/Logic/bloqueoLogic.php?${params.toString()}`);
+});
+
+// =====================================================
+// 3. UTILIDADES DE MODALES
 // =====================================================
 
 function ensureModalContainer() {
@@ -75,7 +139,6 @@ function showAlert(title = 'Aviso', message = '', okText = 'Entendido') {
             </div>
         `;
         container.appendChild(modal);
-
         const close = () => { modal.classList.remove('active'); setTimeout(() => modal.remove(), 250); resolve(); };
         modal.querySelector('.app-modal__close').addEventListener('click', close);
         modal.querySelector('.app-modal__ok').addEventListener('click', close);
@@ -106,12 +169,11 @@ function showConfirm(title = 'Confirmar', message = '') {
             </div>
         `;
         container.appendChild(modal);
-
-        const close = (result) => { modal.classList.remove('active'); setTimeout(() => modal.remove(), 250); resolve(result); };
-        modal.querySelector('.app-modal__close').addEventListener('click', () => close(false));
+        const close = (r) => { modal.classList.remove('active'); setTimeout(() => modal.remove(), 250); resolve(r); };
+        modal.querySelector('.app-modal__close').addEventListener('click',  () => close(false));
         modal.querySelector('.app-modal__cancel').addEventListener('click', () => close(false));
-        modal.querySelector('.app-modal__overlay').addEventListener('click', () => close(false));
-        modal.querySelector('.app-modal__ok').addEventListener('click', () => close(true));
+        modal.querySelector('.app-modal__overlay').addEventListener('click',() => close(false));
+        modal.querySelector('.app-modal__ok').addEventListener('click',     () => close(true));
     });
 }
 
@@ -120,7 +182,6 @@ function mostrarModalSeleccion(titulo, lista, config, callback) {
     const container = document.getElementById('app-modals');
     const modal = document.createElement('div');
     modal.className = 'app-modal active';
-
     modal.innerHTML = `
         <div class="app-modal__overlay"></div>
         <div class="app-modal__content">
@@ -136,89 +197,62 @@ function mostrarModalSeleccion(titulo, lista, config, callback) {
     `;
     container.appendChild(modal);
 
-    const grid = modal.querySelector('#modal-grid-container');
-    const search = modal.querySelector('.modal-search');
+    const grid    = modal.querySelector('#modal-grid-container');
+    const search  = modal.querySelector('.modal-search');
     const closeBtn = modal.querySelector('.app-modal__close');
-    const overlay = modal.querySelector('.app-modal__overlay');
+    const overlay  = modal.querySelector('.app-modal__overlay');
 
     function render(filter = '') {
         grid.innerHTML = '';
         const lowerFilter = filter.toLowerCase();
-
-        // Filtrar
         const filtrados = lista.filter(item => {
             const nombre = (item[config.keyNombre] || '').toLowerCase();
-            const desc = (item[config.keyDesc] || '').toLowerCase();
+            const desc   = (item[config.keyDesc]   || '').toLowerCase();
             return nombre.includes(lowerFilter) || desc.includes(lowerFilter);
         });
-
         if (filtrados.length === 0) {
-            grid.innerHTML = `<div style="text-align:center; color:#94a3b8; padding:2rem;">No se encontraron resultados.</div>`;
+            grid.innerHTML = `<div style="text-align:center;color:#94a3b8;padding:2rem;">No se encontraron resultados.</div>`;
             return;
         }
-
-        // Crear tarjetas
         filtrados.forEach(item => {
             const card = document.createElement('div');
             card.className = 'selection-card';
-
-            // Imagen (si está configurada)
             let imgHTML = '';
             if (config.keyImg && item[config.keyImg]) {
-                const src = `${config.pathImg}/${item[config.keyImg]}`;
-                imgHTML = `<img src="${src}" class="selection-card__img" alt="Img" onerror="this.style.display='none'">`;
-            } else if (config.pathImg) {
-
+                imgHTML = `<img src="${config.pathImg}/${item[config.keyImg]}" class="selection-card__img" alt="Img" onerror="this.style.display='none'">`;
             }
-
-            const descText = item[config.keyDesc] || 'Sin descripción disponible';
-
             card.innerHTML = `
                 ${imgHTML}
                 <div class="selection-card__info">
                     <h4 class="selection-card__title">${item[config.keyNombre]}</h4>
-                    <p class="selection-card__desc">${descText}</p>
+                    <p class="selection-card__desc">${item[config.keyDesc] || 'Sin descripción'}</p>
                 </div>
             `;
-
-            card.addEventListener('click', () => {
-                callback(item);
-                closeModal();
-            });
-
+            card.addEventListener('click', () => { callback(item); closeModal(); });
             grid.appendChild(card);
         });
     }
 
-    const closeModal = () => {
-        modal.classList.remove('active');
-        setTimeout(() => modal.remove(), 250);
-    };
-
+    const closeModal = () => { modal.classList.remove('active'); setTimeout(() => modal.remove(), 250); };
     search.addEventListener('input', (e) => render(e.target.value));
     closeBtn.addEventListener('click', closeModal);
     overlay.addEventListener('click', closeModal);
-
-    render(''); // Render inicial
+    render('');
     setTimeout(() => search.focus(), 100);
 }
 
-
 // =====================================================
-// 4. LOGICA DEL EVENTO (Carga inicial)
+// 4. CARGA INICIAL DEL EVENTO
 // =====================================================
 window.addEventListener("load", async function () {
     try {
         await CalendarManager.init();
 
-        const res = await fetch(`../../data/Logic/eventController.php?accion=evento&idEvento=${idEvento}`);
+        const res  = await fetch(`../../data/Logic/eventController.php?accion=evento&idEvento=${idEvento}`);
         const json = await res.json();
-
         if (!json.correcto) throw new Error(json.mensaje);
-
         evento = json.data;
 
-        // Cargas secundarias (Lugar, Org, Tipo)
         const resLugar = await fetch(`../../data/Logic/eventController.php?accion=lugar&idLugar=${evento.id_lugar}`);
         const jsonLugar = await resLugar.json();
         if (jsonLugar.correcto) lugar = jsonLugar.data;
@@ -240,73 +274,63 @@ window.addEventListener("load", async function () {
     }
 });
 
+// =====================================================
+// 5. RENDERIZADO EN UI
+// =====================================================
 function cargarEventoEnUI() {
-    try {
-        editMode = false;
+    editMode = false;
 
-        // Imagen del evento
-        const PLACEHOLDER_SVG = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='150' viewBox='0 0 200 150'%3E%3Crect fill='%23e2e8f0' width='200' height='150'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' fill='%2394a3b8' font-size='14'%3EImagen no disponible%3C/text%3E%3C/svg%3E";
-        if (evento.imagen_url) {
-            img.src = `../../../src/media/images/events/${evento.imagen_url}`;
-            img.onerror = function () {
-                this.src = PLACEHOLDER_SVG;
-                this.alt = "Imagen no disponible";
-            };
-        } else {
-            img.src = PLACEHOLDER_SVG;
-        }
-        img.alt = evento.nombre_evento || 'Evento';
+    const PLACEHOLDER_SVG = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='150' viewBox='0 0 200 150'%3E%3Crect fill='%23e2e8f0' width='200' height='150'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' fill='%2394a3b8' font-size='14'%3EImagen no disponible%3C/text%3E%3C/svg%3E";
 
-        // Inputs
-        nameInput.value = evento.nombre_evento || '';
-        descInput.value = evento.descripcion || '';
-        timeInput.value = evento.hora_evento || '';
-        priceInput.value = evento.precio_boleto || '';
-
-        // Tarjetas
-        actualizarTarjetaLugar();
-        actualizarTarjetaTipo();
-
-        // Organizador
-        organizerEl.textContent = organizador
-            ? `Organizado por: ${organizador.nombre_agencia}`
-            : "Organizador desconocido";
-
-        const PLACEHOLDER_ORG = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Crect fill='%23e2e8f0' width='80' height='80'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' fill='%2394a3b8' font-size='10'%3EImagen no disponible%3C/text%3E%3C/svg%3E";
-        if (organizador?.imagen_url) {
-            const imgUrl = `../../../src/media/images/organizers/${organizador.imagen_url}`;
-            const preload = new Image();
-            preload.onload = () => { organizerImg.style.backgroundImage = `url(${imgUrl})`; };
-            preload.onerror = () => { organizerImg.style.backgroundImage = `url(${PLACEHOLDER_ORG})`; };
-            preload.src = imgUrl;
-        } else {
-            organizerImg.style.backgroundImage = `url(${PLACEHOLDER_ORG})`;
-        }
-
-        // Estado inicial UI
-        actualizarEstadoUI();
-
-        // Mini Calendario Setup
-        const fechaEvento = new Date(evento.fecha_evento);
-        miniCalendar.addEventListener("click", () => {
-            window.eventosCalendario = [evento];
-            window.dispatchEvent(new CustomEvent("abrirCalendario", {
-                detail: { month: fechaEvento.getMonth(), year: fechaEvento.getFullYear(), source: "event" },
-            }));
-            document.getElementById("calendar-modal").classList.add("active");
-        });
-
-    } catch (error) {
-        console.error("Error UI:", error);
+    if (evento.imagen_url) {
+        img.src = `../../../src/media/images/events/${evento.imagen_url}`;
+        img.onerror = function () { this.src = PLACEHOLDER_SVG; this.alt = "Imagen no disponible"; };
+    } else {
+        img.src = PLACEHOLDER_SVG;
     }
+    img.alt = evento.nombre_evento || 'Evento';
+
+    nameInput.value  = evento.nombre_evento || '';
+    descInput.value  = evento.descripcion   || '';
+    timeInput.value  = evento.hora_evento   || '';
+    priceInput.value = evento.precio_boleto || '';
+
+    actualizarTarjetaLugar();
+    actualizarTarjetaTipo();
+
+    organizerEl.textContent = organizador
+        ? `Organizado por: ${organizador.nombre_agencia}`
+        : "Organizador desconocido";
+
+    const PLACEHOLDER_ORG = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Crect fill='%23e2e8f0' width='80' height='80'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' fill='%2394a3b8' font-size='10'%3EImagen no disponible%3C/text%3E%3C/svg%3E";
+    if (organizador?.imagen_url) {
+        const imgUrl = `../../../src/media/images/organizers/${organizador.imagen_url}`;
+        const preload = new Image();
+        preload.onload  = () => { organizerImg.style.backgroundImage = `url(${imgUrl})`; };
+        preload.onerror = () => { organizerImg.style.backgroundImage = `url(${PLACEHOLDER_ORG})`; };
+        preload.src = imgUrl;
+    } else {
+        organizerImg.style.backgroundImage = `url(${PLACEHOLDER_ORG})`;
+    }
+
+    actualizarEstadoUI();
+
+    const fechaEvento = new Date(evento.fecha_evento);
+    miniCalendar.addEventListener("click", () => {
+        window.eventosCalendario = [evento];
+        window.dispatchEvent(new CustomEvent("abrirCalendario", {
+            detail: { month: fechaEvento.getMonth(), year: fechaEvento.getFullYear(), source: "event" },
+        }));
+        document.getElementById("calendar-modal").classList.add("active");
+    });
 }
 
 function actualizarTarjetaLugar() {
-    placeEl.innerHTML = ''; // Limpiar contenido previo
+    placeEl.innerHTML = '';
     if (lugar) {
-        placeEl.innerHTML = `<div style="display:flex; flex-direction:column; gap:4px;">
+        placeEl.innerHTML = `<div style="display:flex;flex-direction:column;gap:4px;">
             <span>${lugar.nombre_lugar}</span>
-            <small style="font-weight:400; font-size:0.8em; opacity:0.8;">${lugar.direccion || ''}</small>
+            <small style="font-weight:400;font-size:0.8em;opacity:0.8;">${lugar.direccion || ''}</small>
         </div>`;
     } else {
         placeEl.textContent = "Seleccionar Lugar";
@@ -316,7 +340,6 @@ function actualizarTarjetaLugar() {
 function actualizarTarjetaTipo() {
     typeEl.innerHTML = '';
     if (tipoActividad) {
-        // Icono pequeño o imagen si quieres mostrarla en la tarjeta minimizada
         typeEl.innerHTML = `<span>${tipoActividad.nombre_tipo_actividad}</span>`;
     } else {
         typeEl.textContent = "Seleccionar Actividad";
@@ -324,181 +347,114 @@ function actualizarTarjetaTipo() {
 }
 
 function actualizarEstadoUI() {
-    // Inputs
     [nameInput, descInput, timeInput, priceInput, fileInput].forEach(el => el.disabled = !editMode);
 
-    // Punteros e interactividad
-    const cursorStyle = editMode ? 'pointer' : 'default';
-    const borderStyle = editMode ? '2px dashed #2563eb' : 'none'; // Indicador visual de edición
+    const cursorStyle  = editMode ? 'pointer' : 'default';
+    const borderStyle  = editMode ? '2px dashed #2563eb' : '';
 
-    placeEl.style.cursor = cursorStyle;
+    placeEl.style.cursor        = cursorStyle;
     placeEl.style.pointerEvents = editMode ? 'auto' : 'none';
-    if (editMode) placeEl.style.border = borderStyle; else placeEl.style.border = '';
+    placeEl.style.border        = borderStyle;
 
-    typeEl.style.cursor = cursorStyle;
+    typeEl.style.cursor        = cursorStyle;
     typeEl.style.pointerEvents = editMode ? 'auto' : 'none';
-    if (editMode) typeEl.style.border = borderStyle; else typeEl.style.border = '';
+    typeEl.style.border        = borderStyle;
 
-    img.style.cursor = cursorStyle;
+    img.style.cursor        = cursorStyle;
     img.style.pointerEvents = editMode ? 'auto' : 'none';
 
-    // Botones
-    btnSave.disabled = !editMode;
+    btnSave.disabled    = !editMode;
     btnEdit.textContent = editMode ? 'Cancelar edición' : '✏ Iniciar edición';
 
-    // Visibilidad de botones admin
     const puedeEditar = evento.id_organizadora === currentProfile?.id_organizadora;
-    if (!puedeEditar) {
-        btnEdit.style.display = 'none';
-        btnDelete.style.display = 'none';
-    } else {
-        btnEdit.style.display = 'inline-block';
-        btnDelete.style.display = 'inline-block';
-    }
+    btnEdit.style.display   = puedeEditar ? 'inline-block' : 'none';
+    btnDelete.style.display = puedeEditar ? 'inline-block' : 'none';
 }
 
 // =====================================================
-// 5. INTERACCIONES DE USUARIO
+// 6. INTERACCIONES
 // =====================================================
 
-// Botón Editar
-btnEdit.addEventListener("click", () => {
-    editMode = !editMode;
-    actualizarEstadoUI();
-    configurarInputsAyuda();
-    configurarOverlayImagen();
-
+// Botón Editar — adquiere el bloqueo al activar modo edicion
+btnEdit.addEventListener("click", async () => {
     if (!editMode) {
-        // Cancelar: Recargar todo para perder cambios no guardados
+        // Intentar adquirir bloqueo antes de activar edicion
+        const ok = await adquirirBloqueo();
+        if (!ok) return;       // Bloqueado por otro admin
+        editMode = true;
+    } else {
+        // Cancelar edicion: liberar bloqueo
+        await liberarBloqueo();
+        editMode = false;
         fileInput.value = '';
         nuevaImagenArchivo = null;
         eliminarOverlayImagen();
         eliminarTooltips();
         cargarEventoEnUI();
     }
+
+    actualizarEstadoUI();
+    if (editMode) {
+        configurarInputsAyuda();
+        configurarOverlayImagen();
+    }
 });
 
 function configurarInputsAyuda() {
-    
-    // Función auxiliar que crea un "wrapper" (envoltorio) alrededor del input
     const addTooltipWrapper = (element, text) => {
         if (!element) return;
-        
-        // 1. Evitamos volver a envolver si ya lo hicimos
         if (element.parentElement.classList.contains('tooltip-container')) {
             element.parentElement.setAttribute('data-tooltip', text);
             return;
         }
-
-        // 2. Creamos el contenedor
         const wrapper = document.createElement('div');
         wrapper.className = 'tooltip-container';
         wrapper.setAttribute('data-tooltip', text);
-        
-        // 3. Insertamos el contenedor antes del input
         element.parentNode.insertBefore(wrapper, element);
-        
-        // 4. Movemos el input ADENTRO del contenedor
         wrapper.appendChild(element);
-        
-        // 5. Limpieza visual
         element.removeAttribute("title");
-        // Aseguramos que el input ocupe el 100% de su nuevo contenedor
-        element.style.width = "100%"; 
+        element.style.width = "100%";
     };
-
-    // --- CONFIGURACIÓN DE LOS MENSAJES ---
-
-    // 1. Nombre del Evento
-    nameInput.placeholder = "Ej: Concierto de Rock en la Plaza";
-    addTooltipWrapper(nameInput, "El nombre debe ser corto y llamativo para atraer atención.");
-    
-    // 2. Descripción
-    descInput.placeholder = "Describe los detalles, artistas invitados...";
-    addTooltipWrapper(descInput, "Incluye detalles clave: Artistas, reglas de acceso, etc.");
-    
-    // 3. Precio
+    nameInput.placeholder  = "Ej: Concierto de Rock en la Plaza";
+    addTooltipWrapper(nameInput,  "El nombre debe ser corto y llamativo.");
+    descInput.placeholder  = "Describe los detalles, artistas invitados...";
+    addTooltipWrapper(descInput,  "Incluye detalles clave: artistas, reglas de acceso, etc.");
     priceInput.placeholder = "0 - 3000";
     priceInput.min = "0";
     priceInput.max = "3000";
     addTooltipWrapper(priceInput, "Costo en MXN. Escribe 0 si es entrada libre.");
-
-    
 }
 
-// Función para el Overlay de la imagen (Hover)
 function configurarOverlayImagen() {
-    // Verificamos si ya tiene wrapper para no duplicar
     if (img.parentElement.classList.contains('img-wrapper-event')) return;
-
-    // Crear wrapper
     const wrapper = document.createElement('div');
     wrapper.className = 'img-wrapper-event';
-    
-    // Insertar wrapper antes de la imagen y mover imagen adentro
     img.parentNode.insertBefore(wrapper, img);
     wrapper.appendChild(img);
-
-    // Crear overlay
     const overlay = document.createElement('div');
     overlay.className = 'img-hover-overlay';
     overlay.innerText = "(De click para seleccionar la imagen)";
-    
-    // Insertar overlay
     wrapper.appendChild(overlay);
-
-    // Al hacer click en el wrapper, disparar click en la imagen
-    wrapper.addEventListener('click', (e) => {
-        // Evitamos bucle si el click fue directamente en la imagen
-        if(e.target !== img) img.click();
-    });
+    wrapper.addEventListener('click', (e) => { if (e.target !== img) img.click(); });
 }
 
 function eliminarTooltips() {
-    // 1. Buscamos todos los contenedores de tooltips que creamos
-    const wrappers = document.querySelectorAll('.tooltip-container');
-
-    wrappers.forEach(wrapper => {
-        // 2. Buscamos el input (o textarea/select) que está dentro
+    document.querySelectorAll('.tooltip-container').forEach(wrapper => {
         const input = wrapper.querySelector('input, textarea, select');
-
-        if (input) {
-            // 3. Movemos el input FUERA del wrapper (lo insertamos antes del wrapper)
-            // Esto lo devuelve a su posición original en el DOM
-            wrapper.parentNode.insertBefore(input, wrapper);
-
-            // 4. Limpiamos el estilo inline que añadimos (width: 100%)
-            // para que recupere su tamaño definido por CSS original
-            input.style.width = ''; 
-            
-            // Opcional: Si quieres restaurar el 'title' original (aunque suele ser redundante)
-            // input.title = wrapper.getAttribute('data-tooltip'); 
-        }
-
-        // 5. Eliminamos el wrapper (y con él, el tooltip visual)
+        if (input) { wrapper.parentNode.insertBefore(input, wrapper); input.style.width = ''; }
         wrapper.remove();
     });
 }
 
 function eliminarOverlayImagen() {
-    // 1. Buscamos el wrapper de la imagen
     const wrapper = document.querySelector('.img-wrapper-event');
-    
     if (wrapper) {
-        // 2. Buscamos la imagen original dentro
-        const img = wrapper.querySelector('img');
-        
-        if (img) {
-            // 3. Sacamos la imagen del wrapper
-            wrapper.parentNode.insertBefore(img, wrapper);
-        }
-        
-        // 4. Eliminamos el wrapper (esto elimina también el div .img-hover-overlay)
+        const i = wrapper.querySelector('img');
+        if (i) wrapper.parentNode.insertBefore(i, wrapper);
         wrapper.remove();
     }
 }
 
-// Click en Imagen
 img.addEventListener('click', () => {
     if (!editMode) return;
     fileInput.accept = 'image/png, image/jpeg';
@@ -519,105 +475,92 @@ fileInput.addEventListener('change', function () {
     reader.readAsDataURL(file);
 });
 
-// Click en LUGAR (Abre modal rico)
 placeEl.addEventListener('click', async () => {
     if (!editMode) return;
     try {
-        const res = await fetch("../../data/Logic/eventController.php?accion=lugares");
+        const res  = await fetch("../../data/Logic/eventController.php?accion=lugares");
         const json = await res.json();
         if (!json.correcto) return showAlert('Error', 'Falló la carga de lugares');
-
-        // Configuración para el modal: nombre, descripción (dirección) y sin imagen
-        const config = {
+        mostrarModalSeleccion('Selecciona un Lugar', json.data, {
             keyNombre: 'nombre_lugar',
-            keyDesc: 'descripcion',
-            keyImg: 'imagen_url',         // Campo nombre de archivo imagen
-            pathImg: '../../../src/media/images/lugares/'
-        };
-
-        mostrarModalSeleccion('Selecciona un Lugar', json.data, config, (sel) => {
-            lugar = sel;
-            actualizarTarjetaLugar();
-        });
-
+            keyDesc:   'descripcion',
+            keyImg:    'imagen_url',
+            pathImg:   '../../../src/media/images/lugares/'
+        }, (sel) => { lugar = sel; actualizarTarjetaLugar(); });
     } catch (err) {
-        console.error(err);
         showAlert('Error', 'No se pudo conectar con el servidor');
     }
 });
 
-// Click en TIPO DE ACTIVIDAD (Abre modal rico con imagenes)
 typeEl.addEventListener('click', async () => {
     if (!editMode) return;
     try {
-        const res = await fetch("../../data/Logic/eventController.php?accion=tipos");
+        const res  = await fetch("../../data/Logic/eventController.php?accion=tipos");
         const json = await res.json();
         if (!json.correcto) return showAlert('Error', 'Falló la carga de tipos');
-
-        // Configuración para el modal: nombre, descripción e imagen
-        const config = {
+        mostrarModalSeleccion('Selecciona Tipo de Actividad', json.data, {
             keyNombre: 'nombre_tipo_actividad',
-            keyDesc: 'descripcion', // Campo descripción de tu BD
-            pathImg: '../../../src/media/images/activity_types' // Ruta base imágenes
-        };
-
-        mostrarModalSeleccion('Selecciona Tipo de Actividad', json.data, config, (sel) => {
-            tipoActividad = sel;
-            actualizarTarjetaTipo();
-        });
-
+            keyDesc:   'descripcion',
+            pathImg:   '../../../src/media/images/activity_types'
+        }, (sel) => { tipoActividad = sel; actualizarTarjetaTipo(); });
     } catch (err) {
-        console.error(err);
         showAlert('Error', 'No se pudo conectar con el servidor');
     }
 });
 
 // =====================================================
-// 6. GUARDAR Y ELIMINAR
+// 7. GUARDAR Y ELIMINAR
 // =====================================================
 
 btnSave.addEventListener("click", async () => {
     try {
         if (!nameInput.value.trim()) return showAlert('Faltan datos', 'El nombre es obligatorio.');
 
+        // Verificar que el bloqueo siga activo antes de guardar
+        if (!bloqueoActivo) {
+            const recheck = await adquirirBloqueo();
+            if (!recheck) return;
+        }
+
+        btnSave.disabled    = true;
+        btnSave.textContent = "Guardando…";
+
         const formData = new FormData();
-
-        formData.append("fecha_evento", evento.fecha_evento);
-        formData.append("accion", "actualizar");
-        formData.append("idEvento", idEvento);
-        formData.append("nombre_evento", nameInput.value);
-        formData.append("descripcion", descInput.value);
-        formData.append("hora_evento", timeInput.value);
-        formData.append("precio_boleto", priceInput.value);
-
-        // IDs foráneos
-        formData.append("id_lugar", lugar?.id_lugar ?? evento.id_lugar);
-        formData.append("id_tipo_actividad", tipoActividad?.id_tipo_actividad ?? evento.id_tipo_actividad);
-
+        formData.append("fecha_evento",       evento.fecha_evento);
+        formData.append("accion",             "actualizar");
+        formData.append("idEvento",           idEvento);
+        formData.append("id_admin",           idAdmin);
+        formData.append("nombre_evento",      nameInput.value);
+        formData.append("descripcion",        descInput.value);
+        formData.append("hora_evento",        timeInput.value);
+        formData.append("precio_boleto",      priceInput.value);
+        formData.append("id_lugar",           lugar?.id_lugar           ?? evento.id_lugar);
+        formData.append("id_tipo_actividad",  tipoActividad?.id_tipo_actividad ?? evento.id_tipo_actividad);
+        formData.append("id_organizadora",    evento.id_organizadora);
         if (nuevaImagenArchivo) formData.append('imagen', nuevaImagenArchivo);
 
-        const res = await fetch("../../data/Logic/eventController.php", {
-            method: "POST", body: formData
-        });
+        const res  = await fetch("../../data/Logic/eventController.php", { method: "POST", body: formData });
         const json = await res.json();
 
-        if (!json.correcto) return showAlert('Error', json.mensaje || 'Error al guardar');
+        if (!json.correcto) {
+            // Si el servidor rechaza (bloqueo expirado u otro error)
+            showAlert('Error', json.mensaje || 'Error al guardar');
+            return;
+        }
 
-        // Actualizar objeto local con la respuesta o los inputs
+        // Actualizar estado local
         if (json.data) {
             evento = json.data;
-            if (json.data.lugar) lugar = json.data.lugar;
-            if (json.data.tipoActividad) tipoActividad = json.data.tipoActividad;
+            if (json.data.lugar)          lugar         = json.data.lugar;
+            if (json.data.tipoActividad)  tipoActividad = json.data.tipoActividad;
         } else {
-            // Fallback manual si el server no devuelve el objeto completo
             evento.nombre_evento = nameInput.value;
-            evento.descripcion = descInput.value;
-            evento.hora_evento = timeInput.value;
+            evento.descripcion   = descInput.value;
+            evento.hora_evento   = timeInput.value;
             evento.precio_boleto = priceInput.value;
             if (json.nueva_imagen_url) evento.imagen_url = json.nueva_imagen_url;
         }
 
-        // Refrescar imagen si cambió desde server
         const PLACEHOLDER_SVG = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='150' viewBox='0 0 200 150'%3E%3Crect fill='%23e2e8f0' width='200' height='150'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' fill='%2394a3b8' font-size='14'%3EImagen no disponible%3C/text%3E%3C/svg%3E";
         if (evento.imagen_url) {
             img.src = `../../../src/media/images/events/${evento.imagen_url}`;
@@ -627,72 +570,87 @@ btnSave.addEventListener("click", async () => {
         }
 
         nuevaImagenArchivo = null;
+
+        // Liberar bloqueo tras guardado exitoso
+        await liberarBloqueo();
         editMode = false;
         actualizarEstadoUI();
+        eliminarOverlayImagen();
+        eliminarTooltips();
 
         await showAlert('Éxito', 'Evento actualizado correctamente.');
 
     } catch (err) {
         console.error(err);
         showAlert('Error', 'Ocurrió un error inesperado al guardar.');
+    } finally {
+        btnSave.disabled    = false;
+        btnSave.textContent = "Guardar";
     }
 });
 
 btnDelete.addEventListener("click", async () => {
     try {
-    
         const confirmar = await showConfirm('Eliminar', '¿Realmente deseas eliminar este evento? No se puede deshacer.');
         if (!confirmar) return;
 
+        // Adquirir bloqueo antes de eliminar
+        const ok = bloqueoActivo ? true : await adquirirBloqueo();
+        if (!ok) return;
+
+        btnDelete.disabled    = true;
+        btnDelete.textContent = "Eliminando…";
+
         const formData = new FormData();
-
         formData.append("idEvento", idEvento);
-        formData.append("accion", "eliminar");
+        formData.append("id_admin", idAdmin);
+        formData.append("accion",   "eliminar");
 
-        const res = await fetch("../../data/Logic/eventController.php", {
-            method: "POST",
-            body: formData
-        });
-
+        const res  = await fetch("../../data/Logic/eventController.php", { method: "POST", body: formData });
         const text = await res.text();
         let json;
-        try {
-            json = JSON.parse(text);
-        } catch (e) {
-            console.error("Respuesta no JSON:", text);
-            throw new Error("El servidor devolvió una respuesta inválida.");
+        try { json = JSON.parse(text); }
+        catch (e) { throw new Error("El servidor devolvió una respuesta inválida."); }
+
+        if (!json.correcto) {
+            await liberarBloqueo();
+            return showAlert('Error', json.mensaje);
         }
-        console.log(json);
 
-        if (!json.correcto) return showAlert('Error', json.mensaje);
+        // sp_cancelar_evento_y_reservaciones ya libero el bloqueo en el servidor
+        bloqueoActivo = false;
+        quitarBadgeBloqueoActivo();
 
-        await showAlert('Eliminado', 'El evento ha sido eliminado.');
+        await showAlert('Eliminado', `Evento eliminado. ${json.reservaciones_canceladas ?? 0} reservación(es) cancelada(s).`);
         sessionStorage.removeItem("evento_seleccionado");
         window.location.href = "./organizers.html";
+
     } catch (err) {
         console.error(err);
-        showAlert('Error', 'No se pudo eliminar el evento, el evento ya ha sido seleccionado por los clientes.');
+        await liberarBloqueo();
+        showAlert('Error', 'No se pudo eliminar el evento.');
+    } finally {
+        btnDelete.disabled    = false;
+        btnDelete.textContent = "🗑 Eliminar";
     }
 });
 
-
+// =====================================================
+// 8. HEADER / FOOTER
+// =====================================================
 async function footer_header() {
     const base = "./../../../src/";
     await renderizarLayout({
         header: {
             basePath: base,
             titulo: evento.nombre_evento,
-            fondo: `${base}media/images/layout/img_background_header.jpg`,
+            fondo:  `${base}media/images/layout/img_background_header.jpg`,
             enlaces: [
                 { url: "organizer.html", texto: "Pagina Principal", icono: `${base}media/images/icons/icon_home.png` },
                 {
-                    tipo: "boton",
-                    id: "btn_is_r",
-                    url: "#",
+                    tipo: "boton", id: "btn_is_r", url: "#",
                     icono: `${base}media/images/icons/icon_user.png`,
-                    onClick: () => {
-                        window.location.href = "../../../index.html";
-                    }
+                    onClick: () => { window.location.href = "../../../index.html"; }
                 }
             ]
         },
