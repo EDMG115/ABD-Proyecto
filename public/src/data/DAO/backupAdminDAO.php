@@ -53,7 +53,7 @@ try {
     //$pass = escapeshellarg($cred['password']);
     $pass = $cred['password'];
     $fecha = date("Ymd_His");
-    $db = "abdarcproyecto1";
+    $db = "abdarcproyecto4";
     $host = "localhost";
 
     $mysqldump = encontrarMysqldump();

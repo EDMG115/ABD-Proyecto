@@ -9,47 +9,43 @@ if (!isset($_POST['backup_file'])) {
     die("No se recibió archivo");
 }
 try {
-     $cred = $conexion->getCredencialesActuales();
+    $cred = $conexion->getCredencialesActuales();
 
     $archivo = basename($_POST['backup_file']);
 
     $user = $cred['username'];
     //$pass = escapeshellarg($cred['password']);
-    $pass=$cred['password'];
+    $pass = $cred['password'];
     $fecha = date("Ymd_His");
-    $db = "abdarcproyecto1";
+    $db = "abdarcproyecto4";
     $host = "localhost";
 
     if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
-     $ruta = __DIR__ . "\\..\\DB\\backups\\" . $archivo;
+        $ruta = __DIR__ . "\\..\\DB\\backups\\" . $archivo;
         if (!file_exists($ruta)) {
-    die("El respaldo no existe");
-    }
-    $mysql =
-    "\"C:\\Program Files\\MySQL\\MySQL Server 8.0\\bin\\mysql.exe\"";
-
+            die("El respaldo no existe");
+        }
+        $mysql =
+            "\"C:\\Program Files\\MySQL\\MySQL Server 8.0\\bin\\mysql.exe\"";
     } else {
-     $ruta = __DIR__ . "/../DB/backups/" . $archivo;
+        $ruta = __DIR__ . "/../DB/backups/" . $archivo;
         if (!file_exists($ruta)) {
-    die("El respaldo no existe");
-    }
-    $mysql = "/usr/bin/mysql";
+            die("El respaldo no existe");
+        }
+        $mysql = "/usr/bin/mysql";
     }
 
     $comando =
-    "$mysql -u $user -p\"$pass\" $db < \"$ruta\"";
+        "$mysql -u $user -p\"$pass\" $db < \"$ruta\"";
 
     exec($comando . " 2>&1", $output, $resultado);
 
     if ($resultado === 0) {
         echo "✅ Base restaurada correctamente";
-
     } else {
         echo "❌ Error al restaurar\n";
         echo implode("\n", $output);
-
     }
-
 } catch (Exception $e) {
     echo "⛔ " . $e->getMessage();
 }
@@ -67,7 +63,7 @@ function encontrarMysqldump(): ?string
             "C:\\Program Files\\MySQL\\MySQL Server 8.0\\bin\\mysqldump.exe",
             "C:\\Program Files (x86)\\MySQL\\MySQL Server 8.0\\bin\\mysqldump.exe",
         ];
-    } 
+    }
     //Linux / servidor
     else {
         $output = trim(shell_exec("which mysqldump"));
